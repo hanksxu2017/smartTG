@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE sqlMap SYSTEM "./mapsql.dtd">
+<sqlMap>
+
+    <!-- 这里面只支持SQL语句，不支持HQL语句的执行-->
+    
+    <!-- SQL语句-->
+    <!-- 菜单列表树 -->
+    <sqlUnit name="select_study_school_list">
+        <sql>
+           select t.id, t.name, t.address, t.create_time from tg_study_school t order by t.create_time asc
+        </sql>
+    </sqlUnit>
+
+    <sqlUnit name="select_study_teacher_list">
+        <sql>
+            select t.id, t.name, t.phone, t.level, t.create_time from tg_study_teacher t order by t.create_time asc
+        </sql>
+    </sqlUnit>
+
+    <sqlUnit name="select_study_classroom_list">
+        <sql>
+            select t.id, t.study_school_name, t.name, t.description, t.create_time from tg_study_classroom t
+            order by t.create_time asc
+        </sql>
+    </sqlUnit>
+
+    <sqlUnit name="select_study_class_list">
+        <sql>
+            select t.id, t.name, t.teacher_name, t.level, t.description, t.create_time from tg_study_class t
+            order by t.create_time asc
+        </sql>
+    </sqlUnit>
+
+
+
+
+</sqlMap>
