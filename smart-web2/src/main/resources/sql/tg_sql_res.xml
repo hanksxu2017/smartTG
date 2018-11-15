@@ -32,6 +32,14 @@
         </sql>
     </sqlUnit>
 
+    <sqlUnit name="select_study_student_list">
+        <sql>
+            select t.id, t.name, t.sex, t.birthday, t.school_name, t.parent_name, t.parent_phone,
+            t.level, t.status, t.remain_course, t.create_time
+            from tg_study_student t
+            order by t.create_time asc
+        </sql>
+    </sqlUnit>
 
 
 

@@ -1,10 +1,7 @@
 package cn.com.smart.web.bean;
 
-import jdk.nashorn.internal.objects.annotations.Getter;
-import jdk.nashorn.internal.objects.annotations.Getter;
-import org.apache.commons.lang3.StringUtils;
-
 import cn.com.smart.filter.bean.FilterParam;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 版本搜索对象
