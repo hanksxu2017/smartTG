@@ -41,6 +41,13 @@
         </sql>
     </sqlUnit>
 
+    <sqlUnit name="select_study_course_list">
+        <sql>
+            select t.id, t.week_info, t.course_time, t.class_name, t.classroom_name, t.teacher_name, t.status, t.description, t.create_time
+            from tg_study_course t
+            order by t.create_time asc
+        </sql>
+    </sqlUnit>
 
 
 </sqlMap>

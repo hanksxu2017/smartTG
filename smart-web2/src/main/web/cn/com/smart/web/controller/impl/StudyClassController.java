@@ -100,4 +100,9 @@ public class StudyClassController extends BaseController {
         return smartResp;
     }
 
+    @RequestMapping(value = "/queryClass", method = RequestMethod.GET)
+    @ResponseBody
+    public TGStudyClass queryClass(String id) {
+        return this.studyClassService.find(id).getData();
+    }
 }
