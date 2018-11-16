@@ -35,7 +35,7 @@ public class TGStudyClassRoom extends BaseBeanImpl implements DateBean {
 	
 	private String description;
 
-	private String status = "NORMAL";
+	private String status = IConstant.STATUS_NORMAL;
 
 	private Date createTime;
 

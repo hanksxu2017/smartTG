@@ -43,7 +43,7 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 
 	private String teacherName;
 
-	private String status = "NORMAL";
+	private String status = IConstant.STATUS_NORMAL;
 
 	private String description;
 

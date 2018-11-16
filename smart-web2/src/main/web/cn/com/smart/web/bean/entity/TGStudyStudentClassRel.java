@@ -40,7 +40,7 @@ public class TGStudyStudentClassRel extends BaseBeanImpl implements DateBean {
 
     private String studentName;
 
-    private String status = "NORMAL";
+    private String status = IConstant.STATUS_NORMAL;
 
 	private Date createTime;
 

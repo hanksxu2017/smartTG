@@ -14,6 +14,9 @@ SELECT t.id, t.student_name, t.class_name, t.teacher_name, t.status, t.create_ti
 FROM tg_study_student_class_rel t
 ORDER BY t.create_time ASC;
 
-
+#
+SELECT t.id, t.course_week_info, t.course_time, t.student_name,t.class_name, t.classroom_name, t.teacher_name, t.status, t.create_time
+            FROM tg_study_student_course_rel t
+            ORDER BY t.create_time ASC;
 
 

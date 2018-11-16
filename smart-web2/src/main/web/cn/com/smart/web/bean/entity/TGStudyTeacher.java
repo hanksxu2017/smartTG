@@ -33,7 +33,7 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
 
 	private String level;
 
-	private String status = "NORMAL";
+	private String status = IConstant.STATUS_NORMAL;
 
 	private Date createTime;
 

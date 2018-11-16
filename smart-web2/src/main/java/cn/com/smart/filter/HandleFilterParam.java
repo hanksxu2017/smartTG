@@ -39,7 +39,7 @@ public class HandleFilterParam {
 
 	/**
 	 * 解析参数
-	 * @param clasz
+	 * @param clazz
 	 */
 	protected void parseParam(Class<?> clazz) {
 		Field[] fields = clazz.getDeclaredFields();

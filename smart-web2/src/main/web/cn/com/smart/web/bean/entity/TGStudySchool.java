@@ -32,7 +32,7 @@ public class TGStudySchool extends BaseBeanImpl implements DateBean {
 	
 	private String address;
 
-	private String status = "NORMAL";
+	private String status = IConstant.STATUS_NORMAL;
 	/**
 	 * 添加时间 
 	 */

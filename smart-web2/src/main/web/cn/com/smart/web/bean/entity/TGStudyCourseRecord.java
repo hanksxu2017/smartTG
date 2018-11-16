@@ -12,15 +12,15 @@ import java.util.Date;
 
 /**
  *
- * 班级信息实体类
+ *
  * @author XUWENYI <br />
  * 2018年11月15日
  * @version 1.0
  * @since 1.0
  */
 @Entity
-@Table(name="tg_study_student_course_rel")
-public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
+@Table(name="tg_study_course_record")
+public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean {
 
 	/**
 	 * 
@@ -30,11 +30,10 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
 	private String id;
 
     private String courseId;
-
-    private String courseWeekInfo;
-
-    private String courseTime;
-
+    // 开始时间,格式: yyyy-MM-dd HH:mm
+    private String courseStartTime;
+    // 结束时间,格式: yyyy-MM-dd HH:mm
+    private String courseEndTime;
 	private String classId;
 
 	private String className;
@@ -46,16 +45,24 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
 	private String teacherId;
 
 	private String teacherName;
-
-    private String studentId;
-
-    private String studentName;
+    // 应到
+	private int studentQuantityPlan;
+    // 实到
+    private int studentQuantityActual;
+    // 事假
+    private int studentPersonalLeave;
+    // 旷课
+    private int studentPlayTruant;
+    // 其他缺席
+    private int studentOtherAbsent;
 
     private String status = IConstant.STATUS_NORMAL;
 
 	private Date createTime;
 
 	private Date updateTime;
+
+	private String description;
 
 	@Id
 	@Column(name="id", length=64)
@@ -112,24 +119,6 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
         this.className = className;
     }
 
-    @Column(name="student_id", length=64)
-    public String getStudentId() {
-        return studentId;
-    }
-
-    public void setStudentId(String studentId) {
-        this.studentId = studentId;
-    }
-
-    @Column(name="student_name", length=64)
-    public String getStudentName() {
-        return studentName;
-    }
-
-    public void setStudentName(String studentName) {
-        this.studentName = studentName;
-    }
-
     @Column(name="course_id", length=64)
     public String getCourseId() {
         return courseId;
@@ -137,24 +126,6 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
 
     public void setCourseId(String courseId) {
         this.courseId = courseId;
-    }
-
-    @Column(name="course_week_info", length=32)
-    public String getCourseWeekInfo() {
-        return courseWeekInfo;
-    }
-
-    public void setCourseWeekInfo(String courseWeekInfo) {
-        this.courseWeekInfo = courseWeekInfo;
-    }
-
-    @Column(name="course_time", length=32)
-    public String getCourseTime() {
-        return courseTime;
-    }
-
-    public void setCourseTime(String courseTime) {
-        this.courseTime = courseTime;
     }
 
     @Column(name="classroom_id", length=64)
@@ -191,5 +162,77 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
 
     public void setTeacherName(String teacherName) {
         this.teacherName = teacherName;
+    }
+
+    @Column(name="course_start_time", length=32)
+    public String getCourseStartTime() {
+        return courseStartTime;
+    }
+
+    public void setCourseStartTime(String courseStartTime) {
+        this.courseStartTime = courseStartTime;
+    }
+
+    @Column(name="course_end_time", length=32)
+    public String getCourseEndTime() {
+        return courseEndTime;
+    }
+
+    public void setCourseEndTime(String courseEndTime) {
+        this.courseEndTime = courseEndTime;
+    }
+
+    @Column(name="student_quantity_plan", length=11)
+    public int getStudentQuantityPlan() {
+        return studentQuantityPlan;
+    }
+
+    public void setStudentQuantityPlan(int studentQuantityPlan) {
+        this.studentQuantityPlan = studentQuantityPlan;
+    }
+
+    @Column(name="student_quantity_actual", length=11)
+    public int getStudentQuantityActual() {
+        return studentQuantityActual;
+    }
+
+    public void setStudentQuantityActual(int studentQuantityActual) {
+        this.studentQuantityActual = studentQuantityActual;
+    }
+
+    @Column(name="student_personal_leavel", length=11)
+    public int getStudentPersonalLeave() {
+        return studentPersonalLeave;
+    }
+
+    public void setStudentPersonalLeave(int studentPersonalLeave) {
+        this.studentPersonalLeave = studentPersonalLeave;
+    }
+
+    @Column(name="student_play_truant", length=11)
+    public int getStudentPlayTruant() {
+        return studentPlayTruant;
+    }
+
+    public void setStudentPlayTruant(int studentPlayTruant) {
+        this.studentPlayTruant = studentPlayTruant;
+    }
+
+    @Column(name="student_other_absent", length=11)
+    public int getStudentOtherAbsent() {
+        return studentOtherAbsent;
+    }
+
+    public void setStudentOtherAbsent(int studentOtherAbsent) {
+        this.studentOtherAbsent = studentOtherAbsent;
+    }
+
+    @Column(name="description", length=128)
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 }
