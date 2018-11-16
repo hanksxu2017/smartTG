@@ -2,6 +2,7 @@ package cn.com.smart.web.bean.entity;
 
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
+import cn.com.smart.constant.IConstant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

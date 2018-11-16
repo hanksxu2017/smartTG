@@ -23,13 +23,13 @@ public class StudentClassRelSearch extends FilterParam {
             strBuilder.append(param);
         }
         if(null != studentName) {
-            strBuilder.append("&studentName=").append(studentName);
+            strBuilder.append("&studentName=:").append(studentName);
         }
         if(StringUtils.isNotBlank(classId)) {
-            strBuilder.append("&classId="+classId);
+            strBuilder.append("&classId=:"+classId);
         }
         if(StringUtils.isNotBlank(teacherId)) {
-            strBuilder.append("&teacherId="+teacherId);
+            strBuilder.append("&teacherId=:"+teacherId);
         }
         param = strBuilder.toString();
         if(StringUtils.isNotBlank(param) && param.startsWith("&")) {

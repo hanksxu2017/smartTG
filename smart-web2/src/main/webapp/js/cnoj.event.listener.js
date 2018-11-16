@@ -493,7 +493,7 @@ function hrefListener($elementWrap) {
 			if(utils.isExist($searchPanel)) {
 				var $form = $searchPanel.find("form");
 				if(utils.isExist($form)) {
-					uri = uri+"&"+$form.serialize();
+					uri = uri+"&"+decodeURIComponent($form.serialize());
 				}
 			}
 			//获取页面显示数量;即每页显示数
@@ -727,7 +727,7 @@ function searchSubmitListener($elementWrap){
 	 */
 	function _clickElement(event, $this) {
 		var $form = $this.parents("form:eq(0)");
-		var param = $form.serialize();
+		var param = decodeURIComponent($form.serialize());
 	    var uri = $form.attr("action");
 	    var target = $form.attr("target");
 	    var loadingTargetTag = $form.data("loading-target-tag");
@@ -1524,7 +1524,7 @@ function submitBtnListener($elementWrap) {
 			 $form = $this.parents("form:eq(0)");
 		}
 		if($form.validateForm()) {
-			var param = $form.serialize();
+			var param = decodeURIComponent($form.serialize());
 		    var uri = $form.attr("action");
 		    cnoj.submitDialogData(uri,param,fun,$this,$form);
 		}
@@ -1841,7 +1841,7 @@ function uploadFileListener($elementWrap) {
 			var progressBar = $element.data("progressbar");
 			var closeAfterFun = $element.data("close-after");
 			if(utils.isNotEmpty(uri)) {
-				formData = utils.isEmpty(formData)?null:$(formData).serializeArray();
+				formData = utils.isEmpty(formData)?null:decodeURIComponent($(formData).serializeArray());
 				popWidth = utils.isEmpty(popWidth)?450:popWidth;
 				popHeight = utils.isEmpty(popHeight)?300:popHeight;
 				progressBar = (utils.isEmpty(progressBar) || progressBar=='0')?false:true;
@@ -2750,7 +2750,7 @@ function submitFormListener($elementWrap) {
 			 $form = $this.parents("form:eq(0)");
 		}
 		if($form.validateForm()) {
-			var param = $form.serialize();
+			var param = decodeURIComponent($form.serialize());
 		    var uri = $form.attr("action");
 		    cnoj.submitFormDialogData(uri,param,fun,$this,$form);
 		}
@@ -2837,7 +2837,7 @@ function gotoPageListener($elementWrap) {
 		if(utils.isExist($searchPanel)) {
 			var $form = $searchPanel.find("form");
 			if(utils.isExist($form)) {
-				uri = uri+"&"+$form.serialize();
+				uri = uri+"&"+decodeURIComponent($form.serialize());
 			}
 		}
 		//获取页面显示数量;即每页显示数
@@ -2915,7 +2915,7 @@ function changePageSizeListener($elementWrap) {
 		if(utils.isExist($searchPanel)) {
 			var $form = $searchPanel.find("form");
 			if(utils.isExist($form)) {
-				uri = uri+"&"+$form.serialize();
+				uri = uri+"&"+decodeURIComponent($form.serialize());
 			}
 		}
 		if(!utils.isEmpty(target))

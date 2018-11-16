@@ -28,7 +28,8 @@
 				var self = this;
 				$searchPanel.find("form").on('submit', function() {
 					var param = $(this).serialize();
-					if(utils.isNotEmpty(param)) {
+                    param = decodeURIComponent(param);
+                    if(utils.isNotEmpty(param)) {
 						var url = utils.isContain(opts.url,"?")?(opts.url+"&"):(opts.url+"?");
 						url = url+param;
 						$(self).jqGrid("setGridParam",{url:url}).trigger("reloadGrid",[{page:1}]);

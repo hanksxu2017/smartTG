@@ -347,6 +347,7 @@ public abstract class BaseController extends Smart implements IBaseController {
         editBtn = new EditBtn("edit", this.subDir + "edit", null, "修改", "800");
         delBtn = new DelBtn(this.subDir + "delete", "确定要删除选中的信息吗？", this.subDir + "list", null, null);
         refreshBtn = new RefreshBtn(this.subDir + "list", null, null);
+
         modelMap.put("addBtn", addBtn);
         modelMap.put("editBtn", editBtn);
         modelMap.put("delBtn", delBtn);

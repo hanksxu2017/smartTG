@@ -22,6 +22,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
 import java.io.UnsupportedEncodingException;
 import java.util.*;
 
@@ -52,9 +53,9 @@ public class StudyStudentClassRelController extends BaseController {
      * @return
      */
     @RequestMapping("/list")
-    public ModelAndView list(StudentCourseRelSearch searchParam, RequestPage page) {
+    public ModelAndView list(StudentClassRelSearch searchParam, RequestPage page, HttpServletRequest request) {
 
-        SmartResponse<Object> smartResp = opService.getDatas("select_study_course_rel_list", searchParam, page.getStartNum(), page.getPageSize());
+        SmartResponse<Object> smartResp = opService.getDatas("select_study_class_rel_list", searchParam, page.getStartNum(), page.getPageSize());
         ModelAndView modelAndView = this.packListModelView(searchParam, smartResp);
 
         Map<String,Object> param = new HashMap<>();
