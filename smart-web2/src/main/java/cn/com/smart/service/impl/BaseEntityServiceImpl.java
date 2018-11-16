@@ -48,6 +48,11 @@ public class BaseEntityServiceImpl<T extends BaseBean> extends BaseServiceImpl i
 		return fsResp;
 	}
 
+	public long getCount(Map<String, Object> param) {
+        long total = baseDao.count(param);
+        return total;
+    }
+
 	@Override
 	public SmartResponse<T> findByParam(Map<String, Object> param) {
 		return findByParam(param,null);

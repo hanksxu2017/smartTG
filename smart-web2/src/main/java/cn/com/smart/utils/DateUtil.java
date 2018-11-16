@@ -1,6 +1,7 @@
 package cn.com.smart.utils;
 
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 import com.mixsmart.utils.StringUtils;
@@ -33,5 +34,43 @@ public class DateUtil extends BaseUtil {
 		}
 		return value;
 	}
-	
+
+    /**
+     *
+     * @param dateStr
+     * @param format
+     * @return
+     */
+    public static Date parseDate(String dateStr, String format) {
+	    try {
+            SimpleDateFormat dateFormat = new SimpleDateFormat(format);
+            return dateFormat.parse(dateStr);
+        } catch (Exception e) {
+	        return null;
+        }
+    }
+
+    /**
+     * 获取日期所处的星期</br>
+     * 星期1-星期6: 1-6, 星期天: 0
+     * @param date
+     * @return
+     */
+    public static int getWeek(Date date) {
+        if(null == date) {
+            return -1;
+        }
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        int w = cal.get(Calendar.DAY_OF_WEEK) - 1;
+        return w;
+    }
+
+    public static Date addDay(Date srcDate, int offset) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(srcDate);
+        calendar.add(Calendar.DAY_OF_MONTH,offset);
+        return calendar.getTime();
+    }
+
 }

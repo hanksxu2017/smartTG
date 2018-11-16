@@ -88,10 +88,8 @@
       </div>
       <div class="navbar-nar-right p-t-5"  >
           <ul class="navbar-menu" >
-            <li>
-                <a href="index"><span class="glyphicon glyphicon-home"></span> 首页</a>
-            </li>
-             <c:if test="${not empty subSysList }">
+
+<%--             <c:if test="${not empty subSysList }">
              	<c:choose>
              		<c:when test="${fn:length(subSysList) == 1}">
              		   <c:forEach var="subSys" items="${subSysList }">
@@ -124,7 +122,7 @@
              			</li>
              		</c:otherwise>
              	</c:choose>
-             </c:if>
+             </c:if>--%>
              <li>
                <a href="#" class="cnoj-open-blank" data-uri="showPage/base_user_changePwd" data-title="修改密码" data-width="520"><i class="fa fa-pencil-square-o fa-lg"></i>&nbsp;修改密码</a>
              </li>

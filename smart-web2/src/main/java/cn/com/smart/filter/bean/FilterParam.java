@@ -1,15 +1,13 @@
 package cn.com.smart.filter.bean;
 
+import cn.com.smart.filter.HandleFilterParam;
+import com.mixsmart.utils.StringUtils;
+import org.springframework.stereotype.Component;
+
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.Map;
 import java.util.Set;
-
-import org.springframework.stereotype.Component;
-
-import cn.com.smart.filter.HandleFilterParam;
-
-import com.mixsmart.utils.StringUtils;
 
 /**
  * 过滤参数

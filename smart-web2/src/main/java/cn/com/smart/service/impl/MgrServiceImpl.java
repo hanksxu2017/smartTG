@@ -46,7 +46,7 @@ public abstract class MgrServiceImpl<T extends BaseBean> extends BaseEntityServi
 		}
 		return fsResp;
 	}
-	
+
 	@Override
 	public SmartResponse<String> save(BaseBeanImpl bean) throws ServiceException {
 		SmartResponse<String> fsResp = new SmartResponse<String>();

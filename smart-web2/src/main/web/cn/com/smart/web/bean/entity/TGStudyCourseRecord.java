@@ -30,10 +30,10 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean {
 	private String id;
 
     private String courseId;
-    // 开始时间,格式: yyyy-MM-dd HH:mm
-    private String courseStartTime;
-    // 结束时间,格式: yyyy-MM-dd HH:mm
-    private String courseEndTime;
+    // 日期,格式: yyyy-MM-dd
+    private String courseDate;
+    // 课时时间,格式:HH:mm-HH:mm
+    private String courseTime;
 	private String classId;
 
 	private String className;
@@ -164,22 +164,22 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean {
         this.teacherName = teacherName;
     }
 
-    @Column(name="course_start_time", length=32)
-    public String getCourseStartTime() {
-        return courseStartTime;
+    @Column(name="course_date", length=32)
+    public String getCourseDate() {
+        return courseDate;
     }
 
-    public void setCourseStartTime(String courseStartTime) {
-        this.courseStartTime = courseStartTime;
+    public void setCourseDate(String courseDate) {
+        this.courseDate = courseDate;
     }
 
-    @Column(name="course_end_time", length=32)
-    public String getCourseEndTime() {
-        return courseEndTime;
+    @Column(name="course_time", length=32)
+    public String getCourseTime() {
+        return courseTime;
     }
 
-    public void setCourseEndTime(String courseEndTime) {
-        this.courseEndTime = courseEndTime;
+    public void setCourseTime(String courseTime) {
+        this.courseTime = courseTime;
     }
 
     @Column(name="student_quantity_plan", length=11)

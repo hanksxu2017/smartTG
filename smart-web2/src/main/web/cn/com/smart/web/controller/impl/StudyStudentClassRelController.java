@@ -2,29 +2,20 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.bean.entity.TGStudyStudent;
-import cn.com.smart.web.bean.entity.TGStudyStudentClassRel;
-import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
 import cn.com.smart.web.bean.search.StudentClassRelSearch;
-import cn.com.smart.web.bean.search.StudentCourseRelSearch;
-import cn.com.smart.web.bean.search.StudentSearch;
-import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.controller.base.BaseController;
-import cn.com.smart.web.service.*;
-import cn.com.smart.web.tag.bean.CustomBtn;
-import com.mixsmart.utils.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
+import cn.com.smart.web.service.OPService;
+import cn.com.smart.web.service.StudyClassService;
+import cn.com.smart.web.service.StudyStudentClassRelService;
+import cn.com.smart.web.service.StudyTeacherService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.UnsupportedEncodingException;
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * 分班信息管理

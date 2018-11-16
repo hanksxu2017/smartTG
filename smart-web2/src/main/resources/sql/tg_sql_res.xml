@@ -65,4 +65,16 @@
         </sql>
     </sqlUnit>
 
+    <sqlUnit name="select_study_course_record_list">
+        <sql>
+            select t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
+            t.teacher_name, t.student_quantity_plan, t.student_quantity_actual, t.student_personal_leave,
+            t.student_other_absent,
+            t.status, t.create_time, t. description
+            from tg_study_course_record t
+            order by t.create_time asc
+        </sql>
+    </sqlUnit>
+
+
 </sqlMap>
