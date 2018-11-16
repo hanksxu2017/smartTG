@@ -51,7 +51,6 @@
     $(function () {
         $("#teacherSelect").change(function () {
             var text = $(this).find("option:selected").text();
-            alert(text);
             $("#teacherName").val(text);
         });
 

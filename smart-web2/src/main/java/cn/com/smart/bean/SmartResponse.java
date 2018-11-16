@@ -5,6 +5,7 @@ import java.util.List;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.init.config.InitSysConfig;
 import cn.com.smart.web.constant.IActionConstant;
+import org.apache.commons.lang.StringUtils;
 
 /**
  * 执行结果--统一的返回结果bean
@@ -36,6 +37,10 @@ public class SmartResponse<T> {
 	
 	public SmartResponse(String msg) {
 	    this.msg = msg;
+	}
+
+	public boolean isSuccess() {
+		return StringUtils.equals(this.result, IConstant.OP_SUCCESS);
 	}
 
     /**

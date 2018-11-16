@@ -49,5 +49,12 @@
         </sql>
     </sqlUnit>
 
+    <sqlUnit name="select_study_class_rel_list">
+        <sql>
+            select t.id, t.student_name, t.class_name, t.teacher_name, t.status, t.create_time
+            from tg_study_student_class_rel t
+            order by t.create_time asc
+        </sql>
+    </sqlUnit>
 
 </sqlMap>

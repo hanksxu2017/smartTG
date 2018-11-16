@@ -18,11 +18,20 @@
           </div>--%>
 		<!-- table -->
 
-		<cnoj:table smartResp="${smartResp}" headers="姓名,性别,出生日期,就读学校,家长,家长手机,等级,状态,剩余课时,入职时间"
-		headerWidths="10%,5%,10%,15%,10%,10%,5%,5%,10%,20%"
-		  isCheckbox="1" isRowSelected="1" currentUri="${currentUri}"
-		  addBtn="${addBtn}" editBtn="${editBtn}" delBtn="${delBtn}" refreshBtn="${refreshBtn}"
-		  page="${pageParam}"
-		/>
+    <!-- table -->
+    <cnoj:table
+        smartResp="${smartResp }"
+        headers="姓名,性别,出生日期,就读学校,家长,家长手机,等级,状态,剩余课时,入职时间"
+        headerWidths="10%,5%,10%,15%,10%,10%,5%,5%,10%,20%"
+        isCheckbox="1"
+        isRowSelected="1"
+        currentUri="${currentUri}"
+        addBtn="${addBtn}"
+        editBtn="${editBtn}"
+        delBtn="${delBtn}"
+        refreshBtn="${refreshBtn}"
+        customBtns="${customBtns}"
+        page="${pageParam }"
+    />
    </div>
 </div>

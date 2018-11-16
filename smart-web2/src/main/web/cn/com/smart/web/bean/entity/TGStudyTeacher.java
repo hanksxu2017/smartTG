@@ -30,10 +30,8 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
 	private String name;
 	
 	private String phone;
-    /**
-     * 等级
-     */
-	private int level;
+
+	private String level;
 
 	private String status = "NORMAL";
 
@@ -69,12 +67,12 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
         this.phone = phone;
     }
 
-    @Column(name="level",length=8)
-    public int getLevel() {
+    @Column(name="level",length=16)
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 
