@@ -89,6 +89,10 @@ public interface IConstant {
 	 *	对象状态
 	 */
 	String STATUS_NORMAL = "NORMAL";
+	// 退学
+	String STATUS_DROP_OUT = "DROP_OUT";
+	// 休学
+	String STATUS_TEMP_LEAVE = "TEMP_LEAVE";
 	String STATUS_DELETE = "DELETE";
 
 

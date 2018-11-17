@@ -29,7 +29,7 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 	private String id;
 	
 	private String name;
-
+    // 1-男,2-女
 	private short sex;
 
 	private String birthday;

@@ -22,7 +22,7 @@
     <cnoj:table
         smartResp="${smartResp }"
         headers="日期,授课时间,班级,教室,授课教师,学生-应到,学生-实到,学生-事假,学生-缺席,状态,创建时间,备注"
-        headerWidths="5%,5%,10%,10%,5%,5%,5%,5%,5%,10%,15%,20%"
+        headerWidths="10%,10%,10%,10%,5%,5%,5%,5%,5%,10%,10%,15%"
         isCheckbox="1"
         isRowSelected="1"
         currentUri="${currentUri}"

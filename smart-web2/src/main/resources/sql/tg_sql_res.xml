@@ -34,8 +34,13 @@
 
     <sqlUnit name="select_study_student_list">
         <sql>
-            select t.id, t.name, t.sex, t.birthday, t.school_name, t.parent_name, t.parent_phone,
-            t.level, t.status, t.remain_course, t.create_time
+            select t.id, t.name, if(t.sex = 1, "男生", "女生"), t.birthday, t.school_name, t.parent_name, t.parent_phone,
+            t.level,
+            CASE t.status WHEN "NORMAL" THEN '正常'
+            WHEN "DROP_OUT" THEN '退学'
+            WHEN "TEMP_LEAVE" THEN "休学"
+            ELSE '未定义' END ,
+            t.remain_course, t.create_time
             from tg_study_student t
             order by t.create_time asc
         </sql>
@@ -70,11 +75,24 @@
             select t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
             t.teacher_name, t.student_quantity_plan, t.student_quantity_actual, t.student_personal_leave,
             t.student_other_absent,
-            t.status, t.create_time, t. description
+            t.status, t.create_time, t.description
             from tg_study_course_record t
             order by t.create_time asc
         </sql>
     </sqlUnit>
+
+    <sqlUnit name="select_study_course_student_record_list">
+        <sql>
+            select t.id, sr.student_name, t.course_date, t.course_time, t.class_name, t.classroom_name, t.teacher_name,
+            CASE sr.status WHEN "NORMAL" THEN '正常'
+            ELSE '未定义' END ,
+            sr.description, sr.update_time
+            from tg_study_course_record t, tg_study_course_student_record sr
+            where t.id = sr.course_rec_id
+            order by t.create_time asc
+        </sql>
+    </sqlUnit>
+
 
 
 </sqlMap>

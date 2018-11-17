@@ -6,13 +6,12 @@ import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
+import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
+import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
 import cn.com.smart.web.bean.search.ClassSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.controller.base.BaseController;
-import cn.com.smart.web.service.OPService;
-import cn.com.smart.web.service.StudyCourseRecordService;
-import cn.com.smart.web.service.StudyCourseService;
-import cn.com.smart.web.service.StudyStudentCourseRelService;
+import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.CustomBtn;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
@@ -35,6 +34,9 @@ public class StudyCourseRecordController extends BaseController {
     @Autowired
     private StudyCourseRecordService courseRecordService;
 
+    @Autowired
+    private StudyCourseStudentRecordService courseStudentRecordService;
+
 
     public StudyCourseRecordController() {
         super.setSubDir("/studyCourse/record/");
@@ -51,7 +53,7 @@ public class StudyCourseRecordController extends BaseController {
         ModelAndView modelAndView = this.packListModelView(searchParam, smartResp);
 
         // 增加自定义按钮
-        this.addChooseUnitBtn(modelAndView.getModelMap());
+        this.addCustomBtn(modelAndView.getModelMap());
         return modelAndView;
     }
 
@@ -59,13 +61,20 @@ public class StudyCourseRecordController extends BaseController {
      *
      * @param modelMap
      */
-    private void addChooseUnitBtn(Map<String, Object> modelMap) {
-        CustomBtn customBtn = new CustomBtn("generateCourseRecord", "生成每日课时", "生成每日课时", this.getSubDir() + "generateCourseRecord","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
-        customBtn.setWidth("500");
-        customBtns = new ArrayList<>(1);
-        customBtns.add(customBtn);
+    private void addCustomBtn(Map<String, Object> modelMap) {
+        CustomBtn customBtnCourse = new CustomBtn("generateCourseRecord", "生成每日课时", "生成每日课时", this.getSubDir() + "generateCourseRecord","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
+        customBtnCourse.setWidth("500");
+
+        CustomBtn customBtnStudent = new CustomBtn("queryStudent", "学生列表", "学生列表", "showPage/base_studyCourse_record_queryStudent","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
+        customBtnStudent.setWidth("500");
+
+        customBtns = new ArrayList<>(2);
+        customBtns.add(customBtnCourse);
+//        customBtns.add(customBtnStudent);
         modelMap.put("customBtns", customBtns);
     }
+
+
 
     @RequestMapping(value = "/generateCourseRecord")
     public ModelAndView update(String id) {
@@ -122,12 +131,16 @@ public class StudyCourseRecordController extends BaseController {
         for(TGStudyCourse course : courseList) {
             courseRecord = this.initCourseRecord(course, startDate);
             if(null != courseRecord) {
-                this.courseRecordService.save(courseRecord);
+                if(StringUtils.isBlank(courseRecord.getId())) {
+                    this.courseRecordService.save(courseRecord);
+                }
+                this.createCourseStudentRecord(courseRecord);
                 count++;
             }
         }
 
         fsResp.setResult(IConstant.OP_SUCCESS);
+        fsResp.setMsg("课时已生成!");
         fsResp.setSize(count);
         return fsResp;
     }
@@ -164,7 +177,7 @@ public class StudyCourseRecordController extends BaseController {
         params.put("courseId", course.getId());
         List<TGStudyCourseRecord> courseRecords = this.courseRecordService.findByParam(params).getDatas();
         if(CollectionUtils.isNotEmpty(courseRecords)) {
-            return null;
+            return courseRecords.get(0);
         }
 
         TGStudyCourseRecord courseRecord = new TGStudyCourseRecord();
@@ -210,6 +223,54 @@ public class StudyCourseRecordController extends BaseController {
         } else {
             return null;
         }
+    }
+
+    @Autowired
+    private StudyStudentCourseRelService studentCourseRelService;
+
+    /**
+     * 生成课时对应的学生课时记录
+     * @param courseRecord
+     */
+    private void createCourseStudentRecord(TGStudyCourseRecord courseRecord) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", IConstant.STATUS_NORMAL);
+        params.put("courseId", courseRecord.getCourseId());
+        List<TGStudyStudentCourseRel> studentCourseRelList = studentCourseRelService.findByParam(params).getDatas();
+        if(CollectionUtils.isNotEmpty(studentCourseRelList)) {
+            TGStudyCourseStudentRecord courseStudentRecord;
+            for(TGStudyStudentCourseRel rel : studentCourseRelList) {
+                courseStudentRecord = this.initCourseStudentRecord(courseRecord, rel);
+                if(StringUtils.isBlank(courseStudentRecord.getId())) {
+                    this.courseStudentRecordService.save(courseStudentRecord);
+                }
+            }
+        }
+    }
+
+    /**
+     *
+     * @param courseRecord
+     * @param rel
+     * @return
+     */
+    private TGStudyCourseStudentRecord initCourseStudentRecord(TGStudyCourseRecord courseRecord, TGStudyStudentCourseRel rel) {
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("courseRecId", courseRecord.getId());
+        params.put("studentId", rel.getStudentId());
+        List<TGStudyCourseStudentRecord> courseStudentRecords = this.courseStudentRecordService.findByParam(params).getDatas();
+        if(CollectionUtils.isNotEmpty(courseStudentRecords)) {
+            return courseStudentRecords.get(0);
+        }
+
+        TGStudyCourseStudentRecord record = new TGStudyCourseStudentRecord();
+        record.setCourseRecId(courseRecord.getId());
+        record.setStudentId(rel.getStudentId());
+        record.setStudentName(rel.getStudentName());
+        record.setCreateTime(new Date());
+        return record;
     }
 
 
