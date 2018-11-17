@@ -55,7 +55,7 @@ public class StudyClassroomController extends BaseController {
     public ModelAndView add() {
         ModelAndView modelView = new ModelAndView();
         modelView.getModelMap().put("schools", studySchoolService.findAll().getDatas());
-        modelView.setViewName(getURI() + "add");
+        modelView.setViewName(getPageDir() + "add");
         return modelView;
     }
 
@@ -82,7 +82,7 @@ public class StudyClassroomController extends BaseController {
             }
             modelView.getModelMap().put("schools", studySchoolService.findAll().getDatas());
         }
-        modelView.setViewName(getURI() + "edit");
+        modelView.setViewName(getPageDir() + "edit");
         return modelView;
     }
 

@@ -1,6 +1,7 @@
 package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.bean.entity.TGStudyStudent;
@@ -8,18 +9,22 @@ import cn.com.smart.web.bean.entity.TGStudyStudentClassRel;
 import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
 import cn.com.smart.web.bean.search.StudentSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
+import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
+import cn.com.smart.web.filter.bean.UserSearchParam;
 import cn.com.smart.web.service.*;
-import cn.com.smart.web.tag.bean.CustomBtn;
+import cn.com.smart.web.tag.bean.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Controller
@@ -59,7 +64,7 @@ public class StudyStudentController extends BaseController {
      * @param modelMap
      */
     private void addChooseClassBtn(Map<String, Object> modelMap) {
-        CustomBtn customBtn = new CustomBtn("chooseClass", "报班", "报班", this.getSubDir() + "chooseClass","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
+        CustomBtn customBtn = new CustomBtn("chooseClass", "报班", "报班", this.getUriPath() + "chooseClass","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
         customBtn.setWidth("500");
         customBtns = new ArrayList<>(1);
         customBtns.add(customBtn);
@@ -75,7 +80,7 @@ public class StudyStudentController extends BaseController {
     @RequestMapping(value = "/add")
     public ModelAndView add() {
         ModelAndView modelView = new ModelAndView();
-        modelView.setViewName(getURI() + "add");
+        modelView.setViewName(getPageDir() + "add");
         return modelView;
     }
 
@@ -98,8 +103,21 @@ public class StudyStudentController extends BaseController {
 
         studyStudent.setRemainCourse(studyStudent.getTotalCourse());
 
+        studyStudent.setAge(this.getAge(studyStudent.getBirthday()));
+
         SmartResponse<String> smartResp = studyStudentService.save(studyStudent);
         return smartResp;
+    }
+
+    private int getAge(String birthday) {
+        Date birthDate = DateUtil.parseDate(birthday, "yyyy-MM-dd");
+        Calendar cal = Calendar.getInstance();
+        int curYear = cal.get(Calendar.YEAR);
+
+        cal.setTime(birthDate);
+        int birthYear = cal.get(Calendar.YEAR);//获取年份
+
+        return curYear - birthYear;
     }
 
     @RequestMapping(value = "/edit")
@@ -111,7 +129,7 @@ public class StudyStudentController extends BaseController {
                 modelView.getModelMap().put("objBean", studyStudent);
             }
         }
-        modelView.setViewName(getURI() + "edit");
+        modelView.setViewName(getPageDir() + "edit");
         return modelView;
     }
 
@@ -147,7 +165,7 @@ public class StudyStudentController extends BaseController {
         params.put("status", "NORMAL");
         modelView.getModelMap().put("classes", studyClassService.findByParam(params).getDatas());
 
-        modelView.setViewName(getURI() + "chooseClass");
+        modelView.setViewName(getPageDir() + "chooseClass");
         return modelView;
     }
 
@@ -216,6 +234,58 @@ public class StudyStudentController extends BaseController {
 
         rel.setCreateTime(new Date());
         return rel;
+    }
+
+    /**
+     * 简单列表
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/simpList")
+    public ModelAndView simpList(HttpSession session, UserSearchParam searchParam,
+                                 ModelAndView modelView, RequestPage page) throws Exception {
+        String uri = this.getUriPath() + "simpList";
+        SmartResponse<Object> smartResp = this.opService.getDatas("student_simp_list",searchParam, page.getStartNum(), page.getPageSize());
+        pageParam = new PageParam(uri, "#student-tab", page.getPage(), page.getPageSize());
+        selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyClass/studentHas","#has-class-list","id");
+
+        ModelMap modelMap = modelView.getModelMap();
+        modelMap.put("smartResp", smartResp);
+        modelMap.put("pageParam", pageParam);
+        modelMap.put("searchParam", searchParam);
+        modelMap.put("selectedEventProp", selectedEventProp);
+        pageParam = null;
+
+        modelView.setViewName(this.getPageDir() + "simpList");
+        return modelView;
+    }
+
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping("/classList")
+    public ModelAndView classList(UserSearchParam searchParam,ModelAndView modelView,RequestPage page) throws Exception {
+        String uri = this.getUriPath() + "classList";
+        SmartResponse<Object> smartResp = this.opService.getDatas("student_class_list", searchParam, page.getStartNum(), page.getPageSize());
+        pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
+        uri = uri + "?id=" + searchParam.getId();
+        addBtn = new EditBtn("add",this.getUriPath() + "addClass?id=" + searchParam.getId(), "教师增设班级", "600");
+        delBtn = new DelBtn(this.getUriPath() + "deleteClass?classId=" + searchParam.getId(), "确定要从该教师中删除选中的班级吗？",uri,"#student-class-tab", null);
+        refreshBtn = new RefreshBtn(uri, null,"#student-class-tab");
+
+        ModelMap modelMap = modelView.getModelMap();
+        modelMap.put("smartResp", smartResp);
+        modelMap.put("pageParam", pageParam);
+        modelMap.put("searchParam", searchParam);
+        modelMap.put("addBtn", addBtn);
+        modelMap.put("delBtn", delBtn);
+        modelMap.put("refreshBtn", refreshBtn);
+        pageParam = null;
+
+        modelView.setViewName(this.getPageDir() + "classList");
+        return modelView;
     }
 
 }

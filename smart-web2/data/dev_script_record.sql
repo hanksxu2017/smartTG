@@ -37,5 +37,11 @@ SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
             FROM tg_study_course_record t, tg_study_course_student_record sr
             WHERE t.id = sr.course_rec_id
             ORDER BY t.create_time ASC;
-            
-            
+
+  SELECT t.id, t.name, t.week_info, t.course_time, t.classroom_name,
+            CASE t.status WHEN "NORMAL" THEN '正常'
+            ELSE '未定义',
+            t.create_time, t.description
+            FROM tg_study_course t
+            WHERE t.teacher_id =:id
+            ORDER BY t.create_time ASC;

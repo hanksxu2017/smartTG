@@ -324,11 +324,11 @@ public abstract class BaseController extends Smart implements IBaseController {
 	    this.subDir = subDir;
     }
 
-    protected final String getURI() {
+    protected final String getPageDir() {
 	    return baseDir + this.subDir;
     }
 
-    protected final String getSubDir() {
+    protected final String getUriPath() {
 	    return this.subDir;
     }
 

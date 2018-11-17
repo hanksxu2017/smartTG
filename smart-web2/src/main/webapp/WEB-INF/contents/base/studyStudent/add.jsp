@@ -19,7 +19,7 @@
         <div class="form-group m-b-10">
             <label for="birthday" class="col-sm-2 control-label">出生日期</label>
             <div class="col-sm-9 p-l-0">
-                <input type="text" class="form-control cnoj-date" data-date-format="yyyy-mm-dd" name="birthday"
+                <input type="text" class="form-control cnoj-date require" data-date-format="yyyy-mm-dd" name="birthday"
                        data-label-name="出生日期" id="birthday"/>
             </div>
         </div>

@@ -57,7 +57,7 @@ public class StudyCourseController extends BaseController {
     @RequestMapping(value = "/add")
     public ModelAndView add() {
         ModelAndView modelView = new ModelAndView();
-        modelView.setViewName(getURI() + "add");
+        modelView.setViewName(getPageDir() + "add");
 
         Map<String, Object> params = new HashMap<>();
         params.put("status", "NORMAL");
@@ -119,7 +119,7 @@ public class StudyCourseController extends BaseController {
         modelView.getModelMap().put("classes", studyClassService.findByParam(params).getDatas());
         modelView.getModelMap().put("classrooms", studyClassroomService.findByParam(params).getDatas());
 
-        modelView.setViewName(getURI() + "edit");
+        modelView.setViewName(getPageDir() + "edit");
         return modelView;
     }
 

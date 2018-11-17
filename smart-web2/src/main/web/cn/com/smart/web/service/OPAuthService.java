@@ -249,7 +249,9 @@ public class OPAuthService extends MgrServiceImpl<TNOPAuth> {
 	 * @throws ServiceException
 	 */
 	public boolean isAuth(String currentUri,BaseBtn btn,List<String> roleIds) throws ServiceException {
-		boolean is = false;
+		return true;
+		// TODO 取消资源权限设置
+/*		boolean is = false;
 		try {
 			if(StringUtils.isNotEmpty(currentUri) && null != btn && null != roleIds && roleIds.size()>0) {
 				List<TNRoleResource> lists = roleResCache.queryByUriRoles(currentUri, roleIds);
@@ -272,6 +274,6 @@ public class OPAuthService extends MgrServiceImpl<TNOPAuth> {
 		} catch (Exception e) {
 			throw new ServiceException(e.getCause());
 		}
-		return is;
+		return is;*/
 	}
 }

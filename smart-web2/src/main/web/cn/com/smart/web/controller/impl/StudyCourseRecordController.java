@@ -62,7 +62,7 @@ public class StudyCourseRecordController extends BaseController {
      * @param modelMap
      */
     private void addCustomBtn(Map<String, Object> modelMap) {
-        CustomBtn customBtnCourse = new CustomBtn("generateCourseRecord", "生成每日课时", "生成每日课时", this.getSubDir() + "generateCourseRecord","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
+        CustomBtn customBtnCourse = new CustomBtn("generateCourseRecord", "生成每日课时", "生成每日课时", this.getUriPath() + "generateCourseRecord","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
         customBtnCourse.setWidth("500");
 
         CustomBtn customBtnStudent = new CustomBtn("queryStudent", "学生列表", "学生列表", "showPage/base_studyCourse_record_queryStudent","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
@@ -83,7 +83,7 @@ public class StudyCourseRecordController extends BaseController {
         modelView.getModelMap().put("startDate", "2018-11-19");
         modelView.getModelMap().put("endDate", "2018-11-25");
 
-        modelView.setViewName(getURI() + "generateCourseRecord");
+        modelView.setViewName(getPageDir() + "generateCourseRecord");
         return modelView;
     }
 

@@ -46,7 +46,7 @@ public class StudySchoolController extends BaseController {
     @RequestMapping(value = "/add")
     public ModelAndView add() {
         ModelAndView modelView = new ModelAndView();
-        modelView.setViewName(getURI() + "add");
+        modelView.setViewName(getPageDir() + "add");
         return modelView;
     }
 
@@ -71,7 +71,7 @@ public class StudySchoolController extends BaseController {
                 modelView.getModelMap().put("objBean", studySchool);
             }
         }
-        modelView.setViewName(getURI() + "edit");
+        modelView.setViewName(getPageDir() + "edit");
         return modelView;
     }
 

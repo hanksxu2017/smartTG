@@ -29,6 +29,8 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 	private String id;
 	
 	private String name;
+
+	private int age;
     // 1-男,2-女
 	private short sex;
 
@@ -179,5 +181,14 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
     public void setRemainCourse(int remainCourse) {
         this.remainCourse = remainCourse;
+    }
+
+    @Column(name="age", length=2)
+    public int getAge() {
+        return age;
+    }
+
+    public void setAge(int age) {
+        this.age = age;
     }
 }

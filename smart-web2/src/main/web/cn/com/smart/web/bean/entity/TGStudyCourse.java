@@ -28,6 +28,8 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 
 	private String id;
 
+	private String name;
+
 	private String weekInfo;
 
 	private String courseTime;
@@ -168,5 +170,14 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 
     public void setTeacherName(String studyTeacherName) {
         this.teacherName = studyTeacherName;
+    }
+
+    @Column(name="name", length=64)
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 }

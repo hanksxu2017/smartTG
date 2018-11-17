@@ -70,7 +70,7 @@ public class StudyCourseStudentRecordController extends BaseController {
      * @param modelMap
      */
     private void addCustomBtn(Map<String, Object> modelMap) {
-        CustomBtn customBtnCourse = new CustomBtn("studentSignIn", "学生签到", "学生签到", this.getSubDir() + "studentSignIn","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
+        CustomBtn customBtnCourse = new CustomBtn("studentSignIn", "学生签到", "学生签到", this.getUriPath() + "studentSignIn","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
         customBtnCourse.setWidth("500");
 
         customBtns = new ArrayList<>(1);

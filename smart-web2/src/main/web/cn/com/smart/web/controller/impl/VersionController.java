@@ -71,7 +71,7 @@ public class VersionController extends BaseController {
 	public ModelAndView add() {
 		ModelAndView modelView = new ModelAndView();
 		modelView.getModelMap().put("version", versionServ.getLastVersionAddOne(VersionType.PC));
-		modelView.setViewName(getURI() + "add");
+		modelView.setViewName(getPageDir() + "add");
 		return modelView;
 	}
 	
@@ -109,7 +109,7 @@ public class VersionController extends BaseController {
 				modelView.getModelMap().put("objBean", version);
 			}
 		}
-		modelView.setViewName(getURI() + "edit");
+		modelView.setViewName(getPageDir() + "edit");
 		return modelView;
 	}
 	
@@ -160,7 +160,7 @@ public class VersionController extends BaseController {
 			SmartResponse<TNVersion> smartResp = versionServ.find(id);
 			modelView.getModelMap().put("smartResp", smartResp);
 		}
-		modelView.setViewName(getURI() + "view");
+		modelView.setViewName(getPageDir() + "view");
 		return modelView;
 	}
 	
@@ -174,7 +174,7 @@ public class VersionController extends BaseController {
 		List<TNVersion> versions = versionServ.getVersion(VersionType.PC, 10);
 		modelView.getModelMap().put("versions", versions);
 		versions = null;
-		modelView.setViewName(getURI() + "updateLog");
+		modelView.setViewName(getPageDir() + "updateLog");
 		return modelView;
 	}
 	
