@@ -32,6 +32,8 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 
 	private String weekInfo;
 
+	private int courseIndex;
+
 	private String courseTime;
 
 	private String classId;
@@ -179,5 +181,14 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Column(name="course_index", length=64)
+    public int getCourseIndex() {
+        return courseIndex;
+    }
+
+    public void setCourseIndex(int courseIndex) {
+        this.courseIndex = courseIndex;
     }
 }

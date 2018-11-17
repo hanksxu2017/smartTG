@@ -1,12 +1,11 @@
 package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.constant.IConstant;
+import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.bean.entity.TGStudyStudent;
-import cn.com.smart.web.bean.entity.TGStudyStudentClassRel;
-import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
+import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.StudentSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.constant.enums.SelectedEventType;
@@ -271,21 +270,124 @@ public class StudyStudentController extends BaseController {
         SmartResponse<Object> smartResp = this.opService.getDatas("student_class_list", searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
         uri = uri + "?id=" + searchParam.getId();
-        addBtn = new EditBtn("add",this.getUriPath() + "addClass?id=" + searchParam.getId(), "教师增设班级", "600");
-        delBtn = new DelBtn(this.getUriPath() + "deleteClass?classId=" + searchParam.getId(), "确定要从该教师中删除选中的班级吗？",uri,"#student-class-tab", null);
+        delBtn = new DelBtn(this.getUriPath() + "exitClass?studentId=" + searchParam.getId(), "确定要从该班中退出吗？",uri,"#student-class-tab", null);
+        delBtn.setName("退班");
         refreshBtn = new RefreshBtn(uri, null,"#student-class-tab");
 
         ModelMap modelMap = modelView.getModelMap();
         modelMap.put("smartResp", smartResp);
         modelMap.put("pageParam", pageParam);
         modelMap.put("searchParam", searchParam);
-        modelMap.put("addBtn", addBtn);
         modelMap.put("delBtn", delBtn);
         modelMap.put("refreshBtn", refreshBtn);
         pageParam = null;
 
+        CustomBtn customBtnReport = new CustomBtn("reportCourse", "报班", "报班", this.getUriPath() + "reportCourse?studentId=" + searchParam.getId(),"glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
+        customBtnReport.setWidth("600");
+
+        customBtns = new ArrayList<>(1);
+        customBtns.add(customBtnReport);
+        modelMap.put("customBtns", customBtns);
+
+
         modelView.setViewName(this.getPageDir() + "classList");
         return modelView;
     }
+
+    @Autowired
+    private StudyCourseStudentRecordService courseStudentRecordService;
+
+    @RequestMapping(value="/exitClass", produces="application/json;charset=UTF-8")
+    @ResponseBody
+    public SmartResponse<String> exitClass(String id, String studentId) {
+
+        SmartResponse<String> smartResp = new SmartResponse<String>();
+
+        // 从班级中退出
+        Map<String, Object> params = new HashMap<>();
+        params.put("courseId", id);
+        params.put("studentId", studentId);
+        params.put("status", IConstant.STATUS_NORMAL);
+        List<TGStudyStudentCourseRel> relList = this.studentCourseRelService.findByParam(params).getDatas();
+        if(CollectionUtils.isNotEmpty(relList)) {
+            TGStudyStudentCourseRel rel = relList.get(0);
+            if(null != rel && !StringUtils.equals(rel.getStatus(), IConstant.STATUS_EXIT_COURSE)) {
+                rel.setStatus(IConstant.STATUS_EXIT_COURSE);
+                rel.setUpdateTime(new Date());
+                this.studentCourseRelService.update(rel);
+            }
+        }
+
+        // 本周内未结束的课时需要结束掉
+        params = new HashMap<>();
+        params.put("courseId", id);
+        params.put("studentId", studentId);
+        params.put("status", IConstant.STATUS_NORMAL);
+        List<TGStudyCourseStudentRecord> courseStudentRecordList =
+                this.courseStudentRecordService.findByParam(params).getDatas();
+        if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
+            for(TGStudyCourseStudentRecord record : courseStudentRecordList) {
+                record.setStatus(IConstant.STATUS_COURSE_CANCEL_AS_EXIT);
+                record.setUpdateTime(new Date());
+            }
+            this.courseStudentRecordService.update(courseStudentRecordList);
+        }
+
+        smartResp.setResult(IConstant.OP_SUCCESS);
+        smartResp.setMsg("已完成退班!");
+        return smartResp;
+    }
+
+    @Autowired
+    private StudyTeacherService teacherService;
+
+    /**
+     *
+     * @return
+     */
+    @RequestMapping(value = "/reportCourse")
+    public ModelAndView reportCourse(String studentId) {
+        ModelAndView modelView = new ModelAndView();
+        modelView.setViewName(getPageDir() + "reportCourse");
+
+        modelView.getModelMap().put("studentId", studentId);
+
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", IConstant.STATUS_NORMAL);
+        modelView.getModelMap().put("teachers", this.teacherService.findByParam(params).getDatas());
+
+        return modelView;
+    }
+
+    @Override
+    protected MgrServiceImpl getMgrService() {
+        return this.studentCourseRelService;
+    }
+
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/subReportCourse",method=RequestMethod.POST)
+    public @ResponseBody SmartResponse<String> saveClass(TGStudyStudentCourseRel studentCourseRel) throws Exception {
+        String checkRes = this.checkStudentCourseConflict(studentCourseRel);
+        studentCourseRel.setCreateTime(new Date());
+        SmartResponse<String> smartResp = getSmartResponse(studentCourseRel, checkRes);
+
+        return smartResp;
+    }
+
+    /**
+     *
+     * @param studentCourseRel
+     * @return
+     */
+    private String checkStudentCourseConflict(TGStudyStudentCourseRel studentCourseRel) {
+
+        return null;
+    }
+
+
 
 }

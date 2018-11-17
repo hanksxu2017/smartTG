@@ -19,7 +19,7 @@
           </div>
 
 		<cnoj:table smartResp="${smartResp }" headers="名称,星期,时间,教室,教师,状态,开班时间,描述" isCheckbox="1" isRowSelected="1" page="${pageParam }" currentUri="${currentUri }"
-		 addBtn="${addBtn }" delBtn="${delBtn }" refreshBtn="${refreshBtn }" 
+		 delBtn="${delBtn }" customBtns="${customBtns}" refreshBtn="${refreshBtn }"
 		 />
 	</div>
 </div>

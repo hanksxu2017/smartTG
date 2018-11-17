@@ -31,6 +31,8 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
 
 	private String courseRecId;
 
+	private String courseId;
+
 	private String studentId;
 
 	private String studentName;
@@ -114,5 +116,14 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
 
     public void setStudentName(String studentName) {
         this.studentName = studentName;
+    }
+
+    @Column(name="course_id", length=64)
+    public String getCourseId() {
+        return courseId;
+    }
+
+    public void setCourseId(String courseId) {
+        this.courseId = courseId;
     }
 }

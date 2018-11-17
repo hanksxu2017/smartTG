@@ -1,5 +1,6 @@
 package cn.com.smart.web.controller.base;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -7,8 +8,12 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
+import cn.com.smart.bean.BaseBean;
 import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.constant.IConstant;
 import cn.com.smart.filter.bean.FilterParam;
+import cn.com.smart.service.impl.MgrServiceImpl;
+import cn.com.smart.web.bean.entity.TGStudyCourse;
 import com.mixsmart.utils.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -359,4 +364,19 @@ public abstract class BaseController extends Smart implements IBaseController {
         modelView.setViewName(baseDir + this.subDir + "list");
         return modelView;
     }
+
+    protected MgrServiceImpl getMgrService() {
+        return null;
+    }
+
+	protected SmartResponse<String> getSmartResponse(BaseBean bean, String checkRes) {
+		SmartResponse<String> smartResp = new SmartResponse<String>();
+		if(org.apache.commons.lang.StringUtils.isNotBlank(checkRes)) {
+			smartResp.setResult(IConstant.OP_FAIL);
+			smartResp.setMsg(checkRes);
+		} else {
+			smartResp = this.getMgrService().save(bean);
+		}
+		return smartResp;
+	}
 }

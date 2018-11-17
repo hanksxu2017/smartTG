@@ -1,20 +1,21 @@
 package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.constant.IConstant;
+import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.RequestPage;
+import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.bean.entity.TGStudyTeacher;
-import cn.com.smart.web.bean.search.SchoolSearch;
-import cn.com.smart.web.bean.entity.TGStudySchool;
 import cn.com.smart.web.bean.search.TeacherSearch;
 import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.filter.bean.UserSearchParam;
 import cn.com.smart.web.service.OPService;
 import cn.com.smart.web.service.StudyClassroomService;
-import cn.com.smart.web.service.StudySchoolService;
+import cn.com.smart.web.service.StudyCourseService;
 import cn.com.smart.web.service.StudyTeacherService;
 import cn.com.smart.web.tag.bean.*;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -140,16 +141,14 @@ public class StudyTeacherController extends BaseController {
         SmartResponse<Object> smartResp = this.opService.getDatas("teacher_class_list", searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
         uri = uri + "?id=" + searchParam.getId();
-        addBtn = new EditBtn("add",this.getUriPath() + "addClass?teacherId=" + searchParam.getId(), "教师增设班级", "600");
-        delBtn = new DelBtn(this.getUriPath() + "deleteClass?classId=" + searchParam.getId(), "确定要从该教师中删除选中的班级吗？",uri,"#teacher-class-tab", null);
-        refreshBtn = new RefreshBtn(uri, null,"#teahcer-class-tab");
+        addBtn = new EditBtn("add",this.getUriPath() + "addClass?teacherId=" + searchParam.getId(), "教师增设班级", "800");
+        refreshBtn = new RefreshBtn(uri, null,"#teacher-class-tab");
 
         ModelMap modelMap = modelView.getModelMap();
         modelMap.put("smartResp", smartResp);
         modelMap.put("pageParam", pageParam);
         modelMap.put("searchParam", searchParam);
         modelMap.put("addBtn", addBtn);
-        modelMap.put("delBtn", delBtn);
         modelMap.put("refreshBtn", refreshBtn);
         pageParam = null;
 
@@ -185,5 +184,47 @@ public class StudyTeacherController extends BaseController {
         modelView.setViewName(this.getPageDir() + "addClass");
         return modelView;
     }
+
+    @Autowired
+    private StudyCourseService studyCourseService;
+
+    @Override
+    protected MgrServiceImpl getMgrService() {
+        return this.studyCourseService;
+    }
+
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/saveClass",method=RequestMethod.POST)
+    public @ResponseBody SmartResponse<String> saveClass(TGStudyCourse course) throws Exception {
+        String checkRes = this.checkCourseConflict(course);
+        course.setCreateTime(new Date());
+        SmartResponse<String> smartResp = getSmartResponse(course, checkRes);
+        return smartResp;
+    }
+
+
+    // TODO
+    private String getcourseTime(int courseIndex) {
+        return "8:00-10:30";
+    }
+
+    /**
+     * 检查课程安排是否存在冲突
+     * @param studyCourse
+     * @return
+     */
+    private String checkCourseConflict(TGStudyCourse studyCourse) {
+        String courseTime = studyCourse.getCourseTime();
+        String weekInfo = studyCourse.getWeekInfo();
+        // TODO
+
+
+        return "";
+    }
+
 
 }

@@ -93,8 +93,16 @@ public interface IConstant {
 	String STATUS_DROP_OUT = "DROP_OUT";
 	// 休学
 	String STATUS_TEMP_LEAVE = "TEMP_LEAVE";
+	// 删除
 	String STATUS_DELETE = "DELETE";
+	// 已退班
+	String STATUS_EXIT_COURSE = "EXIT_COURSE";
 
-
+	// 课时进行中
+	String STATUS_COURSE_ING = "NORMAL_ING";
+	// 课时已结束
+	String STATUS_COURSE_END = "NORMAL_END";
+	// 因退班而取消
+	String STATUS_COURSE_CANCEL_AS_EXIT = "CANCEL_AS_EXIT";
 	
 }

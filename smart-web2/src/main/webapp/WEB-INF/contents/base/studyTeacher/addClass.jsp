@@ -1,14 +1,17 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
-<%
-    String path = request.getContextPath();
-    String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
-%>
-<c:set var="ctx" value="${basePath}"/>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/class-config.js"></script>
 <div class="wrap-content-dialog">
-   <form class="form-horizontal" role="form" id="form-add" action="studyCourse/save">
+   <form class="form-horizontal" role="form" id="teacher-class-add" action="studyTeacher/saveClass" target=".bootstrap-dialog-message">
        <input type="hidden" name="teacherId" id="teacherId" value="${teacherId}">
        <input type="hidden" name="classroomName" id="classroomName">
+
+       <div class="form-group m-b-10">
+           <label for="input01" class="col-sm-2 control-label">名称</label>
+           <div class="col-sm-9 p-l-0">
+               <input type="text" class="form-control require" name="name" data-label-name="名称" id="input01" />
+           </div>
+       </div>
 
        <div class="form-group m-b-10">
            <label for="weekInfo" class="col-sm-2 control-label">星期</label>
@@ -27,13 +30,13 @@
        </div>
 
        <div class="form-group m-b-10">
-           <label for="courseTime" class="col-sm-2 control-label">授课时间</label>
+           <label for="courseIndex" class="col-sm-2 control-label">授课时间</label>
            <div class="col-sm-9 p-l-0">
-               <select name="courseTime" class="form-control require" id="courseTime">
+               <select name="courseIndex" class="form-control require" id="courseIndex">
                    <option value="">--请选择--</option>
-                   <option value="1" >上午8点-上午10点30分</option>
-                   <option value="2" >下午13点-下午15点30分</option>
-                   <option value="3" >晚上18点-晚上20点30分</option>
+                   <option value="1" >8:00-10:30</option>
+                   <option value="2" >13:00-15:30</option>
+                   <option value="3" >18:00-20:30</option>
                </select>
            </div>
        </div>
@@ -57,21 +60,17 @@
            </div>
        </div>
 
-       <div class="form-group p-r-5 right">
-           <button type="button" class="btn btn-sm btn-success cnoj-auth-config-submit"
-                   data-uri="studyTeacher/saveClass.json" data-config-id="${teacherId}"
+
+       <div class="text-center">
+           <button type="button"
+                   class="btn btn-sm btn-success cnoj-class-config-submit"
+                   data-uri="studyTeacher/saveClass.json"
+                   data-config-id="${teacherId}"
+                   data-form-id="teacher-class-add"
+                   data-alert-msg="请正确填写！"
                    data-refresh-uri="studyTeacher/classList?id=${teacherId}"
-                   data-refresh-target="#teacher-class-tab" > &nbsp;<i class="glyphicon glyphicon-ok-sign"></i> 确定 &nbsp;</button>
+                   data-refresh-target="#teacher-class-tab" > &nbsp;
+               <i class="glyphicon glyphicon-ok-sign"></i> 确定 &nbsp;</button>
        </div>
 	</form>
 </div><!-- wrap-content-dialog -->
-
-<script>
-    $(function () {
-
-        $("#classroomId").change(function () {
-            var text = $(this).find("option:selected").text();
-            $("#classroomName").val(text);
-        });
-    });
-</script>

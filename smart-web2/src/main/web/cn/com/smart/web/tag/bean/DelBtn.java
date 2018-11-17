@@ -14,6 +14,8 @@ public class DelBtn extends BaseBtn {
 	protected String target;
 	
 	protected String callback;
+
+	protected String title;
 	
 	public DelBtn() {
 		this.id="del";
@@ -144,6 +146,12 @@ public class DelBtn extends BaseBtn {
     public void setBusi(String busi) {
         super.setBusi(busi);
     }
-	
-	
+
+	public String getTitle() {
+		return title;
+	}
+
+	public void setTitle(String title) {
+		this.title = title;
+	}
 }

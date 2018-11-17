@@ -164,6 +164,7 @@
 				$this.click(function(){
 					var uri = $(this).data("uri");
 					var target = $(this).data("target");
+					alert(uri + ':::' + target);
 					if(utils.isNotEmpty(uri)) {
 						if(!utils.isEmpty(target)) {
 							loadUri(target,uri);
