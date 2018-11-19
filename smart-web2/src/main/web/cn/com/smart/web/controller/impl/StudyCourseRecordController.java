@@ -60,7 +60,7 @@ public class StudyCourseRecordController extends BaseController {
 		String uri = this.getUriPath() + "simpList";
 		SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_simp_list",searchParam, page.getStartNum(), page.getPageSize());
 		pageParam = new PageParam(uri, "#courseRecord-tab", page.getPage(), page.getPageSize());
-		selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyStudent/courseRecHas","#courseRecord-student-list","id");
+		selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyStudent/courseRecHas?courseRecHas=" + searchParam.getId(),"#has-student-list","id");
 
 		ModelMap modelMap = modelView.getModelMap();
 		modelMap.put("smartResp", smartResp);
@@ -284,29 +284,5 @@ public class StudyCourseRecordController extends BaseController {
         record.setCreateTime(new Date());
         return record;
     }
-
-
-	/**
-	 * 该课时拥有的学生列表信息
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/studentList")
-	public ModelAndView studentList(UserSearchParam searchParam, ModelAndView modelView, RequestPage page) throws Exception {
-		String uri = this.getUriPath() + "studentList";
-		SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_student_list", searchParam, page.getStartNum(), page.getPageSize());
-		pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
-		uri = uri + "?id=" + searchParam.getId();
-		refreshBtn = new RefreshBtn(uri, null,"#courseRecord-student-tab");
-
-		ModelMap modelMap = modelView.getModelMap();
-		modelMap.put("smartResp", smartResp);
-		modelMap.put("pageParam", pageParam);
-		modelMap.put("searchParam", searchParam);
-		modelMap.put("refreshBtn", refreshBtn);
-
-		modelView.setViewName(this.getPageDir() + "studentList");
-		return modelView;
-	}
 
 }

@@ -11,7 +11,9 @@ public class StudentCourseRelSearch extends FilterParam {
 
     private String studentName;
 
-    private String classId;
+    private String courseId;
+
+    private String courseRecordId;
 
     private String teacherId;
 
@@ -27,14 +29,17 @@ public class StudentCourseRelSearch extends FilterParam {
         if(null != studentName) {
             strBuilder.append("&studentName=").append(studentName);
         }
-        if(StringUtils.isNotBlank(classId)) {
-            strBuilder.append("&classId="+classId);
+        if(StringUtils.isNotBlank(courseId)) {
+            strBuilder.append("&courseId="+courseId);
         }
         if(StringUtils.isNotBlank(teacherId)) {
             strBuilder.append("&teacherId="+teacherId);
         }
         if(StringUtils.isNotBlank(weekInfo)) {
             strBuilder.append("&weekInfo=" + weekInfo);
+        }
+        if(StringUtils.isNotBlank(courseRecordId)) {
+            strBuilder.append("&courseRecordId=" + courseRecordId);
         }
         param = strBuilder.toString();
         if(StringUtils.isNotBlank(param) && param.startsWith("&")) {

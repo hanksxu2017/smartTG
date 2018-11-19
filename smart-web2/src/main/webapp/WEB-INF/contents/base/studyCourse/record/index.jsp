@@ -25,7 +25,7 @@
 			</div><!-- col -->
 
 			<div class="col-sm-8 p-l-5 p-r-0">
-			    <div id="courseRecord-student-list">
+			    <div id="has-student-list">
 			       <div class="panel panel-default m-b-0">
 			        <div class="panel-heading ui-widget-header">学生列表</div>
 			        <div class="panel-body p-b-0">

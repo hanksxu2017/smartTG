@@ -12,7 +12,7 @@ import java.util.Date;
 
 /**
  *
- *
+ * 学生课时记录
  * @author XUWENYI <br />
  * 2018年11月15日
  * @version 1.0

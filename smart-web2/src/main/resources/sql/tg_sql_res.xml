@@ -159,7 +159,7 @@
     <!-- 每周课时简单列表 -->
     <sqlUnit name="courseRecord_simp_list">
         <sql>
-            select t.id, t.course_date, t.course_time, t.course_name, t.teacher_name,
+            select t.id, concat(t.course_date, ' ', t.course_time), t.course_name, t.teacher_name,
             CASE t.status WHEN "NORMAL" THEN '正常'
             ELSE '未定义' END
             from tg_study_course_record t
@@ -167,7 +167,18 @@
             order by t.course_date asc
         </sql>
     </sqlUnit>
-
+    <!-- 每周课时关联的学生列表 -->
+    <sqlUnit name="courseRecord_student_list">
+        <sql>
+            select t.id, t.name, t.level, t.remain_course, t.create_time,
+            record.status
+            from tg_study_student t, tg_study_course_student_record record
+            where t.id = record.student_id
+            and record.course_rec_id = :courseRecordId
+            [and t.name like '%:studentName%']
+            order by t.remain_course
+        </sql>
+    </sqlUnit>
 
 
 

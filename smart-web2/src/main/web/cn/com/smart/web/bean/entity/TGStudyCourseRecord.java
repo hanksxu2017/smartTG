@@ -191,7 +191,7 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean {
         this.studentQuantityActual = studentQuantityActual;
     }
 
-    @Column(name="student_personal_leavel", length=11)
+    @Column(name="student_personal_leave", length=11)
     public int getStudentPersonalLeave() {
         return studentPersonalLeave;
     }
