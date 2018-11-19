@@ -4,25 +4,26 @@ import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
-import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
-import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
+import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.CourseRecordSearch;
 import cn.com.smart.web.bean.search.CourseStudentRecordSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
+import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
+import cn.com.smart.web.filter.bean.UserSearchParam;
 import cn.com.smart.web.service.*;
-import cn.com.smart.web.tag.bean.CustomBtn;
+import cn.com.smart.web.tag.bean.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Controller
@@ -38,10 +39,41 @@ public class StudyCourseRecordController extends BaseController {
     @Autowired
     private StudyCourseStudentRecordService courseStudentRecordService;
 
-
     public StudyCourseRecordController() {
         super.setSubDir("/studyCourse/record/");
     }
+
+	@RequestMapping("/index")
+	public ModelAndView index(ModelAndView modelView) throws Exception {
+		modelView.setViewName(this.getPageDir() + "index");
+		return modelView;
+	}
+
+	/**
+	 * 简单列表
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/simpList")
+	public ModelAndView simpList(HttpSession session, UserSearchParam searchParam,
+	                             ModelAndView modelView, RequestPage page) throws Exception {
+		String uri = this.getUriPath() + "simpList";
+		SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_simp_list",searchParam, page.getStartNum(), page.getPageSize());
+		pageParam = new PageParam(uri, "#courseRecord-tab", page.getPage(), page.getPageSize());
+		selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyStudent/courseRecHas","#courseRecord-student-list","id");
+
+		ModelMap modelMap = modelView.getModelMap();
+		modelMap.put("smartResp", smartResp);
+		modelMap.put("pageParam", pageParam);
+		modelMap.put("searchParam", searchParam);
+		modelMap.put("selectedEventProp", selectedEventProp);
+		pageParam = null;
+
+		modelView.setViewName(this.getPageDir() + "simpList");
+		return modelView;
+	}
+
+
 
     /**
      * @param searchParam
@@ -50,7 +82,7 @@ public class StudyCourseRecordController extends BaseController {
      */
     @RequestMapping("/list")
     public ModelAndView list(CourseRecordSearch searchParam, RequestPage page) {
-        SmartResponse<Object> smartResp = opService.getDatas("select_study_course_record_list", searchParam, page.getStartNum(), page.getPageSize());
+        SmartResponse<Object> smartResp = opService.getDatas("course_record_list", searchParam, page.getStartNum(), page.getPageSize());
         ModelAndView modelAndView = this.packListModelView(searchParam, smartResp);
 
         // 增加自定义按钮
@@ -63,26 +95,21 @@ public class StudyCourseRecordController extends BaseController {
      * @param modelMap
      */
     private void addCustomBtn(Map<String, Object> modelMap) {
-        CustomBtn customBtnCourse = new CustomBtn("generateCourseRecord", "生成每日课时", "生成每日课时", this.getUriPath() + "generateCourseRecord","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
-        customBtnCourse.setWidth("500");
 
         CustomBtn customBtnStudent = new CustomBtn("queryStudent", "学生列表", "学生列表", "showPage/base_studyCourse_record_queryStudent","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
         customBtnStudent.setWidth("500");
 
         customBtns = new ArrayList<>(2);
-        customBtns.add(customBtnCourse);
-//        customBtns.add(customBtnStudent);
+        customBtns.add(customBtnStudent);
         modelMap.put("customBtns", customBtns);
     }
 
-
-
     @RequestMapping(value = "/generateCourseRecord")
-    public ModelAndView update(String id) {
+    public ModelAndView generateCourseRecord() {
         ModelAndView modelView = new ModelAndView();
 
-        modelView.getModelMap().put("startDate", "2018-11-19");
-        modelView.getModelMap().put("endDate", "2018-11-25");
+        modelView.getModelMap().put("startDate", DateUtil.dateToStr(DateUtil.getNextMonday(new Date()), "yyyy-MM-dd"));
+        modelView.getModelMap().put("endDate", DateUtil.dateToStr(DateUtil.getNextSunday(new Date()), "yyyy-MM-dd"));
 
         modelView.setViewName(getPageDir() + "generateCourseRecord");
         return modelView;
@@ -259,5 +286,27 @@ public class StudyCourseRecordController extends BaseController {
     }
 
 
+	/**
+	 * 该课时拥有的学生列表信息
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/studentList")
+	public ModelAndView studentList(UserSearchParam searchParam, ModelAndView modelView, RequestPage page) throws Exception {
+		String uri = this.getUriPath() + "studentList";
+		SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_student_list", searchParam, page.getStartNum(), page.getPageSize());
+		pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
+		uri = uri + "?id=" + searchParam.getId();
+		refreshBtn = new RefreshBtn(uri, null,"#courseRecord-student-tab");
+
+		ModelMap modelMap = modelView.getModelMap();
+		modelMap.put("smartResp", smartResp);
+		modelMap.put("pageParam", pageParam);
+		modelMap.put("searchParam", searchParam);
+		modelMap.put("refreshBtn", refreshBtn);
+
+		modelView.setViewName(this.getPageDir() + "studentList");
+		return modelView;
+	}
 
 }

@@ -1,13 +1,21 @@
 package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.bean.entity.TGStudyStudent;
 import cn.com.smart.web.bean.entity.TGStudyTeacher;
+import cn.com.smart.web.bean.search.CourseSearch;
+import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.controller.base.BaseController;
+import cn.com.smart.web.filter.bean.UserSearchParam;
 import cn.com.smart.web.service.OPService;
 import cn.com.smart.web.service.StudyCourseService;
 import cn.com.smart.web.service.StudyTeacherService;
+import cn.com.smart.web.tag.bean.CustomBtn;
+import cn.com.smart.web.tag.bean.EditBtn;
+import cn.com.smart.web.tag.bean.PageParam;
+import cn.com.smart.web.tag.bean.RefreshBtn;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -17,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -30,8 +39,51 @@ public class StudyCourseController extends BaseController {
     @Autowired
     private StudyCourseService courseService;
 
+    @Autowired
+    private StudyTeacherService teacherService;
+
     public StudyCourseController() {
         super.setSubDir("/studyCourse/");
+    }
+
+
+
+    /**
+     * @param searchParam
+     * @param page
+     * @return
+     */
+    @RequestMapping("/list")
+    public ModelAndView list(CourseSearch searchParam, RequestPage page) {
+        SmartResponse<Object> smartResp = opService.getDatas("select_course_list", searchParam, page.getStartNum(), page.getPageSize());
+
+        ModelAndView modelView = new ModelAndView();
+        Map<String, Object> modelMap = modelView.getModelMap();
+//        addBtn = new EditBtn("add", this.getUriPath() + "add", null, "新增", "800");
+//        editBtn = new EditBtn("edit", this.getUriPath() + "edit", null, "修改", "800");
+//        delBtn = new DelBtn(this.getUriPath() + "delete", "确定要删除选中的信息吗？", this.subDir + "list", null, null);
+        refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
+
+//        modelMap.put("addBtn", addBtn);
+//        modelMap.put("editBtn", editBtn);
+//        modelMap.put("delBtn", delBtn);
+        modelMap.put("pageParam", pageParam);
+        modelMap.put("refreshBtn", refreshBtn);
+        modelMap.put("smartResp", smartResp);
+        modelMap.put("searchParam", searchParam);
+
+        modelMap.put("teachers", this.teacherService.findNormal().getDatas());
+
+        CustomBtn customBtnReport = new CustomBtn("generateDailyCourse", "生成周课时表",
+		        "生成周课时表", this.getUriPath() + "record/generateDailyCourse","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
+        customBtnReport.setWidth("600");
+        customBtns = new ArrayList<>(1);
+        customBtns.add(customBtnReport);
+        modelMap.put("customBtns", customBtns);
+
+        modelView.setViewName(this.getPageDir() + "list");
+        return modelView;
+
     }
 
     @RequestMapping("/index")
@@ -165,16 +217,11 @@ public class StudyCourseController extends BaseController {
         return "";
     }
 
-
-    @Autowired
-    private StudyTeacherService teacherService;
-
     private void packTeacherInfo(TGStudyCourse course) {
         TGStudyTeacher teacher = this.teacherService.find(course.getTeacherId()).getData();
         if(null != teacher) {
             course.setTeacherName(teacher.getName());
         }
     }
-
 
 }

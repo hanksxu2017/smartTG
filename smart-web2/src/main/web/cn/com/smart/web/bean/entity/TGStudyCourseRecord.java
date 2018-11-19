@@ -30,13 +30,13 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean {
 	private String id;
 
     private String courseId;
+
+    private String courseName;
+
     // 日期,格式: yyyy-MM-dd
     private String courseDate;
     // 课时时间,格式:HH:mm-HH:mm
     private String courseTime;
-	private String classId;
-
-	private String className;
 
 	private String classroomId;
 
@@ -101,22 +101,13 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean {
         this.updateTime = updateTime;
     }
 
-    @Column(name="class_id", length=64)
-    public String getClassId() {
-        return classId;
+    @Column(name="course_name", length=64)
+    public String getCourseName() {
+        return courseName;
     }
 
-    public void setClassId(String classId) {
-        this.classId = classId;
-    }
-
-    @Column(name="class_name", length=64)
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 
     @Column(name="course_id", length=64)

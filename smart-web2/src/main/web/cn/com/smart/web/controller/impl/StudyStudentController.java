@@ -181,7 +181,6 @@ public class StudyStudentController extends BaseController {
 
         CustomBtn customBtnReport = new CustomBtn("reportCourse", "报班", "报班", this.getUriPath() + "reportCourse?studentId=" + searchParam.getId(),"glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
         customBtnReport.setWidth("600");
-
         customBtns = new ArrayList<>(1);
         customBtns.add(customBtnReport);
         modelMap.put("customBtns", customBtns);
@@ -256,13 +255,29 @@ public class StudyStudentController extends BaseController {
         return modelView;
     }
 
-    @Override
-    protected MgrServiceImpl getMgrService() {
-        return this.studentCourseRelService;
-    }
 
 
-
-
+	/**
+	 *
+	 * @param modelView
+	 * @param id
+	 * @return
+	 * @throws Exception
+	 */
+	@RequestMapping("/courseRecHas")
+	public ModelAndView roleHas(ModelAndView modelView,String id) throws Exception {
+		if(org.apache.commons.lang3.StringUtils.isNotEmpty(id)) {
+			SmartResponse<Object> smartResp = this.opService.find(TGStudyCourseRecord.class, id);
+			ModelMap modelMap = modelView.getModelMap();
+			modelMap.put("id", id);
+			if(smartResp.getResult().equals(OP_SUCCESS)) {
+				TGStudyCourseRecord courseRecord = (TGStudyCourseRecord) smartResp.getData();
+				String name = (null != courseRecord)?courseRecord.getCourseName():null;
+				modelMap.put("name", name);
+			}
+		}
+		modelView.setViewName(this.getPageDir() + "courseRecHas");
+		return modelView;
+	}
 
 }

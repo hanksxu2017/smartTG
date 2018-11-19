@@ -1,8 +1,10 @@
 package cn.com.smart.service.impl;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.constant.IConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.com.smart.ISmart;
@@ -52,6 +54,13 @@ public class BaseEntityServiceImpl<T extends BaseBean> extends BaseServiceImpl i
         long total = baseDao.count(param);
         return total;
     }
+
+	@Override
+	public SmartResponse<T> findNormal() {
+		Map<String, Object> param = new HashMap<>();
+		param.put("status", IConstant.STATUS_NORMAL);
+		return findByParam(param,null);
+	}
 
 	@Override
 	public SmartResponse<T> findByParam(Map<String, Object> param) {

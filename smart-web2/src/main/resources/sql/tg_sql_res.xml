@@ -66,11 +66,17 @@
     </sqlUnit>
 
 
-    <!-- 班级 -->
-    <sqlUnit name="select_study_course_list">
+    <!-- 课时 -->
+    <sqlUnit name="select_course_list">
         <sql>
-            select t.id, t.week_info, t.course_time, t.class_name, t.classroom_name, t.teacher_name, t.status, t.description, t.create_time
+            select t.id,
+            CASE t.week_info WHEN "7" THEN '星期天'
+            ELSE CONCAT('星期', t.week_info) END,
+            t.course_time, t.name, t.classroom_name, t.teacher_name
             from tg_study_course t
+            where t.status = 'NORMAL'
+            [and t.teacher_id =:teacherId]
+            [and t.week_info =:weekInfo]
             order by t.create_time asc
         </sql>
     </sqlUnit>
@@ -129,12 +135,11 @@
         </sql>
     </sqlUnit>
 
-    <sqlUnit name="select_study_course_record_list">
+    <sqlUnit name="course_record_list">
         <sql>
-            select t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
-            t.teacher_name, t.student_quantity_plan, t.student_quantity_actual, t.student_personal_leave,
-            t.student_other_absent,
-            t.status, t.create_time, t.description
+            select t.id, t.course_date, t.course_time, t.teacher_name, t.classroom_name,
+            t.student_quantity_plan, t.student_quantity_actual, t.student_personal_leave,
+            t.student_other_absent, t.status, t.create_time, t.description
             from tg_study_course_record t
             order by t.create_time asc
         </sql>
@@ -151,6 +156,18 @@
             order by t.create_time asc
         </sql>
     </sqlUnit>
+    <!-- 每周课时简单列表 -->
+    <sqlUnit name="courseRecord_simp_list">
+        <sql>
+            select t.id, t.course_date, t.course_time, t.course_name, t.teacher_name,
+            CASE t.status WHEN "NORMAL" THEN '正常'
+            ELSE '未定义' END
+            from tg_study_course_record t
+            [where t.teacher_id =: teacherId]
+            order by t.course_date asc
+        </sql>
+    </sqlUnit>
+
 
 
 

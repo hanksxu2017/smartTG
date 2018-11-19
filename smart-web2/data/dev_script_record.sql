@@ -54,9 +54,66 @@ SELECT DISTINCT T.week_info
             FROM tg_study_course t
             WHERE t.teacher_id = 'U154234886659443576'
             ORDER BY t.create_time ASC;
-            
-            
-            
-            
-            
-            
+
+SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
+            t.teacher_name, t.student_quantity_plan, t.student_quantity_actual, t.student_personal_leave,
+            t.student_other_absent,
+            t.status, t.create_time, t.description
+            FROM tg_study_course_record t
+            ORDER BY t.create_time ASC;
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+          

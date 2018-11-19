@@ -8,10 +8,15 @@ import cn.com.smart.web.bean.entity.TGStudyStudent;
 import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.controller.base.BaseController;
+import cn.com.smart.web.filter.bean.UserSearchParam;
 import cn.com.smart.web.service.*;
+import cn.com.smart.web.tag.bean.EditBtn;
+import cn.com.smart.web.tag.bean.PageParam;
+import cn.com.smart.web.tag.bean.RefreshBtn;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -136,5 +141,9 @@ public class StudyStudentCourseRelController extends BaseController {
 
         return rel;
     }
+
+
+
+
 
 }
