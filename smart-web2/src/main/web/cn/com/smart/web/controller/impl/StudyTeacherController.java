@@ -1,7 +1,6 @@
 package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
-import cn.com.smart.constant.IConstant;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
@@ -10,10 +9,7 @@ import cn.com.smart.web.bean.search.TeacherSearch;
 import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.filter.bean.UserSearchParam;
-import cn.com.smart.web.service.OPService;
-import cn.com.smart.web.service.StudyClassroomService;
-import cn.com.smart.web.service.StudyCourseService;
-import cn.com.smart.web.service.StudyTeacherService;
+import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.*;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -117,7 +113,7 @@ public class StudyTeacherController extends BaseController {
         String uri = this.getUriPath() + "simpList";
         SmartResponse<Object> smartResp = this.opService.getDatas("teacher_simp_list",searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, "#teacher-tab", page.getPage(), page.getPageSize());
-        selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyClass/teacherHas","#has-class-list","id");
+        selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyCourse/teacherHas","#has-class-list","id");
 
         ModelMap modelMap = modelView.getModelMap();
         modelMap.put("smartResp", smartResp);
@@ -131,18 +127,18 @@ public class StudyTeacherController extends BaseController {
     }
 
     /**
-     * 该用户拥有的角色列表
+     * 该教师拥有的课时信息
      * @return
      * @throws Exception
      */
-    @RequestMapping("/classList")
+    @RequestMapping("/courseList")
     public ModelAndView classList(UserSearchParam searchParam,ModelAndView modelView,RequestPage page) throws Exception {
-        String uri = this.getUriPath() + "classList";
-        SmartResponse<Object> smartResp = this.opService.getDatas("teacher_class_list", searchParam, page.getStartNum(), page.getPageSize());
+        String uri = this.getUriPath() + "courseList";
+        SmartResponse<Object> smartResp = this.opService.getDatas("teacher_course_list", searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
         uri = uri + "?id=" + searchParam.getId();
-        addBtn = new EditBtn("add",this.getUriPath() + "addClass?teacherId=" + searchParam.getId(), "教师增设班级", "800");
-        refreshBtn = new RefreshBtn(uri, null,"#teacher-class-tab");
+        addBtn = new EditBtn("add",this.getUriPath() + "addCourse?teacherId=" + searchParam.getId(), "教师增设课时", "800");
+        refreshBtn = new RefreshBtn(uri, null,"#teacher-course-tab");
 
         ModelMap modelMap = modelView.getModelMap();
         modelMap.put("smartResp", smartResp);
@@ -152,25 +148,19 @@ public class StudyTeacherController extends BaseController {
         modelMap.put("refreshBtn", refreshBtn);
         pageParam = null;
 
-        modelView.setViewName(this.getPageDir() + "classList");
+        modelView.setViewName(this.getPageDir() + "courseList");
         return modelView;
     }
 
-    @RequestMapping(value="/deleteClass", produces="application/json;charset=UTF-8")
-    @ResponseBody
-    public SmartResponse<String> deleteClass(String classId) {
-        return null;
-    }
-
     @Autowired
-    private StudyClassroomService studyClassroomService;
+    private StudySchoolService schoolService;
 
     /**
      *
      * @return
      * @throws Exception
      */
-    @RequestMapping("/addClass")
+    @RequestMapping("/addCourse")
     public ModelAndView addClass(String teacherId, ModelAndView modelView) throws Exception {
 
         ModelMap modelMap = modelView.getModelMap();
@@ -179,52 +169,10 @@ public class StudyTeacherController extends BaseController {
 
         Map<String, Object> params = new HashMap<>();
         params.put("status", "NORMAL");
-        modelView.getModelMap().put("classrooms", studyClassroomService.findByParam(params).getDatas());
+        modelView.getModelMap().put("schools", schoolService.findByParam(params).getDatas());
 
-        modelView.setViewName(this.getPageDir() + "addClass");
+        modelView.setViewName(this.getPageDir() + "addCourse");
         return modelView;
     }
-
-    @Autowired
-    private StudyCourseService studyCourseService;
-
-    @Override
-    protected MgrServiceImpl getMgrService() {
-        return this.studyCourseService;
-    }
-
-    /**
-     *
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value="/saveClass",method=RequestMethod.POST)
-    public @ResponseBody SmartResponse<String> saveClass(TGStudyCourse course) throws Exception {
-        String checkRes = this.checkCourseConflict(course);
-        course.setCreateTime(new Date());
-        SmartResponse<String> smartResp = getSmartResponse(course, checkRes);
-        return smartResp;
-    }
-
-
-    // TODO
-    private String getcourseTime(int courseIndex) {
-        return "8:00-10:30";
-    }
-
-    /**
-     * 检查课程安排是否存在冲突
-     * @param studyCourse
-     * @return
-     */
-    private String checkCourseConflict(TGStudyCourse studyCourse) {
-        String courseTime = studyCourse.getCourseTime();
-        String weekInfo = studyCourse.getWeekInfo();
-        // TODO
-
-
-        return "";
-    }
-
 
 }

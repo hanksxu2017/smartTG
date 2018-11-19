@@ -364,19 +364,4 @@ public abstract class BaseController extends Smart implements IBaseController {
         modelView.setViewName(baseDir + this.subDir + "list");
         return modelView;
     }
-
-    protected MgrServiceImpl getMgrService() {
-        return null;
-    }
-
-	protected SmartResponse<String> getSmartResponse(BaseBean bean, String checkRes) {
-		SmartResponse<String> smartResp = new SmartResponse<String>();
-		if(org.apache.commons.lang.StringUtils.isNotBlank(checkRes)) {
-			smartResp.setResult(IConstant.OP_FAIL);
-			smartResp.setMsg(checkRes);
-		} else {
-			smartResp = this.getMgrService().save(bean);
-		}
-		return smartResp;
-	}
 }

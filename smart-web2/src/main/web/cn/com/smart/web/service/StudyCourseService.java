@@ -1,9 +1,7 @@
 package cn.com.smart.web.service;
 
 import cn.com.smart.service.impl.MgrServiceImpl;
-import cn.com.smart.web.bean.entity.TGStudyClassRoom;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.dao.impl.StudyClassroomDao;
 import cn.com.smart.web.dao.impl.StudyCourseDao;
 import org.springframework.stereotype.Service;
 

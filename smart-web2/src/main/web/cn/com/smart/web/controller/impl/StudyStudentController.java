@@ -34,10 +34,6 @@ public class StudyStudentController extends BaseController {
     private OPService opService;
     @Autowired
     private StudyStudentService studyStudentService;
-    @Autowired
-    private StudyClassService studyClassService;
-    @Autowired
-    private StudyStudentClassRelService studentClassRelService;
 
     public StudyStudentController() {
         super.setSubDir("/studyStudent/");
@@ -52,25 +48,8 @@ public class StudyStudentController extends BaseController {
     public ModelAndView list(StudentSearch searchParam, RequestPage page) {
         SmartResponse<Object> smartResp = opService.getDatas("select_study_student_list", searchParam, page.getStartNum(), page.getPageSize());
         ModelAndView modelAndView = this.packListModelView(searchParam, smartResp);
-
-        // 增加自定义按钮
-        this.addChooseClassBtn(modelAndView.getModelMap());
         return modelAndView;
     }
-
-    /**
-     * 增加报班按钮
-     * @param modelMap
-     */
-    private void addChooseClassBtn(Map<String, Object> modelMap) {
-        CustomBtn customBtn = new CustomBtn("chooseClass", "报班", "报班", this.getUriPath() + "chooseClass","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
-        customBtn.setWidth("500");
-        customBtns = new ArrayList<>(1);
-        customBtns.add(customBtn);
-        modelMap.put("customBtns", customBtns);
-    }
-
-
 
     /**
      *
@@ -148,92 +127,10 @@ public class StudyStudentController extends BaseController {
         return smartResp;
     }
 
-
-    /**
-     *
-     * @return
-     */
-    @RequestMapping(value = "/chooseClass")
-    public ModelAndView chooseClass(String id) {
-        ModelAndView modelView = new ModelAndView();
-
-        TGStudyStudent studyStudent = studyStudentService.find(id).getData();
-        modelView.getModelMap().put("student", studyStudent);
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("status", "NORMAL");
-        modelView.getModelMap().put("classes", studyClassService.findByParam(params).getDatas());
-
-        modelView.setViewName(getPageDir() + "chooseClass");
-        return modelView;
-    }
-
-    /**
-     *
-     * @return
-     */
-    @RequestMapping(value = "/submitChooseClass")
-    @ResponseBody
-    public SmartResponse<String> submitChooseClass(TGStudyStudentClassRel studentClassRel) {
-        studentClassRel.setCreateTime(new Date());
-        SmartResponse<String> smartResponse = studentClassRelService.save(studentClassRel);
-        if(smartResponse.isSuccess()) {
-            // 创建学生-班级-课程
-            this.createStudentCourseRel(studentClassRel);
-        }
-
-        return smartResponse;
-    }
-
     @Autowired
     private StudyStudentCourseRelService studentCourseRelService;
     @Autowired
     private StudyCourseService courseService;
-
-    private void createStudentCourseRel(TGStudyStudentClassRel studentClassRel) {
-
-
-        Map<String, Object> params = new HashMap<>();
-        params.put("classId", studentClassRel.getClassId());
-        List<TGStudyCourse> courseList = this.courseService.findByParam(params).getDatas();
-        if(CollectionUtils.isNotEmpty(courseList)) {
-            TGStudyStudentCourseRel rel = null;
-            for(TGStudyCourse course : courseList) {
-                rel = initStudentCourseRel(course, studentClassRel);
-                studentCourseRelService.save(rel);
-            }
-
-        }
-    }
-
-    /**
-     * 初始化学生的课程关系
-     * @param course
-     * @param studentClassRel
-     * @return
-     */
-    private TGStudyStudentCourseRel initStudentCourseRel(TGStudyCourse course, TGStudyStudentClassRel studentClassRel) {
-        TGStudyStudentCourseRel rel = new TGStudyStudentCourseRel();
-
-        rel.setCourseId(course.getId());
-        rel.setCourseWeekInfo(course.getWeekInfo());
-        rel.setCourseTime(course.getCourseTime());
-
-        rel.setClassId(studentClassRel.getClassId());
-        rel.setClassName(studentClassRel.getClassName());
-
-        rel.setClassroomId(course.getClassroomId());
-        rel.setClassroomName(course.getClassroomName());
-
-        rel.setTeacherId(course.getTeacherId());
-        rel.setTeacherName(course.getTeacherName());
-
-        rel.setStudentId(studentClassRel.getStudentId());
-        rel.setStudentName(studentClassRel.getStudentName());
-
-        rel.setCreateTime(new Date());
-        return rel;
-    }
 
     /**
      * 简单列表
@@ -246,7 +143,7 @@ public class StudyStudentController extends BaseController {
         String uri = this.getUriPath() + "simpList";
         SmartResponse<Object> smartResp = this.opService.getDatas("student_simp_list",searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, "#student-tab", page.getPage(), page.getPageSize());
-        selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyClass/studentHas","#has-class-list","id");
+        selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyCourse/studentHas","#has-class-list","id");
 
         ModelMap modelMap = modelView.getModelMap();
         modelMap.put("smartResp", smartResp);
@@ -264,22 +161,22 @@ public class StudyStudentController extends BaseController {
      * @return
      * @throws Exception
      */
-    @RequestMapping("/classList")
+    @RequestMapping("/courseList")
     public ModelAndView classList(UserSearchParam searchParam,ModelAndView modelView,RequestPage page) throws Exception {
-        String uri = this.getUriPath() + "classList";
-        SmartResponse<Object> smartResp = this.opService.getDatas("student_class_list", searchParam, page.getStartNum(), page.getPageSize());
+        String uri = this.getUriPath() + "courseList";
+        SmartResponse<Object> smartResp = this.opService.getDatas("student_course_list", searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
         uri = uri + "?id=" + searchParam.getId();
-        delBtn = new DelBtn(this.getUriPath() + "exitClass?studentId=" + searchParam.getId(), "确定要从该班中退出吗？",uri,"#student-class-tab", null);
+        delBtn = new DelBtn(this.getUriPath() + "exitCourse?studentId=" + searchParam.getId(), "确定要从该班中退出吗？",uri,"#student-course-tab", null);
         delBtn.setName("退班");
-        refreshBtn = new RefreshBtn(uri, null,"#student-class-tab");
+        refreshBtn = new RefreshBtn(uri, null,"#student-course-tab");
 
         ModelMap modelMap = modelView.getModelMap();
         modelMap.put("smartResp", smartResp);
         modelMap.put("pageParam", pageParam);
         modelMap.put("searchParam", searchParam);
         modelMap.put("delBtn", delBtn);
-        modelMap.put("refreshBtn", refreshBtn);
+//        modelMap.put("refreshBtn", refreshBtn);
         pageParam = null;
 
         CustomBtn customBtnReport = new CustomBtn("reportCourse", "报班", "报班", this.getUriPath() + "reportCourse?studentId=" + searchParam.getId(),"glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
@@ -290,14 +187,14 @@ public class StudyStudentController extends BaseController {
         modelMap.put("customBtns", customBtns);
 
 
-        modelView.setViewName(this.getPageDir() + "classList");
+        modelView.setViewName(this.getPageDir() + "courseList");
         return modelView;
     }
 
     @Autowired
     private StudyCourseStudentRecordService courseStudentRecordService;
 
-    @RequestMapping(value="/exitClass", produces="application/json;charset=UTF-8")
+    @RequestMapping(value="/exitCourse", produces="application/json;charset=UTF-8")
     @ResponseBody
     public SmartResponse<String> exitClass(String id, String studentId) {
 
@@ -364,29 +261,7 @@ public class StudyStudentController extends BaseController {
         return this.studentCourseRelService;
     }
 
-    /**
-     *
-     * @return
-     * @throws Exception
-     */
-    @RequestMapping(value="/subReportCourse",method=RequestMethod.POST)
-    public @ResponseBody SmartResponse<String> saveClass(TGStudyStudentCourseRel studentCourseRel) throws Exception {
-        String checkRes = this.checkStudentCourseConflict(studentCourseRel);
-        studentCourseRel.setCreateTime(new Date());
-        SmartResponse<String> smartResp = getSmartResponse(studentCourseRel, checkRes);
 
-        return smartResp;
-    }
-
-    /**
-     *
-     * @param studentCourseRel
-     * @return
-     */
-    private String checkStudentCourseConflict(TGStudyStudentCourseRel studentCourseRel) {
-
-        return null;
-    }
 
 
 

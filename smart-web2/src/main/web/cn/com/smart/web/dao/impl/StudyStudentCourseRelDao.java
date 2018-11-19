@@ -1,7 +1,6 @@
 package cn.com.smart.web.dao.impl;
 
 import cn.com.smart.dao.impl.BaseDaoImpl;
-import cn.com.smart.web.bean.entity.TGStudyStudentClassRel;
 import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
 import org.springframework.stereotype.Repository;
 

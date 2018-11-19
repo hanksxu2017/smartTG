@@ -2,24 +2,16 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
-import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
-import cn.com.smart.web.bean.search.ClassSearch;
 import cn.com.smart.web.bean.search.CourseStudentRecordSearch;
 import cn.com.smart.web.bean.search.WeekInfo;
 import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.CustomBtn;
-import org.apache.commons.collections.CollectionUtils;
-import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.*;
@@ -30,9 +22,6 @@ public class StudyCourseStudentRecordController extends BaseController {
 
     @Autowired
     private OPService opService;
-
-    @Autowired
-    private StudyClassService classService;
     @Autowired
     private StudyTeacherService teacherService;
 
@@ -57,7 +46,6 @@ public class StudyCourseStudentRecordController extends BaseController {
 
         Map<String, Object> params = new HashMap<>();
         params.put("status", IConstant.STATUS_NORMAL);
-        modelAndView.getModelMap().put("classes", this.classService.findByParam(params).getDatas());
         modelAndView.getModelMap().put("teachers", this.teacherService.findByParam(params).getDatas());
         modelAndView.getModelMap().put("weeks", getWeekInfo());
         modelAndView.getModelMap().put("searchParam", searchParam);

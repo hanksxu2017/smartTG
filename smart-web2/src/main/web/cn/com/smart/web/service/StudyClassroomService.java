@@ -1,10 +1,8 @@
 package cn.com.smart.web.service;
 
 import cn.com.smart.service.impl.MgrServiceImpl;
-import cn.com.smart.web.bean.entity.TGStudyClassRoom;
-import cn.com.smart.web.bean.entity.TGStudySchool;
+import cn.com.smart.web.bean.entity.TGStudyClassroom;
 import cn.com.smart.web.dao.impl.StudyClassroomDao;
-import cn.com.smart.web.dao.impl.StudySchoolDao;
 import org.springframework.stereotype.Service;
 
 /**
@@ -15,7 +13,7 @@ import org.springframework.stereotype.Service;
  * @since 1.0
  */
 @Service
-public class StudyClassroomService extends MgrServiceImpl<TGStudyClassRoom> {
+public class StudyClassroomService extends MgrServiceImpl<TGStudyClassroom> {
 
 	@Override
 	public StudyClassroomDao getDao() {

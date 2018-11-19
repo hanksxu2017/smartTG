@@ -1,8 +1,7 @@
 package cn.com.smart.web.dao.impl;
 
 import cn.com.smart.dao.impl.BaseDaoImpl;
-import cn.com.smart.web.bean.entity.TGStudyClassRoom;
-import cn.com.smart.web.bean.entity.TGStudySchool;
+import cn.com.smart.web.bean.entity.TGStudyClassroom;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -13,7 +12,7 @@ import org.springframework.stereotype.Repository;
  * @since 1.0
  */
 @Repository
-public class StudyClassroomDao extends BaseDaoImpl<TGStudyClassRoom> {
+public class StudyClassroomDao extends BaseDaoImpl<TGStudyClassroom> {
 
 	
 }

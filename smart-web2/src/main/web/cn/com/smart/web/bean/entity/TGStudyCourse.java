@@ -30,15 +30,13 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 
 	private String name;
 
-	private String weekInfo;
-
-	private int courseIndex;
+	private short weekInfo;
 
 	private String courseTime;
 
-	private String classId;
+	private String schoolId;
 
-	private String className;
+	private String schoolName;
 
 	private String classroomId;
 
@@ -103,11 +101,11 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
     }
 
     @Column(name="week_info", length=16)
-    public String getWeekInfo() {
+    public short getWeekInfo() {
         return weekInfo;
     }
 
-    public void setWeekInfo(String weekInfo) {
+    public void setWeekInfo(short weekInfo) {
         this.weekInfo = weekInfo;
     }
 
@@ -118,24 +116,6 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 
     public void setCourseTime(String courseTime) {
         this.courseTime = courseTime;
-    }
-
-    @Column(name="class_id", length=64)
-    public String getClassId() {
-        return classId;
-    }
-
-    public void setClassId(String studyClassId) {
-        this.classId = studyClassId;
-    }
-
-    @Column(name="class_name", length=64)
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String studyClassName) {
-        this.className = studyClassName;
     }
 
     @Column(name="classroom_id", length=64)
@@ -183,12 +163,21 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
         this.name = name;
     }
 
-    @Column(name="course_index", length=64)
-    public int getCourseIndex() {
-        return courseIndex;
+    @Column(name="school_id", length=64)
+    public String getSchoolId() {
+        return schoolId;
     }
 
-    public void setCourseIndex(int courseIndex) {
-        this.courseIndex = courseIndex;
+    public void setSchoolId(String schoolId) {
+        this.schoolId = schoolId;
+    }
+
+    @Column(name="school_name", length=64)
+    public String getSchoolName() {
+        return schoolName;
+    }
+
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
     }
 }

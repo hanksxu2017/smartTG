@@ -1,12 +1,11 @@
 #-------清表
-DELETE FROM tg_study_class;
 DELETE FROM tg_study_classroom;
-DELETE FROM tg_study_course;
 DELETE FROM tg_study_school;
 DELETE FROM tg_study_student;
-DELETE FROM tg_study_student_class_rel;
-DELETE FROM tg_study_student_course_rel;
 DELETE FROM tg_study_teacher;
+DELETE FROM tg_study_course;
+DELETE FROM tg_study_student_course_rel;
+
 
 
 #
@@ -39,9 +38,25 @@ SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
             ORDER BY t.create_time ASC;
 
   SELECT t.id, t.name, t.week_info, t.course_time, t.classroom_name,
-            CASE t.status WHEN "NORMAL" THEN '正常'
-            ELSE '未定义',
+            CASE t.status WHEN "NORMAL" THEN '正常' ELSE '未定义' END,
             t.create_time, t.description
-            FROM tg_study_course t
-            WHERE t.teacher_id =:id
+            FROM tg_study_course t 
+            #where t.teacher_id = 
             ORDER BY t.create_time ASC;
+            
+            SELECT t.id, t.name, t.level, t.remain_course, DATE_FORMAT(t.create_time, '%Y-%c-%d')
+            FROM tg_study_student t
+            WHERE t.status = 'NORMAL'
+            ORDER BY t.create_time ASC;
+            
+            
+SELECT DISTINCT T.week_info
+            FROM tg_study_course t
+            WHERE t.teacher_id = 'U154234886659443576'
+            ORDER BY t.create_time ASC;
+            
+            
+            
+            
+            
+            

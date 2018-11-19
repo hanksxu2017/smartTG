@@ -31,13 +31,11 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
 
     private String courseId;
 
-    private String courseWeekInfo;
+    private String courseName;
+
+    private short courseWeekInfo;
 
     private String courseTime;
-
-	private String classId;
-
-	private String className;
 
 	private String classroomId;
 
@@ -94,24 +92,6 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
         this.updateTime = updateTime;
     }
 
-    @Column(name="class_id", length=64)
-    public String getClassId() {
-        return classId;
-    }
-
-    public void setClassId(String classId) {
-        this.classId = classId;
-    }
-
-    @Column(name="class_name", length=64)
-    public String getClassName() {
-        return className;
-    }
-
-    public void setClassName(String className) {
-        this.className = className;
-    }
-
     @Column(name="student_id", length=64)
     public String getStudentId() {
         return studentId;
@@ -140,11 +120,11 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
     }
 
     @Column(name="course_week_info", length=32)
-    public String getCourseWeekInfo() {
+    public short getCourseWeekInfo() {
         return courseWeekInfo;
     }
 
-    public void setCourseWeekInfo(String courseWeekInfo) {
+    public void setCourseWeekInfo(short courseWeekInfo) {
         this.courseWeekInfo = courseWeekInfo;
     }
 
@@ -191,5 +171,14 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
 
     public void setTeacherName(String teacherName) {
         this.teacherName = teacherName;
+    }
+
+    @Column(name="course_name", length=64)
+    public String getCourseName() {
+        return courseName;
+    }
+
+    public void setCourseName(String courseName) {
+        this.courseName = courseName;
     }
 }

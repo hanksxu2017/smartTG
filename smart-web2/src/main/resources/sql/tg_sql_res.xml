@@ -74,10 +74,13 @@
             order by t.create_time asc
         </sql>
     </sqlUnit>
-    <!-- 教师持有的班级 -->
-    <sqlUnit name="teacher_class_list">
+    <!-- 教师的课时信息 -->
+    <sqlUnit name="teacher_course_list">
         <sql>
-            select t.id, t.name, t.week_info, t.course_time, t.classroom_name,
+            select t.id, t.name,
+            CASE t.week_info WHEN "7" THEN '星期天'
+            ELSE CONCAT('星期', t.week_info) END,
+            t.course_time, t.classroom_name,
             CASE t.status WHEN "NORMAL" THEN '正常'
             ELSE '未定义' END,
             t.create_time, t.description
@@ -86,10 +89,21 @@
             order by t.create_time asc
         </sql>
     </sqlUnit>
-    <!-- 学生报名的班级 -->
-    <sqlUnit name="student_class_list">
+    <sqlUnit name="teacher_course_weeks">
         <sql>
-            select t.id, t.name, t.week_info, t.course_time, t.classroom_name, t.teacher_name,
+            select DISTINCT T.week_info
+            from tg_study_course t
+            where t.teacher_id =:teacherId
+            order by t.create_time asc
+        </sql>
+    </sqlUnit>
+    <!-- 学生已选的课时信息 -->
+    <sqlUnit name="student_course_list">
+        <sql>
+            select t.id, t.name,
+            CASE t.week_info WHEN "7" THEN '星期天'
+            ELSE CONCAT('星期', t.week_info) END,
+            t.course_time, t.classroom_name, t.teacher_name,
             CASE t.status WHEN "NORMAL" THEN '正常'
             ELSE '未定义' END,
             t.create_time, t.description

@@ -3,7 +3,7 @@
 <div class="wrap-content">
     <div class="panel no-border">
         <div class="panel-search">
-              <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyTeahcer/classList" target="#teacher-class-tab">
+              <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyTeacher/courseList" target="#teacher-course-tab">
                   <input type="hidden" name="id" value="${searchParam.id }" />
                   <div class="form-group p-r-10">
 				    <label for="search-input02">关键字：</label>

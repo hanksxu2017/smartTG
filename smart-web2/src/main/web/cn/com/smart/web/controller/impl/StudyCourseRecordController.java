@@ -8,7 +8,8 @@ import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
 import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
 import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
-import cn.com.smart.web.bean.search.ClassSearch;
+import cn.com.smart.web.bean.search.CourseRecordSearch;
+import cn.com.smart.web.bean.search.CourseStudentRecordSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
@@ -48,7 +49,7 @@ public class StudyCourseRecordController extends BaseController {
      * @return
      */
     @RequestMapping("/list")
-    public ModelAndView list(ClassSearch searchParam, RequestPage page) {
+    public ModelAndView list(CourseRecordSearch searchParam, RequestPage page) {
         SmartResponse<Object> smartResp = opService.getDatas("select_study_course_record_list", searchParam, page.getStartNum(), page.getPageSize());
         ModelAndView modelAndView = this.packListModelView(searchParam, smartResp);
 
@@ -186,8 +187,6 @@ public class StudyCourseRecordController extends BaseController {
         courseRecord.setCourseDate(courseDate);
         courseRecord.setCourseTime(course.getCourseTime());
 
-        courseRecord.setClassId(course.getClassId());
-        courseRecord.setClassName(course.getClassName());
         courseRecord.setClassroomId(course.getClassroomId());
         courseRecord.setClassroomName(course.getClassroomName());
 
@@ -204,25 +203,11 @@ public class StudyCourseRecordController extends BaseController {
         return courseRecord;
     }
 
-    private Date getWeekDate(String weekInfo, Date startDate) {
-
-        if(StringUtils.equals("星期一", weekInfo)) {
-            return startDate;
-        } else if(StringUtils.equals("星期二", weekInfo)) {
-            return DateUtil.addDay(startDate, 1);
-        } else if(StringUtils.equals("星期三", weekInfo)) {
-            return DateUtil.addDay(startDate, 2);
-        } else if(StringUtils.equals("星期四", weekInfo)) {
-            return DateUtil.addDay(startDate, 3);
-        } else if(StringUtils.equals("星期五", weekInfo)) {
-            return DateUtil.addDay(startDate, 4);
-        } else if(StringUtils.equals("星期六", weekInfo)) {
-            return DateUtil.addDay(startDate, 5);
-        } else if(StringUtils.equals("星期天", weekInfo)) {
-            return DateUtil.addDay(startDate, 6);
-        } else {
-            return null;
+    private Date getWeekDate(short weekInfo, Date startDate) {
+        if(weekInfo >= 1 && weekInfo <= 7) {
+            return DateUtil.addDay(startDate, weekInfo - 1);
         }
+        return null;
     }
 
     @Autowired

@@ -19,7 +19,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="tg_study_classroom")
-public class TGStudyClassRoom extends BaseBeanImpl implements DateBean {
+public class TGStudyClassroom extends BaseBeanImpl implements DateBean {
 
 	/**
 	 * 
@@ -28,9 +28,9 @@ public class TGStudyClassRoom extends BaseBeanImpl implements DateBean {
 
 	private String id;
 
-	private String studySchoolId;
+	private String schoolId;
 
-    private String studySchoolName;
+    private String schoolName;
 
 	private String name;
 	
@@ -52,22 +52,22 @@ public class TGStudyClassRoom extends BaseBeanImpl implements DateBean {
 		this.id = id;
 	}
 
-    @Column(name="study_school_id", length=64, nullable = false)
-    public String getStudySchoolId() {
-        return studySchoolId;
+    @Column(name="school_id", length=64, nullable = false)
+    public String getSchoolId() {
+        return schoolId;
     }
 
-    public void setStudySchoolId(String studySchoolId) {
-        this.studySchoolId = studySchoolId;
+    public void setSchoolId(String studySchoolId) {
+        this.schoolId = studySchoolId;
     }
 
-    @Column(name="study_school_name", length=64)
-    public String getStudySchoolName() {
-        return studySchoolName;
+    @Column(name="school_name", length=64)
+    public String getSchoolName() {
+        return schoolName;
     }
 
-    public void setStudySchoolName(String studySchoolName) {
-        this.studySchoolName = studySchoolName;
+    public void setSchoolName(String studySchoolName) {
+        this.schoolName = studySchoolName;
     }
 
     @Column(name="description", length=64)

@@ -1,17 +1,16 @@
 package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.constant.IConstant;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyClassRoom;
-import cn.com.smart.web.bean.entity.TGStudyTeacher;
+import cn.com.smart.web.bean.entity.TGStudyClassroom;
+import cn.com.smart.web.bean.entity.TGStudySchool;
 import cn.com.smart.web.bean.search.ClassroomSearch;
-import cn.com.smart.web.bean.search.TeacherSearch;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.OPService;
 import cn.com.smart.web.service.StudyClassroomService;
 import cn.com.smart.web.service.StudySchoolService;
-import cn.com.smart.web.service.StudyTeacherService;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -20,6 +19,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 @Controller
 @RequestMapping("/studyClassroom")
@@ -28,9 +29,9 @@ public class StudyClassroomController extends BaseController {
     @Autowired
     private OPService opService;
     @Autowired
-    private StudyClassroomService studyClassroomService;
+    private StudyClassroomService classroomService;
     @Autowired
-    private StudySchoolService studySchoolService;
+    private StudySchoolService schoolService;
 
     public StudyClassroomController() {
         super.setSubDir("/studyClassroom/");
@@ -54,7 +55,8 @@ public class StudyClassroomController extends BaseController {
     @RequestMapping(value = "/add")
     public ModelAndView add() {
         ModelAndView modelView = new ModelAndView();
-        modelView.getModelMap().put("schools", studySchoolService.findAll().getDatas());
+
+        modelView.getModelMap().put("schools", schoolService.findAll().getDatas());
         modelView.setViewName(getPageDir() + "add");
         return modelView;
     }
@@ -66,9 +68,9 @@ public class StudyClassroomController extends BaseController {
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> save(TGStudyClassRoom studyClassRoom) {
+    public SmartResponse<String> save(TGStudyClassroom studyClassRoom) {
         studyClassRoom.setCreateTime(new Date());
-        SmartResponse<String> smartResp = studyClassroomService.save(studyClassRoom);
+        SmartResponse<String> smartResp = classroomService.save(studyClassRoom);
         return smartResp;
     }
 
@@ -76,11 +78,18 @@ public class StudyClassroomController extends BaseController {
     public ModelAndView update(String id) {
         ModelAndView modelView = new ModelAndView();
         if(StringUtils.isNotEmpty(id)) {
-            TGStudyClassRoom studyClassRoom = studyClassroomService.find(id).getData();
+            TGStudyClassroom studyClassRoom = classroomService.find(id).getData();
             if(null != studyClassRoom) {
                 modelView.getModelMap().put("objBean", studyClassRoom);
             }
-            modelView.getModelMap().put("schools", studySchoolService.findAll().getDatas());
+
+            Map<String, Object> params = new HashMap<>();
+            params.put("status", IConstant.STATUS_NORMAL);
+            SmartResponse<TGStudySchool> smartResponse = this.schoolService.findByParam(params);
+            if(StringUtils.equals(IConstant.OP_SUCCESS, smartResponse.getResult()) &&
+                smartResponse.getTotalNum() > 0) {
+                modelView.getModelMap().put("schools", smartResponse.getDatas());
+            }
         }
         modelView.setViewName(getPageDir() + "edit");
         return modelView;
@@ -94,12 +103,22 @@ public class StudyClassroomController extends BaseController {
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> update(TGStudyClassRoom studyClassRoom) {
-        TGStudyClassRoom studyClassRoomDb = this.studyClassroomService.find(studyClassRoom.getId()).getData();
+    public SmartResponse<String> update(TGStudyClassroom studyClassRoom) {
+        TGStudyClassroom studyClassRoomDb = this.classroomService.find(studyClassRoom.getId()).getData();
         studyClassRoom.setCreateTime(studyClassRoomDb.getCreateTime());
         studyClassRoom.setUpdateTime(new Date());
-        SmartResponse<String> smartResp = studyClassroomService.update(studyClassRoom);
+        SmartResponse<String> smartResp = classroomService.update(studyClassRoom);
         return smartResp;
+    }
+
+    @RequestMapping(value = "/queryBySchool", method = RequestMethod.GET)
+    @ResponseBody
+    public SmartResponse<TGStudyClassroom> queryBySchool(String schoolId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("status", IConstant.STATUS_NORMAL);
+        params.put("schoolId", schoolId);
+        SmartResponse<TGStudyClassroom> smartResponse = this.classroomService.findByParam(params);
+        return smartResponse;
     }
 
 }

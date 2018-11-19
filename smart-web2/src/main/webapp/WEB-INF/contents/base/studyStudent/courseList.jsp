@@ -3,7 +3,7 @@
 <div class="wrap-content">
     <div class="panel no-border">
         <div class="panel-search">
-              <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyStudent/classList" target="#student-class-tab">
+              <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyStudent/courseList" target="#student-course-tab">
                   <input type="hidden" name="id" value="${searchParam.id }" />
                   <div class="form-group p-r-10">
 				    <label for="search-input02">关键字：</label>
@@ -19,7 +19,7 @@
           </div>
 
 		<cnoj:table smartResp="${smartResp }" headers="名称,星期,时间,教室,教师,状态,开班时间,描述" isCheckbox="1" isRowSelected="1" page="${pageParam }" currentUri="${currentUri }"
-		 delBtn="${delBtn }" customBtns="${customBtns}" refreshBtn="${refreshBtn }"
+		 delBtn="${delBtn }" customBtns="${customBtns}"
 		 />
 	</div>
 </div>
