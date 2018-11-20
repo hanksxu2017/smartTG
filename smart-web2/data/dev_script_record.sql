@@ -25,45 +25,50 @@ SELECT t.id, t.course_week_info, t.course_time, t.student_name,t.class_name, t.c
             WHEN "TEMP_LEAVE" THEN "休学"
             ELSE '未定义' END ,
             t.remain_course, t.create_time
-            FROM tg_study_student t
-            ORDER BY t.create_time ASC;
+            from tg_study_student t
+            order by t.create_time asc;
             
-SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
+select t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
             t.teacher_name, sr.student_name,
             CASE sr.status WHEN "NORMAL" THEN '正常'
             ELSE '未定义' END ,
             sr.description, sr.update_time
-            FROM tg_study_course_record t, tg_study_course_student_record sr
-            WHERE t.id = sr.course_rec_id
-            ORDER BY t.create_time ASC;
+            from tg_study_course_record t, tg_study_course_student_record sr
+            where t.id = sr.course_rec_id
+            order by t.create_time asc;
 
-  SELECT t.id, t.name, t.week_info, t.course_time, t.classroom_name,
+  select t.id, t.name, t.week_info, t.course_time, t.classroom_name,
             CASE t.status WHEN "NORMAL" THEN '正常' ELSE '未定义' END,
             t.create_time, t.description
-            FROM tg_study_course t 
+            from tg_study_course t 
             #where t.teacher_id = 
-            ORDER BY t.create_time ASC;
+            order by t.create_time asc;
             
-            SELECT t.id, t.name, t.level, t.remain_course, DATE_FORMAT(t.create_time, '%Y-%c-%d')
-            FROM tg_study_student t
-            WHERE t.status = 'NORMAL'
-            ORDER BY t.create_time ASC;
+            select t.id, t.name, t.level, t.remain_course, date_format(t.create_time, '%Y-%c-%d')
+            from tg_study_student t
+            where t.status = 'NORMAL'
+            order by t.create_time asc;
             
             
-SELECT DISTINCT T.week_info
-            FROM tg_study_course t
-            WHERE t.teacher_id = 'U154234886659443576'
-            ORDER BY t.create_time ASC;
+select DISTINCT T.week_info
+            from tg_study_course t
+            where t.teacher_id = 'U154234886659443576'
+            order by t.create_time asc;
 
-SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
+select t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
             t.teacher_name, t.student_quantity_plan, t.student_quantity_actual, t.student_personal_leave,
             t.student_other_absent,
             t.status, t.create_time, t.description
-            FROM tg_study_course_record t
-            ORDER BY t.create_time ASC;
+            from tg_study_course_record t
+            order by t.create_time asc;
 
 
-
+select t.id, t.course_date, t.course_time, t.course_name, t.teacher_name,
+            CASE t.status WHEN "NORMAL" THEN '正常'
+            ELSE '未定义' END
+            from tg_study_course_record t
+            #[where t.teacher_id =: teacherId]
+            order by t.course_date asc
 
 
 

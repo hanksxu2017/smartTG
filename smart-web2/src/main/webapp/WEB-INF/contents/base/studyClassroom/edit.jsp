@@ -3,13 +3,13 @@
 <div class="wrap-content-dialog">
    <form class="form-horizontal" role="form" id="form-edit" action="studyClassroom/update">
        <input type="hidden" name="id" value="${objBean.id}">
-       <input type="hidden" name="studySchoolName" id="studySchoolName" value="${objBean.studySchoolName}">
+       <input type="hidden" name="schoolName" id="schoolName" value="${objBean.schoolName}">
        <div class="form-group m-b-10">
            <label for="input01" class="col-sm-2 control-label">校区</label>
            <div class="col-sm-9 p-l-0">
-               <select name="studySchoolId" class="form-control require" id="input01">
+               <select name="schoolId" class="form-control require" id="input01">
                    <c:forEach items="${schools}" var="school">
-                       <option value="${school.id}" <c:if test="${school.id == objBean.studySchoolId}">selected</c:if> >${school.name}</option>
+                       <option value="${school.id}" <c:if test="${school.id == objBean.schoolId}">selected</c:if> >${school.name}</option>
                    </c:forEach>
                </select>
            </div>
@@ -40,7 +40,7 @@
     $(function () {
         $("#input01").change(function () {
             var text = $(this).find("option:selected").text()
-            $("#studySchoolName").val(text);
+            $("#schoolName").val(text);
         });
 
     });

@@ -36,9 +36,9 @@
        </div>
 
        <div class="form-group m-b-10">
-           <label for="courseIndex" class="col-sm-2 control-label">授课时间</label>
+           <label for="courseTime" class="col-sm-2 control-label">授课时间</label>
            <div class="col-sm-9 p-l-0">
-               <select name="courseIndex" class="form-control require" id="courseIndex">
+               <select name="courseTime" class="form-control require" id="courseTime">
                    <option value="">--请选择--</option>
                    <option value="8:00-10:30" >8:00-10:30</option>
                    <option value="13:00-15:30" >13:00-15:30</option>

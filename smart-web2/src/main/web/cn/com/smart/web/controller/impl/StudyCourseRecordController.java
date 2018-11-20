@@ -39,6 +39,9 @@ public class StudyCourseRecordController extends BaseController {
     @Autowired
     private StudyCourseStudentRecordService courseStudentRecordService;
 
+    @Autowired
+    private StudyTeacherService teacherService;
+
     public StudyCourseRecordController() {
         super.setSubDir("/studyCourse/record/");
     }
@@ -55,19 +58,23 @@ public class StudyCourseRecordController extends BaseController {
 	 * @throws Exception
 	 */
 	@RequestMapping("/simpList")
-	public ModelAndView simpList(HttpSession session, UserSearchParam searchParam,
+	public ModelAndView simpList(HttpSession session, CourseRecordSearch searchParam,
 	                             ModelAndView modelView, RequestPage page) throws Exception {
 		String uri = this.getUriPath() + "simpList";
 		SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_simp_list",searchParam, page.getStartNum(), page.getPageSize());
 		pageParam = new PageParam(uri, "#courseRecord-tab", page.getPage(), page.getPageSize());
 		selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyStudent/courseRecHas?courseRecHas=" + searchParam.getId(),"#has-student-list","id");
+		refreshBtn = new RefreshBtn(uri + "?teacherId=" + searchParam.getTeacherId(), null,"#courseRecord-tab");
 
 		ModelMap modelMap = modelView.getModelMap();
 		modelMap.put("smartResp", smartResp);
 		modelMap.put("pageParam", pageParam);
 		modelMap.put("searchParam", searchParam);
 		modelMap.put("selectedEventProp", selectedEventProp);
+		modelMap.put("refreshBtn", refreshBtn);
 		pageParam = null;
+
+		modelMap.put("teachers", this.teacherService.findNormal().getDatas());
 
 		modelView.setViewName(this.getPageDir() + "simpList");
 		return modelView;
@@ -104,14 +111,14 @@ public class StudyCourseRecordController extends BaseController {
         modelMap.put("customBtns", customBtns);
     }
 
-    @RequestMapping(value = "/generateCourseRecord")
+    @RequestMapping(value = "/generateDailyCourse")
     public ModelAndView generateCourseRecord() {
         ModelAndView modelView = new ModelAndView();
 
         modelView.getModelMap().put("startDate", DateUtil.dateToStr(DateUtil.getNextMonday(new Date()), "yyyy-MM-dd"));
         modelView.getModelMap().put("endDate", DateUtil.dateToStr(DateUtil.getNextSunday(new Date()), "yyyy-MM-dd"));
 
-        modelView.setViewName(getPageDir() + "generateCourseRecord");
+        modelView.setViewName(getPageDir() + "generateDailyCourse");
         return modelView;
     }
 
@@ -213,6 +220,7 @@ public class StudyCourseRecordController extends BaseController {
         courseRecord.setCourseId(course.getId());
         courseRecord.setCourseDate(courseDate);
         courseRecord.setCourseTime(course.getCourseTime());
+        courseRecord.setCourseName(course.getName());
 
         courseRecord.setClassroomId(course.getClassroomId());
         courseRecord.setClassroomName(course.getClassroomName());

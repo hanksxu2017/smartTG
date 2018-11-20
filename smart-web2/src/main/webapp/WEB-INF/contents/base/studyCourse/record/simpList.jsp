@@ -1,8 +1,9 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
 <%@ taglib prefix="cnoj" uri="/cnoj-tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="wrap-content">
     <div class="panel no-border">
-        <%--        <div class="panel-search borer-bottom">
+                <div class="panel-search borer-bottom">
                       <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyCourse/record/simpList" target="#courseRecord-tab">
 
                           <div class="form-group p-r-10">
@@ -22,13 +23,14 @@
                               </span>
                           </div>
                       </form>
-                  </div>--%>
+                  </div>
         <cnoj:tableItem smartResp="${smartResp}"
-                        headers="授课时间,名称,教师,状态"
-                        headerWidths="35%,35%,15%,15%"
+                        headers="授课时间,名称,状态"
+                        headerWidths="45%,40%,15%"
                         isRowSelected="1"
                         currentUri="${currentUri }"
                         selectedEventProp="${selectedEventProp }"
+                        refreshBtn="${refreshBtn}"
                         page="${pageParam }"
         />
     </div>

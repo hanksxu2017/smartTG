@@ -164,8 +164,14 @@ public class StudyStudentController extends BaseController {
      * @throws Exception
      */
     @RequestMapping("/courseList")
-    public ModelAndView classList(UserSearchParam searchParam,ModelAndView modelView,RequestPage page) throws Exception {
+    public ModelAndView classList(StudentCourseRelSearch searchParam,ModelAndView modelView,RequestPage page) throws Exception {
         String uri = this.getUriPath() + "courseList";
+	    if(StringUtils.isBlank(searchParam.getStatus())) {
+		    searchParam.setStatus(IConstant.STATUS_NORMAL);
+	    }
+        if(StringUtils.equals(searchParam.getStatus(), "ALL")) {
+            searchParam.setStatus(null);
+        }
         SmartResponse<Object> smartResp = this.opService.getDatas("student_course_list", searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
         uri = uri + "?id=" + searchParam.getId();
@@ -276,10 +282,23 @@ public class StudyStudentController extends BaseController {
 				TGStudyCourseRecord courseRecord = (TGStudyCourseRecord) smartResp.getData();
 				String name = (null != courseRecord)?courseRecord.getCourseName():null;
 				modelMap.put("name", name);
+				if(IConstant.STATUS_COURSE_END.equals(courseRecord.getStatus())) {
+					modelMap.put("studentSignStatistics", concatSignStatistics(courseRecord));
+				}
 			}
 		}
 		modelView.setViewName(this.getPageDir() + "courseRecHas");
 		return modelView;
+	}
+
+	private String concatSignStatistics(TGStudyCourseRecord courseRecord) {
+		StringBuilder builder = new StringBuilder();
+		builder.append("应到").append(courseRecord.getStudentQuantityPlan());
+		builder.append("/实到").append(courseRecord.getStudentQuantityActual());
+		builder.append("/事假").append(courseRecord.getStudentPersonalLeave());
+		builder.append("/旷课").append(courseRecord.getStudentPlayTruant());
+		builder.append("/其他缺席").append(courseRecord.getStudentOtherAbsent());
+		return builder.toString();
 	}
 
     /**

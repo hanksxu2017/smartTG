@@ -44,7 +44,7 @@ public class StudyClassroomController extends BaseController {
      */
     @RequestMapping("/list")
     public ModelAndView list(ClassroomSearch searchParam, RequestPage page) {
-        SmartResponse<Object> smartResp = opService.getDatas("select_study_classroom_list", searchParam, page.getStartNum(), page.getPageSize());
+        SmartResponse<Object> smartResp = opService.getDatas("classroom_list", searchParam, page.getStartNum(), page.getPageSize());
         return this.packListModelView(searchParam, smartResp);
     }
 

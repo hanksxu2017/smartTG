@@ -23,7 +23,7 @@ public class CourseRecordSearch extends FilterParam {
             strBuilder.append(param);
         }
         if(StringUtils.isNotBlank(teacherId)) {
-            strBuilder.append("&teacherId=:"+teacherId);
+            strBuilder.append("&teacherId="+teacherId);
         }
         param = strBuilder.toString();
         if(StringUtils.isNotBlank(param) && param.startsWith("&")) {

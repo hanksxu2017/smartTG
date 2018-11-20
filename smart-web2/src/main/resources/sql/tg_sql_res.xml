@@ -26,9 +26,9 @@
         </sql>
     </sqlUnit>
 
-    <sqlUnit name="select_study_classroom_list">
+    <sqlUnit name="classroom_list">
         <sql>
-            select t.id, t.study_school_name, t.name, t.description, t.create_time from tg_study_classroom t
+            select t.id, t.school_name, t.name, t.description, t.create_time from tg_study_classroom t
             order by t.create_time asc
         </sql>
     </sqlUnit>
@@ -110,11 +110,14 @@
             CASE t.week_info WHEN "7" THEN '星期天'
             ELSE CONCAT('星期', t.week_info) END,
             t.course_time, t.classroom_name, t.teacher_name,
-            CASE t.status WHEN "NORMAL" THEN '正常'
+            CASE rel.status WHEN "NORMAL" THEN '正常'
+            WHEN 'EXIT_COURSE' THEN '已退班'
             ELSE '未定义' END,
             t.create_time, t.description
             from tg_study_course t, tg_study_student_course_rel rel
             where rel.student_id =:id and rel.course_id = t.id
+            [and rel.status =:status]
+            [and rel.student_name like '%:studentName%']
             order by t.create_time asc
         </sql>
     </sqlUnit>
@@ -138,7 +141,7 @@
     <sqlUnit name="course_record_list">
         <sql>
             select t.id, t.course_date, t.course_time, t.teacher_name, t.classroom_name,
-            t.student_quantity_plan, t.student_quantity_actual, t.student_personal_leave,
+            t.student_quantity_plan, t.student_quantity_actual, t.student_personal_leave, t.play_truant,
             t.student_other_absent, t.status, t.create_time, t.description
             from tg_study_course_record t
             order by t.create_time asc
@@ -159,11 +162,12 @@
     <!-- 每周课时简单列表 -->
     <sqlUnit name="courseRecord_simp_list">
         <sql>
-            select t.id, concat(t.course_date, ' ', t.course_time), t.course_name, t.teacher_name,
+            select t.id, concat(t.course_date, ' ', t.course_time), t.course_name,
             CASE t.status WHEN "NORMAL" THEN '正常'
             ELSE '未定义' END
             from tg_study_course_record t
-            [where t.teacher_id =: teacherId]
+            where 1=1
+            [and t.teacher_id =:teacherId]
             order by t.course_date asc
         </sql>
     </sqlUnit>

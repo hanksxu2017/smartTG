@@ -66,8 +66,8 @@ public class TGStudyClassroom extends BaseBeanImpl implements DateBean {
         return schoolName;
     }
 
-    public void setSchoolName(String studySchoolName) {
-        this.schoolName = studySchoolName;
+    public void setSchoolName(String schoolName) {
+        this.schoolName = schoolName;
     }
 
     @Column(name="description", length=64)
