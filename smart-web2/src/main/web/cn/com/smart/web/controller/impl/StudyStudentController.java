@@ -262,7 +262,6 @@ public class StudyStudentController extends BaseController {
     }
 
 
-
 	/**
 	 *
 	 * @param modelView     JSP页面对象
@@ -402,11 +401,13 @@ public class StudyStudentController extends BaseController {
                 student = this.studentService.find(courseStudentRecord.getStudentId()).getData();
                 student.setRemainCourse(student.getRemainCourse() - 1);
                 student.setUpdateTime(updateDate);
+                student.setCourseSeriesUnSigned(0);
                 this.studentService.update(student);
-
-                // TODO
-                // 学生课时小于3时,进行系统提醒
-
+                if(student.getRemainCourse() < 3) {
+                    // 课时不足
+                    String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
+                    this.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
+                }
             }
         }
 
@@ -433,24 +434,25 @@ public class StudyStudentController extends BaseController {
     @RequestMapping(value = "/studentSign")
     public ModelAndView studentSign(String id, String courseRecordId) {
         ModelAndView modelView = new ModelAndView();
-	    modelView.getModelMap().put("studentIds", id);
+	    modelView.getModelMap().put("studentId", id);
 	    modelView.getModelMap().put("courseRecord", this.courseRecordService.find(courseRecordId).getData());
 
 	    String[] ids = id.split(",");
-	    if(null != ids && ids.length > 1) {
+	    if(ids.length > 1) {
 	    	StringBuilder nameBuilder = new StringBuilder();
-	    	TGStudyStudent student = null;
-			for(int index = 0; index < ids.length; index++) {
-				student = this.studentService.find(ids[index]).getData();
-				if(null != student) {
-					nameBuilder.append(",").append(student.getName());
-				}
-			}
+	    	TGStudyStudent student;
+//            for (int i = 0; i < ids.length; i++) {
+                for(String studentId : ids) {
+                student = this.studentService.find(studentId).getData();
+                if (null != student) {
+                    nameBuilder.append(",").append(student.getName());
+                }
+            }
 			String names = nameBuilder.toString();
 			if(names.startsWith(",")) {
 				names = names.substring(1);
 			}
-		    modelView.getModelMap().put("studentNames", names);
+		    modelView.getModelMap().put("studentName", names);
 	    }
 
         modelView.setViewName(this.getPageDir() + "studentSign");
@@ -463,63 +465,79 @@ public class StudyStudentController extends BaseController {
 	    SmartResponse<String> smartResponse = new SmartResponse<>();
 
 	    CourseStudentStatusEnum statusEnum = CourseStudentStatusEnum.valueOf(status);
-	    if(CourseStudentStatusEnum.NORMAL == statusEnum) {
+	    if(StringUtils.isBlank(courseRecordId) ||
+                StringUtils.isBlank(studentId) ||
+                CourseStudentStatusEnum.NORMAL == statusEnum) {
 		    smartResponse.setMsg("请求无效!");
 		    return smartResponse;
 	    }
 
-		Map<String, Object> params = new HashMap<>();
-		params.put("courseRecordId", courseRecordId);
-		params.put("studentId", studentId);
-		TGStudyCourseStudentRecord courseStudentRecord = this.courseStudentRecordService.findByParam(params).getData();
+	    String[] studentIds = studentId.split(",");
+        for(String sid : studentIds) {
+            smartResponse = processSingleStudentSign(courseRecordId, sid, description, statusEnum);
+            if(!smartResponse.isSuccess()) {
+                return smartResponse;
+            }
+        }
 
-		if(null == courseStudentRecord) {
-			smartResponse.setMsg("学生课时数据不存在!");
-			return smartResponse;
-		}
-		if(StringUtils.equals(courseStudentRecord.getStatus(), IConstant.STATUS_NORMAL)) {
-			// 进行签到操作
-			if(!this.checkCourseStudentRecordCanSign(courseStudentRecord)) {
-				smartResponse.setMsg("课时目前无法进行签到操作,请稍后再试!");
-				return smartResponse;
-			}
-			// 更新学生课时的签到信息
-			courseStudentRecord.setStatus(statusEnum.name());
-			courseStudentRecord.setDescription(description);
-			courseStudentRecord.setUpdateTime(new Date());
-			final SmartResponse<String> updateSmartResponse = this.courseStudentRecordService.update(courseStudentRecord);
-			if(!updateSmartResponse.isSuccess()) {
-				smartResponse.setMsg("学生课时更新失败!");
-				return smartResponse;
-			}
+        smartResponse.setResult(IConstant.OP_SUCCESS);
+        return smartResponse;
+    }
 
-			// 学生课时-1
-			TGStudyStudent student = this.studentService.find(courseStudentRecord.getStudentId()).getData();
-			student.setRemainCourse(student.getRemainCourse() - 1);
-			student.setUpdateTime(new Date());
-			if(CourseStudentStatusEnum.SIGNED.equals(statusEnum)) {
-				student.setCourseSeriesUnSigned(0);
-			} else {
-				// 非正常签到,生成异常签到记录
-				student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
-			}
-			this.studentService.update(student);
-			if(student.getCourseSeriesUnSigned() >= 3) {
-				// 连续非签到,系统提示
-				String content = "学生[" + student.getName() + "]已连续 " + student.getCourseSeriesUnSigned() + "次缺席!";
-				this.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content);
-			}
-			if(student.getRemainCourse() < 3) {
-				// 课时不足
-				String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
-				this.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
-			}
-		}
+    private SmartResponse<String> processSingleStudentSign(String courseRecordId, String studentId, String description, CourseStudentStatusEnum statusEnum){
+        SmartResponse<String> smartResponse = new SmartResponse<>();
+        Map<String, Object> params = new HashMap<>();
+        params.put("courseRecordId", courseRecordId);
+        params.put("studentId", studentId);
+        TGStudyCourseStudentRecord courseStudentRecord = this.courseStudentRecordService.findByParam(params).getData();
 
-	    // 检查课时的学生列表是否已经全部签到
-	    this.updateCourseRecordToEndIfAllSigned(courseStudentRecord.getCourseRecordId());
+        if(null == courseStudentRecord) {
+            smartResponse.setMsg("学生课时数据不存在!");
+            return smartResponse;
+        }
+        if(StringUtils.equals(courseStudentRecord.getStatus(), IConstant.STATUS_NORMAL)) {
+            // 进行签到操作
+            if(!this.checkCourseStudentRecordCanSign(courseStudentRecord)) {
+                smartResponse.setMsg("课时目前无法进行签到操作,请稍后再试!");
+                return smartResponse;
+            }
+            // 更新学生课时的签到信息
+            courseStudentRecord.setStatus(statusEnum.name());
+            courseStudentRecord.setDescription(description);
+            courseStudentRecord.setUpdateTime(new Date());
+            final SmartResponse<String> updateSmartResponse = this.courseStudentRecordService.update(courseStudentRecord);
+            if(!updateSmartResponse.isSuccess()) {
+                smartResponse.setMsg("学生课时更新失败!");
+                return smartResponse;
+            }
 
-	    smartResponse.setResult(IConstant.OP_SUCCESS);
+            // 学生课时-1
+            TGStudyStudent student = this.studentService.find(courseStudentRecord.getStudentId()).getData();
+            student.setRemainCourse(student.getRemainCourse() - 1);
+            student.setUpdateTime(new Date());
+            if(CourseStudentStatusEnum.SIGNED.equals(statusEnum)) {
+                student.setCourseSeriesUnSigned(0);
+            } else {
+                // 非正常签到,生成异常签到记录
+                student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
+            }
+            this.studentService.update(student);
+            if(student.getCourseSeriesUnSigned() >= 3) {
+                // 连续未签到,系统提示
+                String content = "学生[" + student.getName() + "]已连续 " + student.getCourseSeriesUnSigned() + "次缺席!";
+                this.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content);
+            }
+            if(student.getRemainCourse() < 3) {
+                // 课时不足
+                String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
+                this.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
+            }
+        }
+
+        // 检查课时的学生列表是否已经全部签到
+        this.updateCourseRecordToEndIfAllSigned(courseStudentRecord.getCourseRecordId());
+
+        smartResponse.setResult(IConstant.OP_SUCCESS);
         return smartResponse;
     }
 

@@ -2,10 +2,9 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
+import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.bean.entity.TGStudyStudent;
-import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
+import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.filter.bean.UserSearchParam;
@@ -89,10 +88,65 @@ public class StudyStudentCourseRelController extends BaseController {
             TGStudyStudentCourseRel studentCourseRel = this.initStudentCourseRel(courseId, studentId);
             smartResp = this.studentCourseRelService.save(studentCourseRel);
             // 学生报课成功后续进行本周类的课时安排
-            // TODO
+            generateCurWeekCourseRecIfNecessary(studentCourseRel);
         }
         return smartResp;
     }
+
+    @Autowired
+    private StudyCourseRecordService courseRecordService;
+
+    @Autowired
+    private StudyCourseStudentRecordService courseStudentRecordService;
+
+    private void generateCurWeekCourseRecIfNecessary(TGStudyStudentCourseRel studentCourseRel) {
+        TGStudyCourse course = this.courseService.find(studentCourseRel.getCourseId()).getData();
+        Date curDate = new Date();
+        int curWeek = DateUtil.getWeek(curDate);
+        if(0 == curWeek) {
+            curWeek = 7;
+        }
+
+        Date courseDate = null;
+        if(course.getWeekInfo() > curWeek) {
+            courseDate = DateUtil.addDay(curDate, course.getWeekInfo() - curWeek);
+        }
+        if(course.getWeekInfo() == curWeek) {
+            // 又是同一天,下次说吧,或者增加该项功能
+        }
+        if(null != courseDate) {
+            // 需要生成本周内的学生课时记录对象
+            String courseDateStr = DateUtil.dateToStr(courseDate, "yyyy-MM-dd");
+            Map<String, Object> params = new HashMap<>();
+            params.put("courseDate", courseDateStr);
+            params.put("courseId", studentCourseRel.getCourseId());
+            TGStudyCourseRecord courseRecord = this.courseRecordService.findByParam(params).getData();
+            if(null != courseRecord) {
+                this.courseStudentRecordService.save(this.initCourseStudentRecord(courseRecord, studentCourseRel.getStudentId()));
+            }
+        }
+    }
+
+    /**
+     * 初始化学生的每日课时记录
+     * @param courseRecord  每日课时记录对象
+     * @param studentId     学生编号
+     * @return              学生每日课时记录对象
+     */
+    private TGStudyCourseStudentRecord initCourseStudentRecord(TGStudyCourseRecord courseRecord, String studentId) {
+        TGStudyCourseStudentRecord courseStudentRecord = new TGStudyCourseStudentRecord();
+        courseStudentRecord.setCourseRecordId(courseRecord.getId());
+        courseStudentRecord.setCourseId(courseRecord.getCourseId());
+
+        TGStudyStudent student = this.studentService.find(studentId).getData();
+        courseStudentRecord.setStudentId(student.getId());
+        courseStudentRecord.setStudentName(student.getName());
+
+        courseStudentRecord.setCreateTime(new Date());
+
+        return courseStudentRecord;
+    }
+
 
     @Autowired
     private StudyStudentService studentService;

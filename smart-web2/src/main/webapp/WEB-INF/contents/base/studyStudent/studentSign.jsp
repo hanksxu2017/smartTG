@@ -9,7 +9,7 @@
 <div class="wrap-content-dialog">
     <form class="form-horizontal" role="form" id="courseRecord-student-sign" action="studyStudent/subSign">
         <input type="hidden" name="courseRecordId" id="courseRecordId" value="${courseRecord.id}"/>
-        <input type="hidden" name="studentId" id="studentId" value="${student.id}"/>
+        <input type="hidden" name="studentId" id="studentId" value="${studentId}"/>
 
 	    <div class="form-group m-b-10">
 		    <label for="courseName" class="col-sm-2 control-label">课时</label>
@@ -39,7 +39,7 @@
             <label for="studentName" class="col-sm-2 control-label">学生</label>
             <div class="col-sm-9 p-l-0">
                 <input type="text" class="form-control input-readonly" data-label-name="学生"
-                       id="studentName" value="${student.name}" readonly/>
+                       id="studentName" value="${studentName}" readonly/>
             </div>
         </div>
 

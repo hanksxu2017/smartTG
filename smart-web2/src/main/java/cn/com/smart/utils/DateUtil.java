@@ -73,6 +73,13 @@ public class DateUtil extends BaseUtil {
         return calendar.getTime();
     }
 
+    public static Date addMinute(Date srcDate, int offset) {
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(srcDate);
+        calendar.add(Calendar.MINUTE,offset);
+        return calendar.getTime();
+    }
+
 
 	private static Date getThisWeekMonday(Date date) {
 		Calendar cal = Calendar.getInstance();
