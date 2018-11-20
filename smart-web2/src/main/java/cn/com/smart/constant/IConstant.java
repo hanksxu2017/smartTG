@@ -98,11 +98,9 @@ public interface IConstant {
 	// 已退班
 	String STATUS_EXIT_COURSE = "EXIT_COURSE";
 
-	// 课时进行中
-	String STATUS_COURSE_ING = "NORMAL_ING";
-	// 课时已结束
+	// 课时结课结束
 	String STATUS_COURSE_END = "NORMAL_END";
 	// 因退班而取消
 	String STATUS_COURSE_CANCEL_AS_EXIT = "CANCEL_AS_EXIT";
-	
+
 }

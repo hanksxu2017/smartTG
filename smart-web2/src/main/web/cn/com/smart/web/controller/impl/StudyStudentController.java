@@ -2,30 +2,30 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
+import cn.com.smart.constant.enumEntity.CourseStudentStatusEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.*;
+import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
+import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
+import cn.com.smart.web.bean.entity.TGStudyStudent;
+import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.bean.search.StudentSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
-import cn.com.smart.web.filter.bean.UserSearchParam;
 import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpMethod;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpSession;
 import java.util.*;
 
 @Controller
@@ -42,20 +42,19 @@ public class StudyStudentController extends BaseController {
     }
 
     /**
-     * @param searchParam
-     * @param page
-     * @return
+     * @param searchParam   查询参数对象
+     * @param page          分页参数对象
+     * @return              JSP页面对象
      */
     @RequestMapping("/list")
     public ModelAndView list(StudentSearch searchParam, RequestPage page) {
         SmartResponse<Object> smartResp = opService.getDatas("select_study_student_list", searchParam, page.getStartNum(), page.getPageSize());
-        ModelAndView modelAndView = this.packListModelView(searchParam, smartResp);
-        return modelAndView;
+	    return this.packListModelView(searchParam, smartResp);
     }
 
     /**
      *
-     * @return
+     * @return  JSP页面对象
      */
     @RequestMapping(value = "/add")
     public ModelAndView add() {
@@ -64,11 +63,11 @@ public class StudyStudentController extends BaseController {
         return modelView;
     }
 
-    /**
-     * 提交新增
-     *
-     * @return
-     */
+	/**
+	 *
+	 * @param studyStudent  学生信息
+	 * @return              保存结果
+	 */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
     public SmartResponse<String> save(TGStudyStudent studyStudent) {
@@ -85,16 +84,21 @@ public class StudyStudentController extends BaseController {
 
         studyStudent.setAge(this.getAge(studyStudent.getBirthday()));
 
-        SmartResponse<String> smartResp = studentService.save(studyStudent);
-        return smartResp;
+	    return studentService.save(studyStudent);
     }
 
-    private int getAge(String birthday) {
+	/**
+	 * 根据出生日期计算年龄
+	 * @param birthday  出生日期
+	 * @return          年龄
+	 */
+	private int getAge(String birthday) {
         Date birthDate = DateUtil.parseDate(birthday, "yyyy-MM-dd");
         Calendar cal = Calendar.getInstance();
         int curYear = cal.get(Calendar.YEAR);
 
-        cal.setTime(birthDate);
+		assert birthDate != null;
+		cal.setTime(birthDate);
         int birthYear = cal.get(Calendar.YEAR);//获取年份
 
         return curYear - birthYear;
@@ -116,8 +120,8 @@ public class StudyStudentController extends BaseController {
     /**
      * 提交编辑
      *
-     * @param studyStudent
-     * @return
+     * @param studyStudent  学生信息对象
+     * @return              修改结果
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
@@ -125,23 +129,19 @@ public class StudyStudentController extends BaseController {
         TGStudyStudent studyStudentDb = this.studentService.find(studyStudent.getId()).getData();
         studyStudent.setCreateTime(studyStudentDb.getCreateTime());
         studyStudent.setUpdateTime(new Date());
-        SmartResponse<String> smartResp = studentService.update(studyStudent);
-        return smartResp;
+	    return studentService.update(studyStudent);
     }
 
     @Autowired
     private StudyStudentCourseRelService studentCourseRelService;
-    @Autowired
-    private StudyCourseService courseService;
 
     /**
      * 简单列表
-     * @return
-     * @throws Exception
+     * @return              JSP页面对象
      */
     @RequestMapping("/simpList")
-    public ModelAndView simpList(HttpSession session, UserSearchParam searchParam,
-                                 ModelAndView modelView, RequestPage page) throws Exception {
+    public ModelAndView simpList(StudentSearch searchParam,
+                                 ModelAndView modelView, RequestPage page){
         String uri = this.getUriPath() + "simpList";
         SmartResponse<Object> smartResp = this.opService.getDatas("student_simp_list",searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, "#student-tab", page.getPage(), page.getPageSize());
@@ -160,11 +160,10 @@ public class StudyStudentController extends BaseController {
 
     /**
      *
-     * @return
-     * @throws Exception
+     * @return          JSP页面对象
      */
     @RequestMapping("/courseList")
-    public ModelAndView classList(StudentCourseRelSearch searchParam,ModelAndView modelView,RequestPage page) throws Exception {
+    public ModelAndView classList(StudentCourseRelSearch searchParam,ModelAndView modelView,RequestPage page) {
         String uri = this.getUriPath() + "courseList";
 	    if(StringUtils.isBlank(searchParam.getStatus())) {
 		    searchParam.setStatus(IConstant.STATUS_NORMAL);
@@ -205,9 +204,10 @@ public class StudyStudentController extends BaseController {
     @ResponseBody
     public SmartResponse<String> exitClass(String id, String studentId) {
 
-        SmartResponse<String> smartResp = new SmartResponse<String>();
+        SmartResponse<String> smartResp;
+	    smartResp = new SmartResponse<>();
 
-        // 从班级中退出
+	    // 从班级中退出
         Map<String, Object> params = new HashMap<>();
         params.put("courseId", id);
         params.put("studentId", studentId);
@@ -247,7 +247,7 @@ public class StudyStudentController extends BaseController {
 
     /**
      *
-     * @return
+     * @return  JSP页面对象
      */
     @RequestMapping(value = "/reportCourse")
     public ModelAndView reportCourse(String studentId) {
@@ -267,23 +267,23 @@ public class StudyStudentController extends BaseController {
 
 	/**
 	 *
-	 * @param modelView
-	 * @param id
-	 * @return
-	 * @throws Exception
+	 * @param modelView     JSP页面对象
+	 * @param id            课时记录序号
+	 * @return              JSP页面对象
 	 */
 	@RequestMapping("/courseRecHas")
-	public ModelAndView courseRecHas(ModelAndView modelView,String id) throws Exception {
+	public ModelAndView courseRecHas(ModelAndView modelView,String id) {
 		if(StringUtils.isNotBlank(id)) {
 			SmartResponse<Object> smartResp = this.opService.find(TGStudyCourseRecord.class, id);
 			ModelMap modelMap = modelView.getModelMap();
 			modelMap.put("courseRecordId", id);
 			if(smartResp.getResult().equals(OP_SUCCESS)) {
 				TGStudyCourseRecord courseRecord = (TGStudyCourseRecord) smartResp.getData();
-				String name = (null != courseRecord)?courseRecord.getCourseName():null;
-				modelMap.put("name", name);
-				if(IConstant.STATUS_COURSE_END.equals(courseRecord.getStatus())) {
-					modelMap.put("studentSignStatistics", concatSignStatistics(courseRecord));
+				if(null != courseRecord) {
+					modelMap.put("name", courseRecord.getCourseName());
+					if(IConstant.STATUS_COURSE_END.equals(courseRecord.getStatus())) {
+						modelMap.put("studentSignStatistics", concatSignStatistics(courseRecord));
+					}
 				}
 			}
 		}
@@ -292,22 +292,19 @@ public class StudyStudentController extends BaseController {
 	}
 
 	private String concatSignStatistics(TGStudyCourseRecord courseRecord) {
-		StringBuilder builder = new StringBuilder();
-		builder.append("应到").append(courseRecord.getStudentQuantityPlan());
-		builder.append("/实到").append(courseRecord.getStudentQuantityActual());
-		builder.append("/事假").append(courseRecord.getStudentPersonalLeave());
-		builder.append("/旷课").append(courseRecord.getStudentPlayTruant());
-		builder.append("/其他缺席").append(courseRecord.getStudentOtherAbsent());
-		return builder.toString();
+		return "应到" + courseRecord.getStudentQuantityPlan() +
+				"/实到" + courseRecord.getStudentQuantityActual() +
+				"/事假" + courseRecord.getStudentPersonalLeave() +
+				"/旷课" + courseRecord.getStudentPlayTruant() +
+				"/其他缺席" + courseRecord.getStudentOtherAbsent();
 	}
 
     /**
      * 该课时拥有的学生列表信息
-     * @return
-     * @throws Exception
+     * @return          JSP页面对象
      */
     @RequestMapping("/studentList")
-    public ModelAndView studentList(StudentCourseRelSearch searchParam, ModelAndView modelView, RequestPage page) throws Exception {
+    public ModelAndView studentList(StudentCourseRelSearch searchParam, ModelAndView modelView, RequestPage page) {
         String uri = this.getUriPath() + "studentList";
         SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_student_list", searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
@@ -344,7 +341,7 @@ public class StudyStudentController extends BaseController {
 
     /**
      *
-     * @return
+     * @return  JSP页面对象
      */
     @RequestMapping(value = "/allSign")
     public ModelAndView allSign(String courseRecordId) {
@@ -365,8 +362,8 @@ public class StudyStudentController extends BaseController {
     /**
      *
      * 全部签到
-     * @param courseRecordId
-     * @return
+     * @param courseRecordId    课时记录序号
+     * @return                  签到结果
      */
     @RequestMapping(value = "/subAllSign", method = RequestMethod.POST)
     @ResponseBody
@@ -411,6 +408,7 @@ public class StudyStudentController extends BaseController {
 
                 // TODO
                 // 学生课时小于3时,进行系统提醒
+
             }
         }
 
@@ -432,21 +430,138 @@ public class StudyStudentController extends BaseController {
 
     /**
      *
-     * @return
+     * @return  JSP页面对象
      */
     @RequestMapping(value = "/studentSign")
-    public ModelAndView studentSign(String id) {
+    public ModelAndView studentSign(String id, String courseRecordId) {
         ModelAndView modelView = new ModelAndView();
-        System.out.println(id);
-
+	    modelView.getModelMap().put("student", this.studentService.find(id).getData());
+	    modelView.getModelMap().put("courseRecord", this.courseRecordService.find(courseRecordId).getData());
         modelView.setViewName(this.getPageDir() + "studentSign");
         return modelView;
     }
 
     @RequestMapping(value = "/subSign", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> subSign(String courseRecordId, String id) {
+    public SmartResponse<String> subSign(String courseRecordId, String id, String status, String description) {
+	    SmartResponse<String> smartResponse = new SmartResponse<>();
 
-        return null;
+	    CourseStudentStatusEnum statusEnum = CourseStudentStatusEnum.valueOf(status);
+	    if(CourseStudentStatusEnum.NORMAL == statusEnum) {
+		    smartResponse.setMsg("请求无效!");
+		    return smartResponse;
+	    }
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("courseRecordId", courseRecordId);
+		params.put("studentId", id);
+		TGStudyCourseStudentRecord courseStudentRecord = this.courseStudentRecordService.findByParam(params).getData();
+
+		if(null == courseStudentRecord) {
+			smartResponse.setMsg("学生课时数据不存在!");
+			return smartResponse;
+		}
+		if(StringUtils.equals(courseStudentRecord.getStatus(), IConstant.STATUS_NORMAL)) {
+			// 进行签到操作
+			if(!this.checkCourseStudentRecordCanSign(courseStudentRecord)) {
+				smartResponse.setMsg("课时目前无法进行签到操作,请稍后再试!");
+				return smartResponse;
+			}
+			// 更新学生课时的签到信息
+			courseStudentRecord.setStatus(statusEnum.name());
+			courseStudentRecord.setDescription(description);
+			courseStudentRecord.setUpdateTime(new Date());
+			final SmartResponse<String> updateSmartResponse = this.courseStudentRecordService.update(courseStudentRecord);
+			if(!updateSmartResponse.isSuccess()) {
+				smartResponse.setMsg("学生课时更新失败!");
+				return smartResponse;
+			}
+
+			// 学生课时-1
+			TGStudyStudent student = this.studentService.find(courseStudentRecord.getStudentId()).getData();
+			student.setRemainCourse(student.getRemainCourse() - 1);
+			student.setUpdateTime(new Date());
+			if(CourseStudentStatusEnum.SIGNED.equals(statusEnum)) {
+				student.setCourseSeriesUnSigned(0);
+			} else {
+				// 非正常签到,生成异常签到记录
+				student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
+			}
+			this.studentService.update(student);
+			if(student.getCourseSeriesUnSigned() >= 3) {
+				// 连续非签到,系统提示
+				// TODO
+			}
+			if(student.getRemainCourse() < 3) {
+				// 课时不足
+				// TODO 系统提示
+
+			}
+		}
+
+	    // 检查课时的学生列表是否已经全部签到
+	    this.updateCourseRecordToEndIfAllSigned(courseStudentRecord.getCourseRecId());
+
+	    smartResponse.setResult(IConstant.OP_SUCCESS);
+        return smartResponse;
     }
+
+	/**
+	 * 查看课时是否支持签到操作
+	 * @param courseStudentRecord   学生课时信息对象
+	 * @return                      可以执行签到时返回true,否则返回false
+	 */
+	private boolean checkCourseStudentRecordCanSign(TGStudyCourseStudentRecord courseStudentRecord) {
+    	TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseStudentRecord.getCourseRecId()).getData();
+    	return this.checkCourseCanSign(courseRecord);
+	}
+
+	/**
+	 * 检查课时的学生是否已经全部进行了签到操作
+	 * @param courseRecordId    课时记录序号
+	 */
+	private void updateCourseRecordToEndIfAllSigned(String courseRecordId) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("courseRecordId", courseRecordId);
+		params.put("status!", CourseStudentStatusEnum.CANCEL_AS_EXIT.name());
+		List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByParam(params).getDatas();
+		if(!CollectionUtils.isEmpty(courseStudentRecordList)) {
+			// 所有学生课时记录已处理
+			boolean isAllSigned = true;
+
+			int actual = 0;
+			int personalLeave = 0;
+			int playTruant = 0;
+			int otherAbsent = 0;
+
+			for(TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
+				if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.NORMAL.name())) {
+					isAllSigned = false;
+					break;
+				}
+				if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.SIGNED.name())) {
+					actual++;
+				} else if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.PERSONAL_LEAVE.name())) {
+					personalLeave++;
+				} else if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.PLAY_TRUANT.name())) {
+					playTruant++;
+				} else if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.OTHER_ABSENT.name())) {
+					otherAbsent++;
+				}
+			}
+
+			if(isAllSigned) {
+				TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseRecordId).getData();
+				courseRecord.setStudentQuantityPlan(courseStudentRecordList.size());
+				courseRecord.setStudentQuantityActual(actual);
+				courseRecord.setStudentPersonalLeave(personalLeave);
+				courseRecord.setStudentPlayTruant(playTruant);
+				courseRecord.setStudentOtherAbsent(otherAbsent);
+
+				courseRecord.setUpdateTime(new Date());
+				courseRecord.setStatus(IConstant.STATUS_COURSE_END);
+			}
+		}
+
+	}
 }

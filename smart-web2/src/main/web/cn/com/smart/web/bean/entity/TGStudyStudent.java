@@ -56,6 +56,8 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
 	private Date updateTime;
 
+	private int courseSeriesUnSigned;
+
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
@@ -191,4 +193,13 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
     public void setAge(int age) {
         this.age = age;
     }
+
+    @Column(name="course_series_un_signed", length = 3)
+	public int getCourseSeriesUnSigned() {
+		return courseSeriesUnSigned;
+	}
+
+	public void setCourseSeriesUnSigned(int courseSeriesUnSigned) {
+		this.courseSeriesUnSigned = courseSeriesUnSigned;
+	}
 }
