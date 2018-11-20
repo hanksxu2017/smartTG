@@ -2,6 +2,7 @@ package cn.com.smart.web.bean.entity;
 
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
+import cn.com.smart.constant.IConstant;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -21,7 +22,7 @@ public class TGStudySystemMessage extends BaseBeanImpl implements DateBean {
 
 	private int level;
 
-	private int isProcess = 0;
+	private String isProcess = IConstant.IS_PROCESS_NO;
 
 	private Date createTime;
 
@@ -67,11 +68,11 @@ public class TGStudySystemMessage extends BaseBeanImpl implements DateBean {
 	}
 
 	@Column(name="is_process",length=1)
-	public int getIsProcess() {
+	public String getIsProcess() {
 		return isProcess;
 	}
 
-	public void setIsProcess(int isProcess) {
+	public void setIsProcess(String isProcess) {
 		this.isProcess = isProcess;
 	}
 

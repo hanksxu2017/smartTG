@@ -103,4 +103,7 @@ public interface IConstant {
 	// 因退班而取消
 	String STATUS_COURSE_CANCEL_AS_EXIT = "CANCEL_AS_EXIT";
 
+	String IS_PROCESS_YES = "YES";
+	String IS_PROCESS_NO = "NO";
+
 }

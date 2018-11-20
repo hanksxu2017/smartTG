@@ -24,7 +24,8 @@
               var datas = output.datas;
               var a = '';
               for(var i=0;i<datas.length;i++) {
-                  a = "<a href='#' class='handle-task' data-title='处理系统消息' data-uri='studySystemMessage/process?id=" + datas[i].id + "'><span>" + datas[i].messageContent + "</span></a>";
+                  a = "<a href='javascript:void(0);' data-title='处理系统消息' data-uri='studySystemMessage/process?id=" + datas[i].id + "'><span>" + datas[i].messageContent +
+					  "</span>&nbsp;&nbsp;&nbsp;</a>";
 
                   contents +="<div class='row list-row'><div class='col-sm-10 list-col p-l-5 p-r-0'>" + a + "</div>"+
                   "<div class='col-sm-2 list-col p-l-5 p-r-5 text-right'>"+utils.handleShortTime(datas[i].createTime)+"</div>"+

@@ -39,6 +39,7 @@
               contents = "<div class='row'><div class='p-t-20 text-center'>没有待办任务</div></div>";
           }
           $("#my-todo-index .list-content").html(contents);
+
           contents = null;
           takeTaskListener();
           handleTaskListener();

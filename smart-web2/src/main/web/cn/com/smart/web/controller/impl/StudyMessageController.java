@@ -9,11 +9,15 @@ import cn.com.smart.web.bean.entity.TGStudyClassroom;
 import cn.com.smart.web.bean.entity.TGStudySchool;
 import cn.com.smart.web.bean.entity.TGStudySystemMessage;
 import cn.com.smart.web.bean.search.ClassroomSearch;
+import cn.com.smart.web.bean.search.SystemMessageSearch;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.OPService;
 import cn.com.smart.web.service.StudyClassroomService;
 import cn.com.smart.web.service.StudySchoolService;
 import cn.com.smart.web.service.StudySystemMessageService;
+import cn.com.smart.web.tag.bean.DelBtn;
+import cn.com.smart.web.tag.bean.EditBtn;
+import cn.com.smart.web.tag.bean.RefreshBtn;
 import org.apache.commons.lang.StringUtils;
 import org.snaker.engine.access.Page;
 import org.snaker.engine.access.QueryFilter;
@@ -55,17 +59,42 @@ public class StudyMessageController extends BaseController {
     public SmartResponse<TGStudySystemMessage> indexTodo(HttpServletRequest request, Page<WorkItem> page) {
 
         Map<String, Object> params = new HashMap<>();
-	    params.put("isProcess", 0);
+	    params.put("isProcess", IConstant.IS_PROCESS_NO);
         SmartResponse<TGStudySystemMessage> smartResp = this.systemMessageService.findByParam(params, " level desc");
 
         return smartResp;
+    }
+
+    /**
+     * @param searchParam
+     * @param page
+     * @return
+     */
+    @RequestMapping("/list")
+    public ModelAndView list(SystemMessageSearch searchParam, RequestPage page) {
+        SmartResponse<Object> smartResp = opService.getDatas("system_message_list", searchParam, page.getStartNum(), page.getPageSize());
+        ModelAndView modelView = new ModelAndView();
+        Map<String, Object> modelMap = modelView.getModelMap();
+        editBtn = new EditBtn("edit", this.getUriPath() + "edit", null, "修改", "800");
+//        delBtn = new DelBtn(this.getUriPath() + "delete", "确定要删除选中的通知吗？", this.getUriPath() + "list", null, null);
+        refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
+
+        modelMap.put("editBtn", editBtn);
+//        modelMap.put("delBtn", delBtn);
+        modelMap.put("pageParam", pageParam);
+        modelMap.put("refreshBtn", refreshBtn);
+        modelMap.put("smartResp", smartResp);
+        modelMap.put("searchParam", searchParam);
+
+        modelView.setViewName(this.getPageDir() + "list");
+        return modelView;
     }
 
 	/**
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/process")
+	@RequestMapping(value = "/edit")
 	public ModelAndView process(String id) {
 		ModelAndView modelView = new ModelAndView();
 
@@ -73,24 +102,35 @@ public class StudyMessageController extends BaseController {
 		systemMessage.setMessageType(SystemMessageEnum.valueOf(systemMessage.getMessageType()).getMessage());
 		modelView.getModelMap().put("systemMessage", systemMessage);
 
-		modelView.setViewName(getPageDir() + "process");
+		modelView.setViewName(getPageDir() + "edit");
 		return modelView;
 	}
-
 
 	/**
 	 * 提交修改
 	 *
 	 * @return
 	 */
-	@RequestMapping(value = "/subProcess", method = RequestMethod.POST)
+	@RequestMapping(value = "/update", method = RequestMethod.POST)
 	@ResponseBody
-	public SmartResponse<String> subProcess(TGStudySystemMessage systemMessage) {
-		systemMessage.setProcessTime(new Date());
-		systemMessage.setIsProcess(1);
-		SmartResponse<String> smartResp = systemMessageService.update(systemMessage);
+	public SmartResponse<String> update(TGStudySystemMessage systemMessage) {
+        SmartResponse<String> smartResp;
+                TGStudySystemMessage systemMessageDb = this.systemMessageService.find(systemMessage.getId()).getData();
+	    if(StringUtils.equals(systemMessage.getIsProcess(), IConstant.IS_PROCESS_YES)) {
+            systemMessageDb.setProcessDesc(systemMessage.getProcessDesc());
+            systemMessage.setProcessTime(new Date());
+            systemMessage.setIsProcess(IConstant.IS_PROCESS_YES);
+            smartResp = systemMessageService.update(systemMessageDb);
+        } else {
+            smartResp = new SmartResponse<>();
+            smartResp.setResult(IConstant.OP_SUCCESS);
+            smartResp.setMsg("暂不处理");
+        }
+
 		return smartResp;
 	}
+
+
 
 
 

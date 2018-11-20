@@ -62,39 +62,34 @@ SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
             FROM tg_study_course_record t
             ORDER BY t.create_time ASC;
 
+  SELECT t.id, t.name, t.level, t.remain_course, t.create_time, record.status
+            FROM tg_study_student t, tg_study_course_student_record record 
+            WHERE t.id = record.student_id
+            #and record.course_rec_id = :courseRecordId
+            #[and t.name like '%:studentName%']
+            ORDER BY t.remain_course
 
-SELECT t.id, t.course_date, t.course_time, t.course_name, t.teacher_name,
-            CASE t.status WHEN "NORMAL" THEN '正常'
-            ELSE '未定义' END
-            FROM tg_study_course_record t
-            #[where t.teacher_id =: teacherId]
-            ORDER BY t.course_date ASC
+
+            SELECT t.id, t.message_type, t.message_content, t.level, t.is_process,
+            t.create_time, t.process_time, t.process_desc
+            FROM tg_study_system_message t
+            ORDER BY t.level DESC, t.create_time DESC
 
 
-SELECT t.id, t.name,
-            CASE t.week_info WHEN "7" THEN '星期天'
-            ELSE CONCAT('星期', t.week_info) END,
-            t.course_time, t.classroom_name, t.teacher_name,
-            CASE rel.status WHEN "NORMAL" THEN '正常'
-            WHEN 'EXIT_COURSE' THEN '已退班'
+            SELECT t.id,
+            CASE t.message_type WHEN 'STUDENT_ABSENT_NOTE' THEN '连续缺课提醒'
+            WHEN 'STUDENT_REMAIN_COURSE_NOTE' THEN '续费提醒'
+            WHEN 'COURSE_UN_SIGNED_NOTE' THEN '课时未结课提醒'
             ELSE '未定义' END,
-            t.create_time, t.description
-            FROM tg_study_course t, tg_study_student_course_rel rel
-            WHERE rel.student_id ='U154234936651434629' 
-            AND rel.course_id = t.id
-            AND rel.status ='NORMAL'
-            #[and rel.student_name like '%:studentName%']
-            ORDER BY t.create_time ASC;
+            t.message_content,
+            CASE t.is_process WHEN 'NO' THEN '未处理'
+            WHEN 'YES' THEN '已处理'
+            ELSE '未定义',
+            t.create_time, t.process_time, t.process_desc
+            FROM tg_study_system_message t
+            ORDER BY t.level DESC, t.create_time DESC
 
 
-UPDATE tg_study_course_record rec SET rec.course_name = (SELECT c.name FROM tg_study_course c WHERE c.id = rec.course_id);
-
-
-SELECT * FROM tg_study_course WHERE id = 'U154234929855961102';
-
-
-
-SELECT * FROM tg_study_system_message;
 
 
 
