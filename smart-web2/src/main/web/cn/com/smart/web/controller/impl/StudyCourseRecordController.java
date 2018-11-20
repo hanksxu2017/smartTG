@@ -6,11 +6,9 @@ import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.CourseRecordSearch;
-import cn.com.smart.web.bean.search.CourseStudentRecordSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
-import cn.com.smart.web.filter.bean.UserSearchParam;
 import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.*;
 import org.apache.commons.collections.CollectionUtils;
@@ -286,7 +284,7 @@ public class StudyCourseRecordController extends BaseController {
         }
 
         TGStudyCourseStudentRecord record = new TGStudyCourseStudentRecord();
-        record.setCourseRecId(courseRecord.getId());
+        record.setCourseRecordId(courseRecord.getId());
         record.setStudentId(rel.getStudentId());
         record.setStudentName(rel.getStudentName());
         record.setCreateTime(new Date());

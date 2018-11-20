@@ -29,7 +29,7 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
 
 	private String id;
 
-	private String courseRecId;
+	private String courseRecordId;
 
 	private String courseId;
 
@@ -92,12 +92,12 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
     }
 
     @Column(name="course_rec_id", length=64)
-    public String getCourseRecId() {
-        return courseRecId;
+    public String getCourseRecordId() {
+        return courseRecordId;
     }
 
-    public void setCourseRecId(String courseRecId) {
-        this.courseRecId = courseRecId;
+    public void setCourseRecordId(String courseRecordId) {
+        this.courseRecordId = courseRecordId;
     }
 
     @Column(name="student_id", length=64)

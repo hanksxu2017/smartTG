@@ -171,10 +171,10 @@ function initCookieValue() {
     </div><!-- wrap -->
 	
 	<div class="footer clear">
-	   <div class="container text-center">
+<%--	   <div class="container text-center">
             <p>${project.copyright }</p>
 	        <p>${project.contactInfo }</p>
-	   </div>
+	   </div>--%>
 	</div>
 </body>
 </html>

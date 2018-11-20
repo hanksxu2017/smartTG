@@ -3,12 +3,10 @@ package cn.com.smart.web.controller.impl;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.constant.enumEntity.CourseStudentStatusEnum;
+import cn.com.smart.constant.enumEntity.SystemMessageEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
-import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
-import cn.com.smart.web.bean.entity.TGStudyStudent;
-import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
+import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.bean.search.StudentSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
@@ -435,15 +433,33 @@ public class StudyStudentController extends BaseController {
     @RequestMapping(value = "/studentSign")
     public ModelAndView studentSign(String id, String courseRecordId) {
         ModelAndView modelView = new ModelAndView();
-	    modelView.getModelMap().put("student", this.studentService.find(id).getData());
+	    modelView.getModelMap().put("studentIds", id);
 	    modelView.getModelMap().put("courseRecord", this.courseRecordService.find(courseRecordId).getData());
+
+	    String[] ids = id.split(",");
+	    if(null != ids && ids.length > 1) {
+	    	StringBuilder nameBuilder = new StringBuilder();
+	    	TGStudyStudent student = null;
+			for(int index = 0; index < ids.length; index++) {
+				student = this.studentService.find(ids[index]).getData();
+				if(null != student) {
+					nameBuilder.append(",").append(student.getName());
+				}
+			}
+			String names = nameBuilder.toString();
+			if(names.startsWith(",")) {
+				names = names.substring(1);
+			}
+		    modelView.getModelMap().put("studentNames", names);
+	    }
+
         modelView.setViewName(this.getPageDir() + "studentSign");
         return modelView;
     }
 
     @RequestMapping(value = "/subSign", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> subSign(String courseRecordId, String id, String status, String description) {
+    public SmartResponse<String> subSign(String courseRecordId, String studentId, String status, String description) {
 	    SmartResponse<String> smartResponse = new SmartResponse<>();
 
 	    CourseStudentStatusEnum statusEnum = CourseStudentStatusEnum.valueOf(status);
@@ -454,7 +470,7 @@ public class StudyStudentController extends BaseController {
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("courseRecordId", courseRecordId);
-		params.put("studentId", id);
+		params.put("studentId", studentId);
 		TGStudyCourseStudentRecord courseStudentRecord = this.courseStudentRecordService.findByParam(params).getData();
 
 		if(null == courseStudentRecord) {
@@ -490,17 +506,18 @@ public class StudyStudentController extends BaseController {
 			this.studentService.update(student);
 			if(student.getCourseSeriesUnSigned() >= 3) {
 				// 连续非签到,系统提示
-				// TODO
+				String content = "学生[" + student.getName() + "]已连续 " + student.getCourseSeriesUnSigned() + "次缺席!";
+				this.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content);
 			}
 			if(student.getRemainCourse() < 3) {
 				// 课时不足
-				// TODO 系统提示
-
+				String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
+				this.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
 			}
 		}
 
 	    // 检查课时的学生列表是否已经全部签到
-	    this.updateCourseRecordToEndIfAllSigned(courseStudentRecord.getCourseRecId());
+	    this.updateCourseRecordToEndIfAllSigned(courseStudentRecord.getCourseRecordId());
 
 	    smartResponse.setResult(IConstant.OP_SUCCESS);
         return smartResponse;
@@ -512,7 +529,7 @@ public class StudyStudentController extends BaseController {
 	 * @return                      可以执行签到时返回true,否则返回false
 	 */
 	private boolean checkCourseStudentRecordCanSign(TGStudyCourseStudentRecord courseStudentRecord) {
-    	TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseStudentRecord.getCourseRecId()).getData();
+    	TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseStudentRecord.getCourseRecordId()).getData();
     	return this.checkCourseCanSign(courseRecord);
 	}
 
@@ -562,6 +579,17 @@ public class StudyStudentController extends BaseController {
 				courseRecord.setStatus(IConstant.STATUS_COURSE_END);
 			}
 		}
+	}
 
+	@Autowired
+	private StudySystemMessageService systemMessageService;
+
+	private void broadSystemMessage(SystemMessageEnum systemMessageEnum, String content) {
+		TGStudySystemMessage systemMessage = new TGStudySystemMessage();
+		systemMessage.setMessageType(systemMessageEnum.name());
+		systemMessage.setMessageContent(content);
+		systemMessage.setLevel(systemMessageEnum.getLevel());
+		systemMessage.setCreateTime(new Date());
+		this.systemMessageService.save(systemMessage);
 	}
 }

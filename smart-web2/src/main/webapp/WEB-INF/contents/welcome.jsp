@@ -5,15 +5,16 @@
          <div class="col-sm-6 p-l-0 p-r-5">
             <div class="panel panel-default">
                <div class="panel-heading ui-state-default">
-               <div class="title left">我的待办</div>
-               <div class="right"><a class="cnoj-open-self" data-title="我的待办" href="process/todo">更多</a></div>
+               <div class="title left">系统消息</div>
+               <%--<div class="right"><a class="cnoj-open-self" data-title="系统消息" href="#">更多</a></div>--%>
                </div>
                <div class="panel-body default-page-body">
-				    <div id="my-todo" class="cnoj-load-url" data-uri="showPage/flow_process_indexTodo" ></div>
+				    <%--<div id="my-todo" class="cnoj-load-url" data-uri="showPage/flow_process_indexTodo" ></div>--%>
+                   <div id="my-todo" class="cnoj-load-url" data-uri="showPage/base_studySystemMessage_unProcessList" ></div>
 			   </div>
             </div><!-- panel -->
          </div>
-          <div class="col-sm-6 p-l-5 p-r-5">
+         <%-- <div class="col-sm-6 p-l-5 p-r-5">
              <div class="panel panel-default">
                <div class="panel-heading ui-state-default">
                <div class="title left">新闻通知</div>
@@ -25,10 +26,10 @@
 				    </div>
 			   </div>
             </div><!-- panel -->
-         </div>
+         </div>--%>
      </div>
      <div class="row m-l-0 m-r-0 m-t-8">
-         <div class="col-sm-6 p-l-0 p-r-5">
+        <%-- <div class="col-sm-6 p-l-0 p-r-5">
              <div class="panel panel-default m-b-0">
                <div class="panel-heading ui-state-default">
                <div class="title left">收文</div>
@@ -54,7 +55,7 @@
 				   
 			   </div>
             </div><!-- panel -->
-         </div>
+         </div>--%>
      </div>
 </div>
 <script type="text/javascript">
