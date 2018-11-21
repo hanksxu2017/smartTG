@@ -83,7 +83,7 @@
             where t.status = 'NORMAL'
             [and t.teacher_id =:teacherId]
             [and t.week_info =:weekInfo]
-            order by t.create_time asc
+            order by t.week_info,t.name
         </sql>
     </sqlUnit>
     <!-- 教师的课时信息 -->
@@ -218,12 +218,14 @@
     <sqlUnit name="courseRecord_simp_list">
         <sql>
             select t.id, concat(t.course_date, ' ', t.course_time), t.course_name,
-            CASE t.status WHEN "NORMAL" THEN '正常'
+            CASE t.status WHEN 'NORMAL' THEN '正常'
+            WHEN 'NORMAL_END' THEN '已结课'
             ELSE '未定义' END
             from tg_study_course_record t
             where 1=1
+            and YEARWEEK(DATE_FORMAT(t.course_date,'%Y-%m-%d')) = YEARWEEK(NOW())
             [and t.teacher_id =:teacherId]
-            order by t.course_date asc
+            order by t.course_date
         </sql>
     </sqlUnit>
     <!-- 每周课时关联的学生列表 -->

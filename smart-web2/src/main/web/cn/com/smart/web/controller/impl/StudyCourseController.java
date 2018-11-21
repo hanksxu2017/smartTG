@@ -15,6 +15,7 @@ import cn.com.smart.web.service.StudyCourseRecordService;
 import cn.com.smart.web.service.StudyCourseService;
 import cn.com.smart.web.service.StudyTeacherService;
 import cn.com.smart.web.tag.bean.CustomBtn;
+import cn.com.smart.web.tag.bean.PageParam;
 import cn.com.smart.web.tag.bean.RefreshBtn;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
@@ -65,6 +66,7 @@ public class StudyCourseController extends BaseController {
 //        editBtn = new EditBtn("edit", this.getUriPath() + "edit", null, "修改", "800");
 //        delBtn = new DelBtn(this.getUriPath() + "delete", "确定要删除选中的信息吗？", this.subDir + "list", null, null);
         refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
+        pageParam = new PageParam(this.getUriPath() + "list", null, page.getPage(), page.getPageSize());
 
 //        modelMap.put("addBtn", addBtn);
 //        modelMap.put("editBtn", editBtn);
