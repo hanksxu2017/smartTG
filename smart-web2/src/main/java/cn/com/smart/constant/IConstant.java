@@ -95,7 +95,7 @@ public interface IConstant {
 	String STATUS_TEMP_LEAVE = "TEMP_LEAVE";
 	// 删除
 	String STATUS_DELETE = "DELETE";
-	// 已退班
+	// 退班
 	String STATUS_EXIT_COURSE = "EXIT_COURSE";
 
 	// 课时结课结束

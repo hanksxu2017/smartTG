@@ -47,7 +47,33 @@ public class StudyStudentController extends BaseController {
     @RequestMapping("/list")
     public ModelAndView list(StudentSearch searchParam, RequestPage page) {
         SmartResponse<Object> smartResp = opService.getDatas("select_study_student_list", searchParam, page.getStartNum(), page.getPageSize());
-	    return this.packListModelView(searchParam, smartResp);
+
+
+	    ModelAndView modelView = new ModelAndView();
+	    Map<String, Object> modelMap = modelView.getModelMap();
+	    addBtn = new EditBtn("add", this.getUriPath() + "add", null, "新增", "800");
+	    editBtn = new EditBtn("edit", this.getUriPath() + "edit", null, "修改", "800");
+	    delBtn = new DelBtn(this.getUriPath() + "delete", "确定对该学员进行退学操作吗？", this.getUriPath() + "list", null, null);
+	    delBtn.setName("退学");
+	    refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
+
+	    CustomBtn customBtnReport = new CustomBtn("increaseRemainCourse", "课时续费", "课时续费",
+			    this.getUriPath() + "increaseRemainCourse?studentId=" + searchParam.getId(),"glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
+	    customBtnReport.setWidth("600");
+	    customBtns = new ArrayList<>(1);
+	    customBtns.add(customBtnReport);
+	    modelMap.put("customBtns", customBtns);
+
+	    modelMap.put("addBtn", addBtn);
+	    modelMap.put("editBtn", editBtn);
+	    modelMap.put("delBtn", delBtn);
+	    modelMap.put("pageParam", pageParam);
+	    modelMap.put("refreshBtn", refreshBtn);
+	    modelMap.put("smartResp", smartResp);
+	    modelMap.put("searchParam", searchParam);
+
+	    modelView.setViewName(this.getPageDir() + "list");
+	    return modelView;
     }
 
     /**
@@ -84,6 +110,45 @@ public class StudyStudentController extends BaseController {
 
 	    return studentService.save(studyStudent);
     }
+
+
+	@RequestMapping(value = "/delete", method = RequestMethod.POST)
+	@ResponseBody
+	public SmartResponse<String> delete(String id) {
+
+		TGStudyStudent studyStudentDb = this.studentService.find(id).getData();
+		studyStudentDb.setStatus(IConstant.STATUS_DROP_OUT);
+		studyStudentDb.setUpdateTime(new Date());
+		SmartResponse<String> smartResponse = studentService.update(studyStudentDb);
+		if(!smartResponse.isSuccess()) {
+			return smartResponse;
+		}
+
+		// 取消课时关联
+		Map<String, Object> params = new HashMap<>();
+		params.put("studentId", id);
+		params.put("status", IConstant.STATUS_NORMAL);
+		List<TGStudyStudentCourseRel> courseRelList = this.studentCourseRelService.findByParam(params).getDatas();
+		if(CollectionUtils.isNotEmpty(courseRelList)) {
+			for(TGStudyStudentCourseRel courseRel : courseRelList) {
+				courseRel.setStatus(IConstant.STATUS_DROP_OUT);
+				courseRel.setUpdateTime(new Date());
+			}
+			this.studentCourseRelService.update(courseRelList);
+		}
+
+		// 取消课时记录
+		List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByParam(params).getDatas();
+		if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
+			for(TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
+				courseStudentRecord.setStatus(IConstant.STATUS_COURSE_CANCEL_AS_EXIT);
+				courseStudentRecord.setUpdateTime(new Date());
+			}
+			this.studentCourseRelService.update(courseRelList);
+		}
+
+		return smartResponse;
+	}
 
 	/**
 	 * 根据出生日期计算年龄
@@ -239,6 +304,42 @@ public class StudyStudentController extends BaseController {
         smartResp.setMsg("已完成退班!");
         return smartResp;
     }
+
+
+	/**
+	 *
+	 * @return  JSP页面对象
+	 */
+	@RequestMapping(value = "/increaseRemainCourse")
+	public ModelAndView increaseRemainCourse(String id) {
+		ModelAndView modelView = new ModelAndView();
+		modelView.setViewName(getPageDir() + "increaseRemainCourse");
+
+		modelView.getModelMap().put("student", this.studentService.find(id).getData());
+
+		return modelView;
+	}
+
+	/**
+	 * 提交编辑
+	 *
+	 * @param studentId     学生编号
+	 * @param courseCount   新增课时数量
+	 * @return              修改结果
+	 */
+	@RequestMapping(value = "/subIncreaseRemainCourse", method = RequestMethod.POST)
+	@ResponseBody
+	public SmartResponse<String> subIncreaseRemainCourse(String studentId, String courseCount) {
+		TGStudyStudent studyStudentDb = this.studentService.find(studentId).getData();
+		studyStudentDb.setCreateTime(studyStudentDb.getCreateTime());
+		studyStudentDb.setUpdateTime(new Date());
+		studyStudentDb.setRemainCourse(studyStudentDb.getRemainCourse() + Integer.valueOf(courseCount));
+		studyStudentDb.setTotalCourse(studyStudentDb.getTotalCourse() + Integer.valueOf(courseCount));
+
+		// TODO 增加续费日志记录
+		return studentService.update(studyStudentDb);
+	}
+
 
     @Autowired
     private StudyTeacherService teacherService;

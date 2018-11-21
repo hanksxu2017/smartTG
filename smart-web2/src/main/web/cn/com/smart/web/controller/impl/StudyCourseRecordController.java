@@ -276,7 +276,7 @@ public class StudyCourseRecordController extends BaseController {
     private TGStudyCourseStudentRecord initCourseStudentRecord(TGStudyCourseRecord courseRecord, TGStudyStudentCourseRel rel) {
 
         Map<String, Object> params = new HashMap<>();
-        params.put("courseRecId", courseRecord.getId());
+        params.put("courseRecordId", courseRecord.getId());
         params.put("studentId", rel.getStudentId());
         List<TGStudyCourseStudentRecord> courseStudentRecords = this.courseStudentRecordService.findByParam(params).getDatas();
         if(CollectionUtils.isNotEmpty(courseStudentRecords)) {
