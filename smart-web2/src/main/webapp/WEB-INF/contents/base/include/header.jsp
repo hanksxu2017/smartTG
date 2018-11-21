@@ -61,14 +61,15 @@
 	  <link rel="stylesheet" type="text/css" href="${pageContext.request.contextPath}/plugins/bootstrap/css/ie.css">
       <script type="text/javascript" src="${pageContext.request.contextPath}/plugins/bootstrap/js/bootstrap-ie.js"></script>
      <![endif]-->
+	<link rel="icon" type="image/x-icon" href="${pageContext.request.contextPath}/images/logo.png"/>
 </head>
   <body>
    <div class="header">
       <div class="navbar-brand p-l-10">
         <div class="p-t-2"><a href="index"><img class="logo-img" height="40" width="40" alt="logo" src="${pageContext.request.contextPath}/images/logo.png" /> ${project.name }</a>
-          <span class="header-version version">
+         <%-- <span class="header-version version">
           <a class="cnoj-open-blank" data-title="${version.version}更新信息" data-uri="version/view?id=${version.id}" data-width="600" href="javascript:void(0)">${version.version }</a>
-          </span>
+          </span>--%>
         </div>
       </div>
       <div class="navbar-left">

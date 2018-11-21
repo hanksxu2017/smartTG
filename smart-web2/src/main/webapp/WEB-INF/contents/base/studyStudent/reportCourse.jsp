@@ -80,7 +80,6 @@
     $(function () {
 
         $("#teacherId").change(function () {
-            var text = $(this).find("option:selected").text();
             $("#weekInfo").val('');
             $("#courseId").val('');
             $("#courseTime").val('');
