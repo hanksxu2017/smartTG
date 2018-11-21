@@ -5,9 +5,9 @@ DELETE FROM tg_study_student;
 DELETE FROM tg_study_teacher;
 
 DELETE FROM tg_study_course;
+DELETE FROM tg_study_course_record;
 DELETE FROM tg_study_student_course_rel;
-
-
+DELETE FROM tg_study_course_student_record;
 
 #
 SELECT t.id, t.student_name, t.class_name, t.teacher_name, t.status, t.create_time
@@ -120,7 +120,7 @@ SELECT temp.id, temp.name, temp.week_info, temp.status, (SELECT COUNT(rel.id) AS
 SELECT * FROM tg_study_student_course_rel WHERE course_id = 'U154260888617713400';
 
 
-SELECT * FROM tg_study_course_student_record WHERE student_id = 'U154234936651434629' AND course;
+SELECT * FROM tg_study_course_student_record WHERE student_id = 'U154234936651434629' AND course_record_id = 'U154268062407973255';
 
 
 

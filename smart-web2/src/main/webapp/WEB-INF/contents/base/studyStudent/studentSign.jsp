@@ -86,22 +86,3 @@
     </form>
 </div>
 <!-- wrap-content-dialog -->
-
-
-<script>
-    $(function () {
-
-    });
-
-    function getWeekInfoInCN(week) {
-        var weeks = new Array();
-        weeks[1] = "一";
-        weeks[2] = "二";
-        weeks[3] = "三";
-        weeks[4] = "四";
-        weeks[5] = "五";
-        weeks[6] = "六";
-        weeks[7] = "天";
-        return weeks[week];
-    }
-</script>

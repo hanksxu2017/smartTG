@@ -117,8 +117,8 @@
                     t.description
                 FROM tg_study_course t
                 WHERE t.teacher_id =:id
-                    [and t.name like '%:courseName%']) temp
-            ORDER BY temp.create_time ASC
+                    [and t.name like '%:courseName%']
+                ORDER BY t.week_info, t.name) temp
         </sql>
     </sqlUnit>
     <sqlUnit name="teacher_course_weeks">

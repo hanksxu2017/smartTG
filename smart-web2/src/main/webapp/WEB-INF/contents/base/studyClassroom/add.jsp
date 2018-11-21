@@ -4,9 +4,9 @@
    <form class="form-horizontal" role="form" id="form-add" action="studyClassroom/save">
        <input type="hidden" name="schoolName" id="schoolName">
 		    <div class="form-group m-b-10">
-			    <label for="input01" class="col-sm-2 control-label">校区</label>
+			    <label for="idSelForSchoolAdd" class="col-sm-2 control-label">校区</label>
 			    <div class="col-sm-9 p-l-0">
-                    <select name="schoolId" class="form-control require" id="input01">
+                    <select name="schoolId" class="form-control require" id="idSelForSchoolAdd">
 						<option value="">--请选择--</option>
                         <c:forEach items="${schools}" var="school">
                             <option value="${school.id}">${school.name}</option>
@@ -25,7 +25,7 @@
        <div class="form-group m-b-10">
            <label for="input03" class="col-sm-2 control-label">描述</label>
            <div class="col-sm-9 p-l-0">
-               <textarea class="form-control require" name="description" data-label-name="描述" rows="8" id="input03" cols="60" />
+               <textarea class="form-control require" name="description" data-label-name="描述" rows="8" id="input03" cols="60" ></textarea>
            </div>
        </div>
 
@@ -38,7 +38,7 @@
 
 <script>
     $(function () {
-        $("#input01").change(function () {
+        $("#idSelForSchoolAdd").change(function () {
             var text = $(this).find("option:selected").text()
             $("#schoolName").val(text);
         });

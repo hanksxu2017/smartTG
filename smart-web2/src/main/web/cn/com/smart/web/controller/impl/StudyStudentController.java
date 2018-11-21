@@ -587,7 +587,12 @@ public class StudyStudentController extends BaseController {
         Map<String, Object> params = new HashMap<>();
         params.put("courseRecordId", courseRecordId);
         params.put("studentId", studentId);
-	    TGStudyCourseStudentRecord courseStudentRecord = this.courseStudentRecordService.findByParam(params).getData();
+        SmartResponse<TGStudyCourseStudentRecord> recordSmartResponse = this.courseStudentRecordService.findByParam(params);
+        if(!recordSmartResponse.isSuccess()) {
+			smartResponse.setMsg(recordSmartResponse.getMsg());
+			return smartResponse;
+        }
+	    TGStudyCourseStudentRecord courseStudentRecord = recordSmartResponse.getDatas().get(0);
 
         if(null == courseStudentRecord) {
             smartResponse.setMsg("学生课时数据不存在!");

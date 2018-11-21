@@ -120,9 +120,12 @@ public class StudyStudentCourseRelController extends BaseController {
             Map<String, Object> params = new HashMap<>();
             params.put("courseDate", courseDateStr);
             params.put("courseId", studentCourseRel.getCourseId());
-            TGStudyCourseRecord courseRecord = this.courseRecordService.findByParam(params).getData();
-            if(null != courseRecord) {
-                this.courseStudentRecordService.save(this.initCourseStudentRecord(courseRecord, studentCourseRel.getStudentId()));
+            SmartResponse<TGStudyCourseRecord> smartResponse = this.courseRecordService.findByParam(params);
+            if(smartResponse.isSuccess()) {
+	            TGStudyCourseRecord courseRecord = smartResponse.getDatas().get(0);
+	            if(null != courseRecord) {
+		            this.courseStudentRecordService.save(this.initCourseStudentRecord(courseRecord, studentCourseRel.getStudentId()));
+	            }
             }
         }
     }

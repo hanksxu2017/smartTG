@@ -285,6 +285,7 @@ public class StudyCourseRecordController extends BaseController {
 
         TGStudyCourseStudentRecord record = new TGStudyCourseStudentRecord();
         record.setCourseRecordId(courseRecord.getId());
+        record.setCourseId(courseRecord.getCourseId());
         record.setStudentId(rel.getStudentId());
         record.setStudentName(rel.getStudentName());
         record.setCreateTime(new Date());

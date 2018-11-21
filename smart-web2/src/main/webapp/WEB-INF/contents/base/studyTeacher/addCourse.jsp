@@ -13,16 +13,16 @@
        <input type="hidden" name="classroomName" id="classroomName">
 
        <div class="form-group m-b-10">
-           <label for="input01" class="col-sm-2 control-label">名称</label>
+           <label for="nameForTechAddCourse" class="col-sm-2 control-label">名称</label>
            <div class="col-sm-9 p-l-0">
-               <input type="text" class="form-control require" name="name" data-label-name="名称" id="input01" />
+               <input type="text" class="form-control require" name="name" data-label-name="名称" id="nameForTechAddCourse" />
            </div>
        </div>
 
        <div class="form-group m-b-10">
-           <label for="weekInfo" class="col-sm-2 control-label">星期</label>
+           <label for="weekInfoForTechAddCourse" class="col-sm-2 control-label">星期</label>
            <div class="col-sm-9 p-l-0">
-               <select name="weekInfo" class="form-control require" id="weekInfo">
+               <select name="weekInfo" class="form-control require" id="weekInfoForTechAddCourse">
                    <option value="">--请选择--</option>
                    <option value="1" >星期一</option>
                    <option value="2" >星期二</option>
@@ -36,21 +36,23 @@
        </div>
 
        <div class="form-group m-b-10">
-           <label for="courseTime" class="col-sm-2 control-label">授课时间</label>
+           <label for="courseTimeForTechAddCourse" class="col-sm-2 control-label">授课时间</label>
            <div class="col-sm-9 p-l-0">
-               <select name="courseTime" class="form-control require" id="courseTime">
+               <select name="courseTime" class="form-control require" id="courseTimeForTechAddCourse">
                    <option value="">--请选择--</option>
-                   <option value="8:00-10:30" >8:00-10:30</option>
-                   <option value="13:00-15:30" >13:00-15:30</option>
-                   <option value="18:00-20:30" >18:00-20:30</option>
+                   <option value="7:30-9:00" >7:30-9:00</option>
+                   <option value="9:00-10:30" >9:00-10:30</option>
+                   <option value="13:30-15:00" >13:30-15:00</option>
+                   <option value="15:30-17:00" >15:30-17:00</option>
+                   <option value="18:30-20:00" >18:30-20:00</option>
                </select>
            </div>
        </div>
 
        <div class="form-group m-b-10">
-           <label for="schoolId" class="col-sm-2 control-label">校区</label>
+           <label for="schoolIdForTechAddCourse" class="col-sm-2 control-label">校区</label>
            <div class="col-sm-9 p-l-0">
-               <select name="schoolId" class="form-control require" id="schoolId">
+               <select name="schoolId" class="form-control require" id="schoolIdForTechAddCourse">
                    <option value="">--请选择--</option>
                    <c:forEach items="${schools}" var="school">
                        <option value="${school.id}" >${school.name}</option>
@@ -60,18 +62,18 @@
        </div>
 
        <div class="form-group m-b-10">
-           <label for="classroomId" class="col-sm-2 control-label">教室</label>
+           <label for="classroomIdForTechAddCourse" class="col-sm-2 control-label">教室</label>
            <div class="col-sm-9 p-l-0">
-               <select name="classroomId" class="form-control require" id="classroomId">
+               <select name="classroomId" class="form-control require" id="classroomIdForTechAddCourse">
                    <option value="">--请选择--</option>
                </select>
            </div>
        </div>
 
        <div class="form-group m-b-10">
-           <label for="description" class="col-sm-2 control-label">描述</label>
+           <label for="descriptionForTechAddCourse" class="col-sm-2 control-label">描述</label>
            <div class="col-sm-9 p-l-0">
-               <textarea class="form-control" name="description" data-label-name="描述" rows="8" id="description" cols="60"></textarea>
+               <textarea class="form-control" name="description" data-label-name="描述" rows="8" id="descriptionForTechAddCourse" cols="60"></textarea>
            </div>
        </div>
 
@@ -92,12 +94,12 @@
 
 <script>
     $(function () {
-        $("#schoolId").change(function () {
+        $("#schoolIdForTechAddCourse").change(function () {
             var text = $(this).find("option:selected").text();
             $("#schoolName").val(text);
             var value = $(this).find("option:selected").val();
             if(null == value || '' == value) {
-                $("#classroomId").val('');
+                $("#classroomIdForTechAddCourse").val('');
             } else {
                 var url = "${ctx}/studyClassroom/queryBySchool?schoolId=" + value;
                 $.ajax({
@@ -110,21 +112,21 @@
             }
         });
 
-        $("#classroomId").change(function () {
+        $("#classroomIdForTechAddCourse").change(function () {
             $("#classroomName").val($(this).find("option:selected").text());
         });
 
     });
 
     function initClassroomSelect(data) {
-        $("#classroomId").empty();
+        $("#classroomIdForTechAddCourse").empty();
         if(null != data && "1" === data.result && data.totalNum > 0) {
-            $("#classroomId").append("<option value=''>--请选择--</option>");
+            $("#classroomIdForTechAddCourse").append("<option value=''>--请选择--</option>");
             $.each(data.datas, function(index, classroom) {
-                $("#classroomId").append("<option value='" + classroom.id + "'>" + classroom.name + "</option>");
+                $("#classroomIdForTechAddCourse").append("<option value='" + classroom.id + "'>" + classroom.name + "</option>");
             });
         } else {
-            $("#classroomId").append("<option value=''>--无教室信息--</option>");
+            $("#classroomIdForTechAddCourse").append("<option value=''>--无教室信息--</option>");
         }
     }
 

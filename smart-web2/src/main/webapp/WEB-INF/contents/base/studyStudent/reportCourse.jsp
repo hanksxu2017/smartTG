@@ -11,9 +11,9 @@
         <input type="hidden" name="studentId" id="studentId" value="${studentId}"/>
 
         <div class="form-group m-b-10">
-            <label for="teacherId" class="col-sm-2 control-label">授课教师</label>
+            <label for="tIdSelForStuReportCourse" class="col-sm-2 control-label">授课教师</label>
             <div class="col-sm-9 p-l-0">
-                <select class="form-control require" id="teacherId">
+                <select class="form-control require" id="tIdSelForStuReportCourse">
                     <option value="">--请选择--</option>
                     <c:forEach items="${teachers}" var="teacher">
                         <option value="${teacher.id}" >${teacher.name}</option>
@@ -23,18 +23,18 @@
         </div>
 
         <div class="form-group m-b-10">
-            <label for="weekInfo" class="col-sm-2 control-label">星期</label>
+            <label for="weekSelForStuReportCourse" class="col-sm-2 control-label">星期</label>
             <div class="col-sm-9 p-l-0">
-                <select class="form-control require" id="weekInfo">
+                <select class="form-control require" id="weekSelForStuReportCourse">
                     <option value="">--请选择--</option>
                 </select>
             </div>
         </div>
 
         <div class="form-group m-b-10">
-            <label for="courseId" class="col-sm-2 control-label">班级</label>
+            <label for="courseSelForStuReportCourse" class="col-sm-2 control-label">班级</label>
             <div class="col-sm-9 p-l-0">
-                <select name="courseId" class="form-control require" id="courseId">
+                <select name="courseId" class="form-control require" id="courseSelForStuReportCourse">
                     <option value="">--请选择--</option>
                     <!-- 动态加载 -->
                 </select>
@@ -42,18 +42,18 @@
         </div>
 
         <div class="form-group m-b-10">
-            <label for="classroom" class="col-sm-2 control-label">教室</label>
+            <label for="classroomForStuReportCourse" class="col-sm-2 control-label">教室</label>
             <div class="col-sm-9 p-l-0">
                 <input type="text" class="form-control input-readonly" data-label-name="教室"
-                       id="classroom" readonly/>
+                       id="classroomForStuReportCourse" readonly/>
             </div>
         </div>
 
         <div class="form-group m-b-10">
-            <label for="courseTime" class="col-sm-2 control-label">上课时间</label>
+            <label for="courseTimeForStuReportCourse" class="col-sm-2 control-label">上课时间</label>
             <div class="col-sm-9 p-l-0">
                 <input type="text" class="form-control input-readonly" data-label-name="上课时间"
-                       id="courseTime" readonly/>
+                       id="courseTimeForStuReportCourse" readonly/>
             </div>
         </div>
 
@@ -79,13 +79,13 @@
 <script>
     $(function () {
 
-        $("#teacherId").change(function () {
-            $("#weekInfo").val('');
-            $("#courseId").val('');
-            $("#courseTime").val('');
-            $("#classroom").val('');
+        $("#tIdSelForStuReportCourse").change(function () {
+            $("#weekSelForStuReportCourse").val('');
+            $("#courseSelForStuReportCourse").val('');
+            $("#courseTimeForStuReportCourse").val('');
+            $("#classroomForStuReportCourse").val('');
 
-            var url = "${ctx}/studyCourse/queryWeeks?teacherId=" + $("#teacherId").val();
+            var url = "${ctx}/studyCourse/queryWeeks?teacherId=" + $("#tIdSelForStuReportCourse").val();
             $.ajax({
                 type: "GET",
                 url: url,
@@ -96,12 +96,12 @@
 
         });
 
-        $("#weekInfo").change(function () {
-            var weekInfo = $("#weekInfo").val();
-            if(null == weekInfo || '' == weekInfo) {
-                $("#courseId").val('');
+        $("#weekSelForStuReportCourse").change(function () {
+            var weekInfo = $("#weekSelForStuReportCourse").val();
+            if(null == weekInfo || '' === weekInfo) {
+                $("#courseSelForStuReportCourse").val('');
             } else {
-                var teacherId = $("#teacherId").val();
+                var teacherId = $("#tIdSelForStuReportCourse").val();
                 var url = "${ctx}/studyCourse/queryCourse?weekInfo=" + weekInfo + "&teacherId=" + teacherId;
                 // 查询教师在指定星期的班级信息
                 $.ajax({
@@ -114,11 +114,11 @@
             }
         });
 
-        $("#courseId").change(function () {
-            var courseId = $("#courseId").val();
+        $("#courseSelForStuReportCourse").change(function () {
+            var courseId = $("#courseSelForStuReportCourse").val();
             if(null == courseId || '' == courseId) {
-                $("#courseTime").val('');
-                $("#classroom").val('');
+                $("#courseTimeForStuReportCourse").val('');
+                $("#classroomForStuReportCourse").val('');
             } else {
                 var url = "${ctx}/studyCourse/queryCourse?courseId=" + courseId;
                 $.ajax({
@@ -127,8 +127,8 @@
                     success: function(data){
                         if(null != data && "1" === data.result && data.totalNum > 0) {
                             $.each(data.datas, function(idx, course) {
-                                $("#courseTime").val(course.courseTime);
-                                $("#classroom").val(course.classroomName);
+                                $("#courseTimeForStuReportCourse").val(course.courseTime);
+                                $("#classroomForStuReportCourse").val(course.classroomName);
                             });
                         }
                     }
@@ -138,32 +138,32 @@
     });
 
     function initCourseSelect(data) {
-        $("#courseId").empty();
+        $("#courseSelForStuReportCourse").empty();
         if(null != data && "1" === data.result && data.totalNum > 0) {
-            $("#courseId").append("<option value=''>--请选择--</option>");
+            $("#courseSelForStuReportCourse").append("<option value=''>--请选择--</option>");
             $.each(data.datas, function(idx, course) {
-                $("#courseId").append("<option value='" + course.id + "'>" + course.name + "</option>");
+                $("#courseSelForStuReportCourse").append("<option value='" + course.id + "'>" + course.name + "</option>");
             });
         } else {
-            $("#courseId").append("<option value=''>--无班级信息--</option>");
+            $("#courseSelForStuReportCourse").append("<option value=''>--无班级信息--</option>");
         }
     }
 
     function initWeekInfoSelect(data) {
-        $("#weekInfo").empty();
+        $("#weekSelForStuReportCourse").empty();
         if(null != data && "1" === data.result && data.totalNum > 0) {
-            $("#weekInfo").append("<option value=''>--请选择--</option>");
+            $("#weekSelForStuReportCourse").append("<option value=''>--请选择--</option>");
             $.each(data.datas, function(idx, week) {
-                $("#weekInfo").append("<option value='" + week + "'>星期" + getWeekInfoInCN(week) + "</option>");
+                $("#weekSelForStuReportCourse").append("<option value='" + week + "'>星期" + getWeekInfoInCN(week) + "</option>");
             });
         } else {
-            $("#weekInfo").append("<option value=''>--无星期信息--</option>");
+            $("#weekSelForStuReportCourse").append("<option value=''>--无星期信息--</option>");
         }
     }
 
 
     function getWeekInfoInCN(week) {
-        var weeks = new Array();
+        var weeks = [];
         weeks[1] = "一";
         weeks[2] = "二";
         weeks[3] = "三";
