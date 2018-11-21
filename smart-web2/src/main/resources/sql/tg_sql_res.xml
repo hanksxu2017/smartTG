@@ -84,14 +84,22 @@
     <sqlUnit name="teacher_course_list">
         <sql>
             select t.id, t.name,
-            CASE t.week_info WHEN "7" THEN '星期天'
-            ELSE CONCAT('星期', t.week_info) END,
+            CASE t.week_info WHEN '7' THEN '星期天'
+            WHEN '1' THEN '星期一'
+            WHEN '2' THEN '星期二'
+            WHEN '3' THEN '星期三'
+            WHEN '4' THEN '星期四'
+            WHEN '5' THEN '星期五'
+            WHEN '6' THEN '星期六'
+            ELSE '未设置' END,
             t.course_time, t.classroom_name,
             CASE t.status WHEN "NORMAL" THEN '正常'
             ELSE '未定义' END,
-            t.create_time, t.description
+            DATE_FORMAT(t.create_time, '%Y-%m-%e'),
+            t.description
             from tg_study_course t
             where t.teacher_id =:id
+            [and t.name like '%:courseName%']
             order by t.create_time asc
         </sql>
     </sqlUnit>
@@ -101,6 +109,21 @@
             from tg_study_course t
             where t.teacher_id =:teacherId
             order by t.create_time asc
+        </sql>
+    </sqlUnit>
+    <!-- 课时的学生列表 -->
+    <sqlUnit name="course_student_list">
+        <sql>
+            select t.id, t.name, t.level, t.remain_course, t.create_time,
+            CASE rel.status WHEN 'NORMAL' THEN '正常'
+            WHEN 'EXIT_COURSE' THEN '已退班'
+            ELSE '未定义' END
+            from tg_study_student t, tg_study_student_course_rel rel
+            where t.id = rel.student_id
+            and rel.course_id = :id
+            [and rel.status =:status]
+            [and t.name like '%:studentName%']
+            order by t.remain_course, rel.status
         </sql>
     </sqlUnit>
     <!-- 学生已选的课时信息 -->

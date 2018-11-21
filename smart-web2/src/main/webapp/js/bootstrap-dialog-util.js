@@ -38,7 +38,7 @@ BootstrapDialogUtil.loadUriDialog = function(title,uri,popWidth,bgColor,isFooter
 	    		 callback = null;
 		     }
 	    	 BootstrapDialog.show({
-	 			title:title,draggable: true,width:popWidth,backgroundColor:bgColor,
+                 title:title,draggable: true,width:popWidth,backgroundColor:bgColor,
 	 			message: function(dialog) {
 	 				var html = dialog.getModalFooter();
 	 				if(!isFooter)

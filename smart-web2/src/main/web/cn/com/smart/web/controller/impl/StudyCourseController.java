@@ -85,8 +85,11 @@ public class StudyCourseController extends BaseController {
 
         modelView.setViewName(this.getPageDir() + "list");
         return modelView;
-
     }
+
+
+
+
 
     @RequestMapping("/index")
     public ModelAndView index(ModelAndView modelView) {

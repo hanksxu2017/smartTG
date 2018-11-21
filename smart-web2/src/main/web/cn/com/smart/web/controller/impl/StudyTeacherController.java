@@ -1,11 +1,16 @@
 package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.constant.IConstant;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
+import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
 import cn.com.smart.web.bean.entity.TGStudyTeacher;
+import cn.com.smart.web.bean.search.StudentCourseRelSearch;
+import cn.com.smart.web.bean.search.TeacherCourseSearch;
 import cn.com.smart.web.bean.search.TeacherSearch;
+import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.filter.bean.UserSearchParam;
@@ -21,6 +26,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -132,7 +138,7 @@ public class StudyTeacherController extends BaseController {
      * @throws Exception
      */
     @RequestMapping("/courseList")
-    public ModelAndView classList(UserSearchParam searchParam,ModelAndView modelView,RequestPage page) throws Exception {
+    public ModelAndView classList(TeacherCourseSearch searchParam, ModelAndView modelView, RequestPage page) throws Exception {
         String uri = this.getUriPath() + "courseList";
         SmartResponse<Object> smartResp = this.opService.getDatas("teacher_course_list", searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
@@ -148,9 +154,53 @@ public class StudyTeacherController extends BaseController {
         modelMap.put("refreshBtn", refreshBtn);
         pageParam = null;
 
+	    CustomBtn customBtnStudentList = new CustomBtn("studentList", "学生列表",
+			    "学生列表", this.getUriPath() + "studentList","glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
+	    customBtnStudentList.setWidth("600");
+	    customBtnStudentList.setModalBodyId("course-student-list-dialog");
+
+	    customBtns = new ArrayList<>(1);
+	    customBtns.add(customBtnStudentList);
+	    modelMap.put("customBtns", customBtns);
+
+
         modelView.setViewName(this.getPageDir() + "courseList");
         return modelView;
     }
+
+	/**
+	 *  页面显示: 课时所包含的学生信息
+	 * @param searchParam   查询参数
+	 * @return  JSP页面对象
+	 */
+	@RequestMapping(value = "/studentList")
+	public ModelAndView studentList(StudentCourseRelSearch searchParam, ModelAndView modelView, RequestPage page) {
+		String uri = this.getUriPath() + "studentList";
+		String nextStatus = searchParam.getStatus();
+		if(StringUtils.isBlank(searchParam.getStatus())) {
+			searchParam.setStatus(IConstant.STATUS_NORMAL);
+			nextStatus = IConstant.STATUS_NORMAL;
+		} else if(StringUtils.equals("ALL", searchParam.getStatus())) {
+			searchParam.setStatus(null);
+			nextStatus = "ALL";
+		}
+		SmartResponse<Object> smartResp = this.opService.getDatas("course_student_list", searchParam, page.getStartNum(), page.getPageSize());
+		pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
+		uri = uri + "?id=" + searchParam.getId();
+		refreshBtn = new RefreshBtn(uri, null,"#course-student-list-dialog");
+
+		ModelMap modelMap = modelView.getModelMap();
+		modelMap.put("smartResp", smartResp);
+		modelMap.put("pageParam", pageParam);
+
+		searchParam.setStatus(nextStatus);
+		modelMap.put("searchParam", searchParam);
+		modelMap.put("refreshBtn", refreshBtn);
+
+
+		modelView.setViewName(this.getPageDir() + "studentList");
+		return modelView;
+	}
 
     @Autowired
     private StudySchoolService schoolService;

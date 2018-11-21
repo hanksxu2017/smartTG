@@ -21,6 +21,8 @@ public class CustomBtn extends BaseBtn {
 	protected String paramName = "id";
 	
 	protected BtnPropType.OpenStyle openStyle = BtnPropType.OpenStyle.OPEN_POP;
+
+	protected String modalBodyId;
 	
 	/**
 	 * 点击按钮时，先执行的js方法名称
@@ -140,4 +142,11 @@ public class CustomBtn extends BaseBtn {
 		this.beforeCheck = beforeCheck;
 	}
 
+	public String getModalBodyId() {
+		return modalBodyId;
+	}
+
+	public void setModalBodyId(String modalBodyId) {
+		this.modalBodyId = modalBodyId;
+	}
 }

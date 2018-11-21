@@ -3354,6 +3354,7 @@ function openProp(obj,op,flag) {
 	var paramName = $obj.data("param-name");
 	var selectedType = $obj.data("selected-type");
 	var beforeCheck = $obj.data("before-check");
+	var modalBodyId = $obj.data("modal-body-id");
 	selectedType = utils.isEmpty(selectedType)?'none-selected':selectedType;
 	var width = $obj.data("width");
 	if(utils.isEmpty(width) || !utils.regexNum(width)) {

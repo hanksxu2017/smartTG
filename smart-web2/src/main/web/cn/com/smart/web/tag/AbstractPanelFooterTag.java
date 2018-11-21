@@ -5,9 +5,6 @@ import java.util.List;
 
 import javax.servlet.jsp.JspWriter;
 
-import com.mixsmart.utils.CollectionUtils;
-import com.mixsmart.utils.StringUtils;
-
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.web.bean.UserInfo;
 import cn.com.smart.web.constant.enums.BtnPropType;
@@ -20,6 +17,8 @@ import cn.com.smart.web.tag.bean.DelBtn;
 import cn.com.smart.web.tag.bean.EditBtn;
 import cn.com.smart.web.tag.bean.PageParam;
 import cn.com.smart.web.tag.bean.RefreshBtn;
+import com.mixsmart.utils.StringUtils;
+import org.apache.commons.collections.CollectionUtils;
 
 /**
  * 面板底部分页或按钮栏
@@ -79,7 +78,7 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
     			count++;
     			List<String> btnList = new ArrayList<String>();
     			btnStyleFlag = "${btnListStyle}";
-    			htmlContent.append("<div class='btn-list' "+StringUtils.handleNull(btnStyleFlag)+"><div class='btn-group cnoj-op-btn-list'>");
+    			htmlContent.append("<div class='btn-list' "+ StringUtils.handleNull(btnStyleFlag)+"><div class='btn-group cnoj-op-btn-list'>");
     			String btnHtml = null;
     			String authUrl = null;
     			if(null != addBtn && (!addBtn.getIsAuth() || authServ.isAuth(currentUri, addBtn, userInfo.getRoleIds()))) {
@@ -128,9 +127,17 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
 	    							icon = "<i class='glyphicon "+StringUtils.handleNull(customBtn.getBtnIcon())+"'></i>";
 	    						}
 	    					}
+
 	    					btnHtml = "<button type='button' id='"+customBtn.getId()+"' class='btn "+StringUtils.handleNull(customBtn.getBtnStyle())+" "+customBtn.getOpenStyle().getValue()+" param' data-selected-type='"+StringUtils.handleNull(customBtn.getSelectedType())+"' "
 	    					        + "data-uri='"+authUrl+"' data-title='"+StringUtils.handleNull(customBtn.getTitle())+"' data-value='' data-param-name='"+StringUtils.handleNull(customBtn.getParamName())+"' data-width='"+StringUtils.handleNull(customBtn.getWidth())+
-	    					           "' data-before-check='"+StringUtils.handleNull(customBtn.getBeforeCheck())+"'>"+icon+" "+StringUtils.handleNull(customBtn.getName())+"</button>";
+	    					           "' data-before-check='"+StringUtils.handleNull(customBtn.getBeforeCheck()) + "'";
+
+	    					if(StringUtils.isNotEmpty(customBtn.getModalBodyId())) {
+							    btnHtml += " data-modal-body-id='" + customBtn.getModalBodyId();
+						    }
+
+						    btnHtml += "'>"+icon+" "+StringUtils.handleNull(customBtn.getName())+"</button>";
+
 	    					addBtnHtmlToList(btnList, customBtn, btnHtml);
     					}
     				}// for
