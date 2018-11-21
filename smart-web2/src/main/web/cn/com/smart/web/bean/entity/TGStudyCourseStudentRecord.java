@@ -91,7 +91,7 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
         this.description = description;
     }
 
-    @Column(name="course_rec_id", length=64)
+    @Column(name="course_record_id", length=64)
     public String getCourseRecordId() {
         return courseRecordId;
     }

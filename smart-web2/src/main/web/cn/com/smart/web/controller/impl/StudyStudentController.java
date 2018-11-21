@@ -539,10 +539,8 @@ public class StudyStudentController extends BaseController {
 	    modelView.getModelMap().put("courseRecord", this.courseRecordService.find(courseRecordId).getData());
 
 	    String[] ids = id.split(",");
-	    if(ids.length > 1) {
 	    	StringBuilder nameBuilder = new StringBuilder();
 	    	TGStudyStudent student;
-//            for (int i = 0; i < ids.length; i++) {
                 for(String studentId : ids) {
                 student = this.studentService.find(studentId).getData();
                 if (null != student) {
@@ -554,7 +552,6 @@ public class StudyStudentController extends BaseController {
 				names = names.substring(1);
 			}
 		    modelView.getModelMap().put("studentName", names);
-	    }
 
         modelView.setViewName(this.getPageDir() + "studentSign");
         return modelView;
@@ -590,7 +587,7 @@ public class StudyStudentController extends BaseController {
         Map<String, Object> params = new HashMap<>();
         params.put("courseRecordId", courseRecordId);
         params.put("studentId", studentId);
-        TGStudyCourseStudentRecord courseStudentRecord = this.courseStudentRecordService.findByParam(params).getData();
+	    TGStudyCourseStudentRecord courseStudentRecord = this.courseStudentRecordService.findByParam(params).getData();
 
         if(null == courseStudentRecord) {
             smartResponse.setMsg("学生课时数据不存在!");

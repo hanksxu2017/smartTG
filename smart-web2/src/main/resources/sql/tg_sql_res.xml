@@ -210,7 +210,7 @@
             ELSE '未定义' END ,
             sr.description, sr.update_time
             from tg_study_course_record t, tg_study_course_student_record sr
-            where t.id = sr.course_rec_id
+            where t.id = sr.course_record_id
             order by t.create_time asc
         </sql>
     </sqlUnit>
@@ -233,7 +233,7 @@
             record.status
             from tg_study_student t, tg_study_course_student_record record
             where t.id = record.student_id
-            and record.course_rec_id = :courseRecordId
+            and record.course_record_id = :courseRecordId
             [and t.name like '%:studentName%']
             order by t.remain_course
         </sql>

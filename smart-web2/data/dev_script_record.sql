@@ -3,6 +3,7 @@ DELETE FROM tg_study_classroom;
 DELETE FROM tg_study_school;
 DELETE FROM tg_study_student;
 DELETE FROM tg_study_teacher;
+
 DELETE FROM tg_study_course;
 DELETE FROM tg_study_student_course_rel;
 
@@ -97,7 +98,7 @@ SELECT * FROM tg_study_course WHERE id = 'U154234929855961102';
 SELECT * FROM tg_study_system_message;
 
 
-SELECT temp.id, temp.name, temp.week_info, temp.status, (SELECT COUNT(rel.id) AS studentCount FROM tg_study_student_course_rel rel) , temp.create_time, temp.description FROM (
+SELECT temp.id, temp.name, temp.week_info, temp.status, (SELECT COUNT(rel.id) AS studentCount FROM tg_study_student_course_rel rel WHERE rel.course_id = temp.id AND rel.status = 'NORMAL') , temp.create_time, temp.description FROM (
             SELECT t.id, t.name,
             CASE t.week_info WHEN '7' THEN '星期天'
             WHEN '1' THEN '星期一'
@@ -119,7 +120,7 @@ SELECT temp.id, temp.name, temp.week_info, temp.status, (SELECT COUNT(rel.id) AS
 SELECT * FROM tg_study_student_course_rel WHERE course_id = 'U154260888617713400';
 
 
-
+SELECT * FROM tg_study_course_student_record WHERE student_id = 'U154234936651434629' AND course;
 
 
 
