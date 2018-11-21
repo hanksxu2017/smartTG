@@ -1,0 +1,141 @@
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%
+    String path = request.getContextPath();
+    String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+%>
+<c:set var="ctx" value="${basePath}"/>
+<script type="text/javascript" src="${pageContext.request.contextPath}/js/class-config.js"></script>
+<div class="wrap-content-dialog">
+   <form class="form-horizontal" role="form" id="teacher-course-edit" action="studyCourse/subEditCourse" target=".bootstrap-dialog-message">
+       <input type="hidden" name="teacherId" id="teacherId" value="${course.teacherId}">
+       <input type="hidden" name="schoolName" id="schoolName">
+       <input type="hidden" name="classroomName" id="classroomName">
+
+	   <div class="form-group m-b-10">
+		   <label for="teacherNameForEditCourse" class="col-sm-2 control-label">教师</label>
+		   <div class="col-sm-9 p-l-0">
+			   <input type="text" class="form-control input-readonly" data-label-name="教师"
+			          id="teacherNameForEditCourse" value="${course.teacherName}" readonly/>
+		   </div>
+	   </div>
+
+       <div class="form-group m-b-10">
+           <label for="nameForTechEditCourse" class="col-sm-2 control-label">名称</label>
+           <div class="col-sm-9 p-l-0">
+               <input type="text" class="form-control require" name="name" data-label-name="名称" id="nameForTechEditCourse" value="${course.name}"/>
+           </div>
+       </div>
+
+       <div class="form-group m-b-10">
+           <label for="weekInfoForTechAddCourse" class="col-sm-2 control-label">星期</label>
+           <div class="col-sm-9 p-l-0">
+               <select name="weekInfo" class="form-control require" id="weekInfoForTechAddCourse">
+                   <option value="">--请选择--</option>
+                   <option value="1"  <c:if test="${course.weekInfo eq '1'}">selected</c:if> >星期一</option>
+                   <option value="2"  <c:if test="${course.weekInfo eq '2'}">selected</c:if> >星期二</option>
+                   <option value="3"  <c:if test="${course.weekInfo eq '3'}">selected</c:if> >星期三</option>
+                   <option value="4"  <c:if test="${course.weekInfo eq '4'}">selected</c:if> >星期四</option>
+                   <option value="5"  <c:if test="${course.weekInfo eq '5'}">selected</c:if> >星期五</option>
+                   <option value="6"  <c:if test="${course.weekInfo eq '6'}">selected</c:if> >星期六</option>
+                   <option value="7"  <c:if test="${course.weekInfo eq '7'}">selected</c:if> >星期天</option>
+               </select>
+           </div>
+       </div>
+
+       <div class="form-group m-b-10">
+           <label for="courseTimeForTechEditCourse" class="col-sm-2 control-label">授课时间</label>
+           <div class="col-sm-9 p-l-0">
+               <select name="courseTime" class="form-control require" id="courseTimeForTechEditCourse">
+                   <option value="">--请选择--</option>
+                   <option value="7:30-9:00" <c:if test="${course.courseTime eq '7:30-9:00'}">selected</c:if> >7:30-9:00</option>
+                   <option value="9:00-10:30" <c:if test="${course.courseTime eq '9:00-10:30'}">selected</c:if> >9:00-10:30</option>
+                   <option value="13:30-15:00" <c:if test="${course.courseTime eq '13:30-15:00'}">selected</c:if> >13:30-15:00</option>
+                   <option value="15:30-17:00" <c:if test="${course.courseTime eq '15:30-17:00'}">selected</c:if> >15:30-17:00</option>
+                   <option value="18:30-20:00" <c:if test="${course.courseTime eq '18:30-20:00'}">selected</c:if> >18:30-20:00</option>
+               </select>
+           </div>
+       </div>
+
+       <div class="form-group m-b-10">
+           <label for="schoolIdForTechEditCourse" class="col-sm-2 control-label">校区</label>
+           <div class="col-sm-9 p-l-0">
+               <select name="schoolId" class="form-control require" id="schoolIdForTechEditCourse">
+                   <option value="">--请选择--</option>
+                   <c:forEach items="${schools}" var="school">
+                       <option value="${school.id}"  <c:if test="${course.schoolId eq school.id}">selected</c:if> >${school.name}</option>
+                   </c:forEach>
+               </select>
+           </div>
+       </div>
+
+       <div class="form-group m-b-10">
+           <label for="classroomIdForTechEditCourse" class="col-sm-2 control-label">教室</label>
+           <div class="col-sm-9 p-l-0">
+               <select name="classroomId" class="form-control require" id="classroomIdForTechEditCourse">
+                   <option value="">--请选择--</option>
+               </select>
+           </div>
+       </div>
+
+       <div class="form-group m-b-10">
+           <label for="descriptionForTechEditCourse" class="col-sm-2 control-label">描述</label>
+           <div class="col-sm-9 p-l-0">
+               <textarea class="form-control" name="description" data-label-name="描述" rows="8" id="descriptionForTechEditCourse" cols="60">${course.description}</textarea>
+           </div>
+       </div>
+
+
+       <div class="text-center">
+           <button type="button"
+                   class="btn btn-sm btn-success cnoj-class-config-submit"
+                   data-uri="studyCourse/subEditCourse"
+                   data-config-id="${course.teacherId}"
+                   data-form-id="teacher-course-edit"
+                   data-alert-msg="请正确填写！"
+                   data-refresh-uri="studyTeacher/courseList?id=${course.teacherId}"
+                   data-refresh-target="#teacher-course-tab" > &nbsp;
+               <i class="glyphicon glyphicon-ok-sign"></i> 确定 &nbsp;</button>
+       </div>
+	</form>
+</div><!-- wrap-content-dialog -->
+
+<script>
+    $(function () {
+        $("#schoolIdForTechEditCourse").change(function () {
+            var text = $(this).find("option:selected").text();
+            $("#schoolName").val(text);
+            var value = $(this).find("option:selected").val();
+            if(null == value || '' == value) {
+                $("#classroomIdForTechEditCourse").val('');
+            } else {
+                var url = "${ctx}/studyClassroom/queryBySchool?schoolId=" + value;
+                $.ajax({
+                    type: "GET",
+                    url: url,
+                    success: function(data){
+                        initClassroomSelect(data);
+                    }
+                });
+            }
+        });
+
+        $("#classroomIdForTechEditCourse").change(function () {
+            $("#classroomName").val($(this).find("option:selected").text());
+        });
+
+    });
+
+    function initClassroomSelect(data) {
+        $("#classroomIdForTechEditCourse").empty();
+        if(null != data && "1" === data.result && data.totalNum > 0) {
+            $("#classroomIdForTechEditCourse").append("<option value=''>--请选择--</option>");
+            $.each(data.datas, function(index, classroom) {
+                $("#classroomIdForTechEditCourse").append("<option value='" + classroom.id + "'>" + classroom.name + "</option>");
+            });
+        } else {
+            $("#classroomIdForTechEditCourse").append("<option value=''>--无教室信息--</option>");
+        }
+    }
+
+</script>

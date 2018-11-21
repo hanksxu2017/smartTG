@@ -156,6 +156,32 @@ public class StudyCourseController extends BaseController {
         return this.opService.getDatas("teacher_course_weeks", params);
     }
 
+	/**
+	 * 提交编辑
+	 *
+	 * @param course
+	 * @return
+	 */
+	@RequestMapping(value = "/subEditCourse", method = RequestMethod.POST)
+	@ResponseBody
+	public SmartResponse<String> subEditCourse(TGStudyCourse course) {
+		SmartResponse<String> smartResp = new SmartResponse<>();
+		String checkRes = this.checkCourseConflict(course);
+		if(StringUtils.isNotBlank(checkRes)) {
+			smartResp.setMsg(checkRes);
+			return smartResp;
+		}
+
+		course.setUpdateTime(new Date());
+
+		smartResp = this.courseService.update(course);
+		// 老师课时增加成功后,进行本周内的时安排
+		generateCurWeekCourseRecIfNecessary(course);
+
+		return smartResp;
+
+	}
+
     /**
      *
      * @param course        课时对象

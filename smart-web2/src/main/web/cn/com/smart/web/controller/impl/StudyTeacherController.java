@@ -144,6 +144,8 @@ public class StudyTeacherController extends BaseController {
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
         uri = uri + "?id=" + searchParam.getId();
         addBtn = new EditBtn("add",this.getUriPath() + "addCourse?teacherId=" + searchParam.getId(), "教师增设课时", "800");
+	    editBtn = new EditBtn("edit",this.getUriPath() + "editCourse", "班级修改", "800");
+		editBtn.setSelectedType(BtnPropType.SelectType.ONE.getValue());
         refreshBtn = new RefreshBtn(uri, null,"#teacher-course-tab");
 
         ModelMap modelMap = modelView.getModelMap();
@@ -159,7 +161,7 @@ public class StudyTeacherController extends BaseController {
 	    customBtnStudentList.setWidth("600");
 	    customBtnStudentList.setModalBodyId("course-student-list-dialog");
 
-	    customBtns = new ArrayList<>(1);
+	    customBtns = new ArrayList<>(2);
 	    customBtns.add(customBtnStudentList);
 	    modelMap.put("customBtns", customBtns);
 
@@ -167,6 +169,24 @@ public class StudyTeacherController extends BaseController {
         modelView.setViewName(this.getPageDir() + "courseList");
         return modelView;
     }
+
+    @Autowired
+    private StudyCourseService courseService;
+
+	@RequestMapping(value = "/editCourse")
+	public ModelAndView editCourse(String id) {
+		ModelAndView modelView = new ModelAndView();
+		if(StringUtils.isNotEmpty(id)) {
+			TGStudyCourse course = this.courseService.find(id).getData();
+			if(null != course) {
+				modelView.getModelMap().put("course", course);
+			}
+		}
+
+		modelView.getModelMap().put("schools", schoolService.findNormal().getDatas());
+		modelView.setViewName(getPageDir() + "editCourse");
+		return modelView;
+	}
 
 	/**
 	 *  页面显示: 课时所包含的学生信息
