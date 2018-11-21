@@ -99,7 +99,8 @@ public class StudyMessageController extends BaseController {
 		ModelAndView modelView = new ModelAndView();
 
 		TGStudySystemMessage systemMessage = this.systemMessageService.find(id).getData();
-		systemMessage.setMessageType(SystemMessageEnum.valueOf(systemMessage.getMessageType()).getMessage());
+		SystemMessageEnum systemMessageEnum = SystemMessageEnum.valueOf(systemMessage.getMessageType());
+		systemMessage.setMessageType(systemMessageEnum.getMessage());
 		modelView.getModelMap().put("systemMessage", systemMessage);
 
 		modelView.setViewName(getPageDir() + "edit");
@@ -118,8 +119,8 @@ public class StudyMessageController extends BaseController {
                 TGStudySystemMessage systemMessageDb = this.systemMessageService.find(systemMessage.getId()).getData();
 	    if(StringUtils.equals(systemMessage.getIsProcess(), IConstant.IS_PROCESS_YES)) {
             systemMessageDb.setProcessDesc(systemMessage.getProcessDesc());
-            systemMessage.setProcessTime(new Date());
-            systemMessage.setIsProcess(IConstant.IS_PROCESS_YES);
+		    systemMessageDb.setProcessTime(new Date());
+		    systemMessageDb.setIsProcess(IConstant.IS_PROCESS_YES);
             smartResp = systemMessageService.update(systemMessageDb);
         } else {
             smartResp = new SmartResponse<>();

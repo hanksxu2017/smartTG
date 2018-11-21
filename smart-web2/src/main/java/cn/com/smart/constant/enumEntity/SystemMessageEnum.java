@@ -19,7 +19,7 @@ public enum SystemMessageEnum implements IEnum {
 
 	@Override
 	public String getMessage() {
-		return null;
+		return message;
 	}
 
 	public int getLevel() {
