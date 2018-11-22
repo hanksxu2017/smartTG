@@ -46,9 +46,12 @@ public class StudyStudentController extends BaseController {
      */
     @RequestMapping("/list")
     public ModelAndView list(StudentSearch searchParam, RequestPage page) {
-        SmartResponse<Object> smartResp = opService.getDatas("select_study_student_list", searchParam, page.getStartNum(), page.getPageSize());
-
-
+    	if(StringUtils.isBlank(searchParam.getStatus())) {
+    		searchParam.setStatus(IConstant.STATUS_NORMAL);
+	    }else if(StringUtils.equals(searchParam.getStatus(), "ALL")) {
+		    searchParam.setStatus("");
+	    }
+        SmartResponse<Object> smartResp = opService.getDatas("student_list", searchParam, page.getStartNum(), page.getPageSize());
 	    ModelAndView modelView = new ModelAndView();
 	    Map<String, Object> modelMap = modelView.getModelMap();
 	    addBtn = new EditBtn("add", this.getUriPath() + "add", null, "新增", "800");
@@ -58,10 +61,16 @@ public class StudyStudentController extends BaseController {
 	    refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
 
 	    CustomBtn customBtnReport = new CustomBtn("increaseRemainCourse", "课时续费", "课时续费",
-			    this.getUriPath() + "increaseRemainCourse?studentId=" + searchParam.getId(),"glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
+			    this.getUriPath() + "increaseRemainCourse?studentId=" + searchParam.getId(),"glyphicon-plus", BtnPropType.SelectType.ONE.getValue());
 	    customBtnReport.setWidth("600");
-	    customBtns = new ArrayList<>(1);
+
+	    CustomBtn customBtnTempLeave = new CustomBtn("tempLeave", "休学", "休学",
+			    this.getUriPath() + "tempLeave?studentId=" + searchParam.getId(),"glyphicon-pause", BtnPropType.SelectType.ONE.getValue());
+	    customBtnTempLeave.setWidth("600");
+
+	    customBtns = new ArrayList<>(2);
 	    customBtns.add(customBtnReport);
+	    customBtns.add(customBtnTempLeave);
 	    modelMap.put("customBtns", customBtns);
 
 	    modelMap.put("addBtn", addBtn);
@@ -341,6 +350,59 @@ public class StudyStudentController extends BaseController {
 	}
 
 
+
+	/**
+	 *
+	 * @return  JSP页面对象
+	 */
+	@RequestMapping(value = "/tempLeave")
+	public ModelAndView tempLeave(String id) {
+		ModelAndView modelView = new ModelAndView();
+		modelView.setViewName(getPageDir() + "tempLeave");
+
+		modelView.getModelMap().put("student", this.studentService.find(id).getData());
+
+		return modelView;
+	}
+
+
+	/**
+	 * 提交休学更改
+	 *
+	 * @param studentId     学生编号
+	 * @param status        状态
+	 * @return              修改结果
+	 */
+	@RequestMapping(value = "/subTempLeave", method = RequestMethod.POST)
+	@ResponseBody
+	public SmartResponse<String> subTempLeave(String studentId, String status) {
+		SmartResponse<String> smartResponse = new SmartResponse<>();
+		TGStudyStudent studyStudentDb = this.studentService.find(studentId).getData();
+		if(!StringUtils.equals(status, studyStudentDb.getStatus())) {
+			if(StringUtils.equals(status, IConstant.STATUS_TEMP_LEAVE)) {
+				// 休学
+				studyStudentDb.setStatus(IConstant.STATUS_TEMP_LEAVE);
+				studyStudentDb.setUpdateTime(new Date());
+				studentService.update(studyStudentDb);
+				// 删除所有班级信息
+				Map<String, Object> params = new HashMap<>();
+				params.put("status", IConstant.STATUS_NORMAL);
+				params.put("studentId", studentId);
+				this.studentCourseRelService.deleteByField(params);
+				// 删除所有未结课的课时信息
+				this.courseStudentRecordService.deleteByField(params);
+			} else if(StringUtils.equals(status, IConstant.STATUS_BACK_STUDY)) {
+				studyStudentDb.setStatus(IConstant.STATUS_NORMAL);
+				studyStudentDb.setUpdateTime(new Date());
+				studentService.update(studyStudentDb);
+			}
+		}
+
+		smartResponse.setResult(IConstant.OP_SUCCESS);
+		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
+		return smartResponse;
+	}
+
     @Autowired
     private StudyTeacherService teacherService;
 
@@ -481,7 +543,7 @@ public class StudyStudentController extends BaseController {
 
         Date updateDate = new Date();
         Map<String, Object> params = new HashMap<>();
-        params.put("courseRecId", courseRecordId);
+        params.put("courseRecordId", courseRecordId);
         params.put("status", IConstant.STATUS_NORMAL);
         List<TGStudyCourseStudentRecord> courseStudentRecordList =
                 this.courseStudentRecordService.findByParam(params).getDatas();

@@ -41,16 +41,19 @@
     </sqlUnit>
 
     <!-- 学生 -->
-    <sqlUnit name="select_study_student_list">
+    <sqlUnit name="student_list">
         <sql>
-            select t.id, t.name, if(t.sex = 1, "男生", "女生"), t.birthday, t.school_name, t.parent_name, t.parent_phone,
+            select t.id, t.name, if(t.sex = 1, "男生", "女生"), t.birthday, t.school_name, t.parent_phone,
             t.level,
-            CASE t.status WHEN "NORMAL" THEN '正常'
-            WHEN "DROP_OUT" THEN '退学'
-            WHEN "TEMP_LEAVE" THEN "休学"
+            CASE t.status WHEN 'NORMAL' THEN '正常'
+            WHEN 'DROP_OUT' THEN '退学'
+            WHEN 'TEMP_LEAVE' THEN "休学"
             ELSE '未定义' END ,
             t.remain_course, t.create_time
             from tg_study_student t
+            where 1=1
+            [and t.name like '%:name%']
+            [and t.status =:status]
             order by t.create_time asc
         </sql>
     </sqlUnit>
@@ -232,7 +235,9 @@
     <sqlUnit name="courseRecord_student_list">
         <sql>
             select t.id, t.name, t.level, t.remain_course, t.create_time,
-            record.status
+            CASE record.status WHEN 'NORMAL' THEN '正常'
+            WHEN 'NORMAL_END' THEN '已结课'
+            ELSE '未定义' END
             from tg_study_student t, tg_study_course_student_record record
             where t.id = record.student_id
             and record.course_record_id = :courseRecordId

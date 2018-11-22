@@ -89,12 +89,18 @@ public interface IConstant {
 	 *	对象状态
 	 */
 	String STATUS_NORMAL = "NORMAL";
+
+	/* ----- 学生状态 -----*/
 	// 退学
 	String STATUS_DROP_OUT = "DROP_OUT";
 	// 休学
 	String STATUS_TEMP_LEAVE = "TEMP_LEAVE";
 	// 删除
 	String STATUS_DELETE = "DELETE";
+	// 返校
+	String STATUS_BACK_STUDY = "BACK_STUDY";
+
+
 	// 退班
 	String STATUS_EXIT_COURSE = "EXIT_COURSE";
 

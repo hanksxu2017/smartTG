@@ -38,7 +38,7 @@
             </div>
         </div>
 
-        <div class="form-group m-b-10">
+<%--        <div class="form-group m-b-10">
             <label for="parentName" class="col-sm-2 control-label">家长</label>
             <div class="col-sm-3 p-l-0">
                 <select class="form-control" name="parentType" id="parentType">
@@ -50,12 +50,12 @@
             <div class="col-sm-5 p-l-0">
                 <input type="text" class="form-control require" name="parentName" data-label-name="家长" id="parentName"/>
             </div>
-        </div>
+        </div>--%>
 
         <div class="form-group m-b-10">
-            <label for="parentPhone" class="col-sm-2 control-label">家长号码</label>
+            <label for="parentPhone" class="col-sm-2 control-label">联系方式</label>
             <div class="col-sm-9 p-l-0">
-                <input type="text" class="form-control require" name="parentPhone" data-label-name="家长号码"
+                <input type="text" class="form-control require" name="parentPhone" data-label-name="联系方式"
                        id="parentPhone"/>
             </div>
         </div>

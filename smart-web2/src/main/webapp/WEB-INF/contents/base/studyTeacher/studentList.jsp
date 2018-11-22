@@ -18,6 +18,7 @@
 		            <select name="status" class="form-control" id="status">
 			            <option value="NORMAL" <c:if test="${searchParam.status eq 'NORMAL'}">selected</c:if> >在班</option>
 			            <option value="EXIT_COURSE" <c:if test="${searchParam.status eq 'EXIT_COURSE'}">selected</c:if> >已退班</option>
+			            <option value="DROP_OUT" <c:if test="${searchParam.status eq 'DROP_OUT'}">selected</c:if> >已退班</option>
 			            <option value="ALL" <c:if test="${searchParam.status eq 'ALL'}">selected</c:if> >全部</option>
 		            </select>
 	            </div>
