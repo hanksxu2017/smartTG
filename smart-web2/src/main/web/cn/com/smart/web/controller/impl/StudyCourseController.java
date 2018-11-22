@@ -160,7 +160,7 @@ public class StudyCourseController extends BaseController {
 
 	/**
 	 * 提交编辑
-	 *
+	 *  TODO 提交编辑时的检查冲突要排除对象本身
 	 * @param course
 	 * @return
 	 */
