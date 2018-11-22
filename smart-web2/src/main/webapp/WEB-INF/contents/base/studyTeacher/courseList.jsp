@@ -24,7 +24,7 @@
 					isCheckbox="1" isRowSelected="1"
 					page="${pageParam }"
 					currentUri="${currentUri }"
-		 addBtn="${addBtn }" refreshBtn="${refreshBtn }" customBtns="${customBtns}"
+		 addBtn="${addBtn }" editBtn="${editBtn}" refreshBtn="${refreshBtn }" customBtns="${customBtns}"
 		 />
 	</div>
 </div>

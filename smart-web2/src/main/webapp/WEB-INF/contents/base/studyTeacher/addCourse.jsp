@@ -8,29 +8,34 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/class-config.js"></script>
 <div class="wrap-content-dialog">
    <form class="form-horizontal" role="form" id="teacher-course-add" action="studyCourse/saveCourse" target=".bootstrap-dialog-message">
-       <input type="hidden" name="teacherId" id="teacherId" value="${teacherId}">
+       <input type="hidden" name="teacherId" id="teacherId" value="${teacher.id}">
+	   <input type="hidden" name="teacherName" id="teacherName" value="${teacher.name}">
        <input type="hidden" name="schoolName" id="schoolName">
        <input type="hidden" name="classroomName" id="classroomName">
+       <input type="hidden" name="courseTime" id="courseTime">
 
-       <div class="form-group m-b-10">
+<%--       <div class="form-group m-b-10">
            <label for="nameForTechAddCourse" class="col-sm-2 control-label">名称</label>
            <div class="col-sm-9 p-l-0">
                <input type="text" class="form-control require" name="name" data-label-name="名称" id="nameForTechAddCourse" />
            </div>
-       </div>
+       </div>--%>
+
+	   <div class="form-group m-b-10">
+		   <label for="teacherNameForTechAddCourse" class="col-sm-2 control-label">教师</label>
+		   <div class="col-sm-9 p-l-0">
+			   <input type="text" class="form-control input-readonly" data-label-name="教师" id="teacherNameForTechAddCourse" value="${teacher.name}" readonly/>
+		   </div>
+	   </div>
 
        <div class="form-group m-b-10">
            <label for="weekInfoForTechAddCourse" class="col-sm-2 control-label">星期</label>
            <div class="col-sm-9 p-l-0">
                <select name="weekInfo" class="form-control require" id="weekInfoForTechAddCourse">
                    <option value="">--请选择--</option>
-                   <option value="1" >星期一</option>
-                   <option value="2" >星期二</option>
-                   <option value="3" >星期三</option>
-                   <option value="4" >星期四</option>
-                   <option value="5" >星期五</option>
-                   <option value="6" >星期六</option>
-                   <option value="7" >星期天</option>
+	               <c:forEach items="${weekInfoList}" var="weekInfo">
+		               <option value="${weekInfo.busiValue}" >${weekInfo.busiName}</option>
+	               </c:forEach>
                </select>
            </div>
        </div>
@@ -38,13 +43,11 @@
        <div class="form-group m-b-10">
            <label for="courseTimeForTechAddCourse" class="col-sm-2 control-label">授课时间</label>
            <div class="col-sm-9 p-l-0">
-               <select name="courseTime" class="form-control require" id="courseTimeForTechAddCourse">
+               <select name="courseTimeIndex" class="form-control require" id="courseTimeForTechAddCourse">
                    <option value="">--请选择--</option>
-                   <option value="7:30-9:00" >7:30-9:00</option>
-                   <option value="9:00-10:30" >9:00-10:30</option>
-                   <option value="13:30-15:00" >13:30-15:00</option>
-                   <option value="15:30-17:00" >15:30-17:00</option>
-                   <option value="18:30-20:00" >18:30-20:00</option>
+                   <c:forEach items="${courseTimes}" var="courseTime">
+                       <option value="${courseTime.busiValue}" >${courseTime.busiName}</option>
+                   </c:forEach>
                </select>
            </div>
        </div>
@@ -114,6 +117,10 @@
 
         $("#classroomIdForTechAddCourse").change(function () {
             $("#classroomName").val($(this).find("option:selected").text());
+        });
+        
+        $("#courseTimeForTechAddCourse").change(function () {
+            $("#courseTime").val($(this).find("option:selected").text());
         });
 
     });

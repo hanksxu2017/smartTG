@@ -2,10 +2,8 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
-import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
 import cn.com.smart.web.bean.entity.TGStudyTeacher;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.bean.search.TeacherCourseSearch;
@@ -26,6 +24,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
+import javax.swing.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -38,7 +37,7 @@ public class StudyTeacherController extends BaseController {
     @Autowired
     private OPService opService;
     @Autowired
-    private StudyTeacherService studyTeacherService;
+    private StudyTeacherService teacherService;
 
     public StudyTeacherController() {
         super.setSubDir("/studyTeacher/");
@@ -75,7 +74,7 @@ public class StudyTeacherController extends BaseController {
     @ResponseBody
     public SmartResponse<String> save(TGStudyTeacher studyTeacher) {
         studyTeacher.setCreateTime(new Date());
-        SmartResponse<String> smartResp = studyTeacherService.save(studyTeacher);
+        SmartResponse<String> smartResp = teacherService.save(studyTeacher);
         return smartResp;
     }
 
@@ -83,7 +82,7 @@ public class StudyTeacherController extends BaseController {
     public ModelAndView update(String id) {
         ModelAndView modelView = new ModelAndView();
         if(StringUtils.isNotEmpty(id)) {
-            TGStudyTeacher studyTeacher = studyTeacherService.find(id).getData();
+            TGStudyTeacher studyTeacher = teacherService.find(id).getData();
             if(null != studyTeacher) {
                 modelView.getModelMap().put("objBean", studyTeacher);
             }
@@ -101,10 +100,10 @@ public class StudyTeacherController extends BaseController {
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
     public SmartResponse<String> update(TGStudyTeacher studyTeacher) {
-        TGStudyTeacher studyTeacherDb = this.studyTeacherService.find(studyTeacher.getId()).getData();
+        TGStudyTeacher studyTeacherDb = this.teacherService.find(studyTeacher.getId()).getData();
         studyTeacher.setCreateTime(studyTeacherDb.getCreateTime());
         studyTeacher.setUpdateTime(new Date());
-        SmartResponse<String> smartResp = studyTeacherService.update(studyTeacher);
+        SmartResponse<String> smartResp = teacherService.update(studyTeacher);
         return smartResp;
     }
 
@@ -153,6 +152,7 @@ public class StudyTeacherController extends BaseController {
         modelMap.put("pageParam", pageParam);
         modelMap.put("searchParam", searchParam);
         modelMap.put("addBtn", addBtn);
+        modelMap.put("editBtn", editBtn);
         modelMap.put("refreshBtn", refreshBtn);
         pageParam = null;
 
@@ -172,6 +172,8 @@ public class StudyTeacherController extends BaseController {
 
     @Autowired
     private StudyCourseService courseService;
+    @Autowired
+    private StudyClassroomService classroomService;
 
 	@RequestMapping(value = "/editCourse")
 	public ModelAndView editCourse(String id) {
@@ -180,10 +182,20 @@ public class StudyTeacherController extends BaseController {
 			TGStudyCourse course = this.courseService.find(id).getData();
 			if(null != course) {
 				modelView.getModelMap().put("course", course);
+
+				Map<String, Object> params = new HashMap<>();
+				params.put("schoolId", course.getSchoolId());
+				params.put("status", IConstant.STATUS_NORMAL);
+				modelView.getModelMap().put("classrooms", classroomService.findByParam(params).getDatas());
 			}
 		}
 
 		modelView.getModelMap().put("schools", schoolService.findNormal().getDatas());
+
+		modelView.getModelMap().put("courseTimes", dictService.getItems("COURSE_TIMES").getDatas());
+
+		modelView.getModelMap().put("weekInfoList", dictService.getItems("WEEK_INFO_LIST").getDatas());
+
 		modelView.setViewName(getPageDir() + "editCourse");
 		return modelView;
 	}
@@ -224,6 +236,8 @@ public class StudyTeacherController extends BaseController {
 
     @Autowired
     private StudySchoolService schoolService;
+	@Autowired
+	private DictService dictService;
 
     /**
      *
@@ -234,12 +248,17 @@ public class StudyTeacherController extends BaseController {
     public ModelAndView addClass(String teacherId, ModelAndView modelView) throws Exception {
 
         ModelMap modelMap = modelView.getModelMap();
-        // 携带教师id
-        modelMap.put("teacherId", teacherId);
+
+	    TGStudyTeacher teacher = this.teacherService.find(teacherId).getData();
+        modelMap.put("teacher", teacher);
 
         Map<String, Object> params = new HashMap<>();
         params.put("status", "NORMAL");
         modelView.getModelMap().put("schools", schoolService.findByParam(params).getDatas());
+
+	    modelView.getModelMap().put("courseTimes", dictService.getItems("COURSE_TIMES").getDatas());
+
+	    modelView.getModelMap().put("weekInfoList", dictService.getItems("WEEK_INFO_LIST").getDatas());
 
         modelView.setViewName(this.getPageDir() + "addCourse");
         return modelView;

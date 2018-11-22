@@ -175,6 +175,7 @@ public class StudyCourseController extends BaseController {
 		}
 
 		course.setUpdateTime(new Date());
+		course.setName(this.concatCourseName(course));
 
 		smartResp = this.courseService.update(course);
 		// 老师课时增加成功后,进行本周内的时安排
@@ -199,7 +200,9 @@ public class StudyCourseController extends BaseController {
         }
 
         course.setCreateTime(new Date());
-        this.packTeacherInfo(course);
+//        this.packTeacherInfo(course);
+
+        course.setName(this.concatCourseName(course));
 
         smartResp = this.courseService.save(course);
         // 老师课时增加成功后,进行本周内的时安排
@@ -214,20 +217,20 @@ public class StudyCourseController extends BaseController {
      * @return              课程存在冲突时返回提示信息,否则返回null
      */
     private String checkCourseConflict(TGStudyCourse course) {
-        String checkRes = this.checkTeacherCourse(course.getCourseTime(), course.getWeekInfo(), course.getTeacherId());
+        String checkRes = this.checkTeacherCourse(course.getCourseTimeIndex(), course.getWeekInfo(), course.getTeacherId());
         if(StringUtils.isNotBlank(checkRes)) {
             return checkRes;
         }
-        checkRes = this.checkClassroom(course.getCourseTime(), course.getWeekInfo(), course.getClassroomId());
+        checkRes = this.checkClassroom(course.getCourseTimeIndex(), course.getWeekInfo(), course.getClassroomId());
         if(StringUtils.isNotBlank(checkRes)) {
             return checkRes;
         }
         return "";
     }
 
-    private String checkTeacherCourse(String courseTime, short weekInfo, String teacherId) {
+    private String checkTeacherCourse(short courseTimeIndex, short weekInfo, String teacherId) {
         Map<String, Object> params = new HashMap<>();
-        params.put("courseTime", courseTime);
+        params.put("courseTimeIndex", courseTimeIndex);
         params.put("weekInfo", weekInfo);
         params.put("teacherId", teacherId);
         SmartResponse<TGStudyCourse> courseSmartResponse = this.courseService.findByParam(params);
@@ -237,9 +240,9 @@ public class StudyCourseController extends BaseController {
         return "";
     }
 
-    private String checkClassroom(String courseTime, short weekInfo, String classroomId) {
+    private String checkClassroom(short courseTimeIndex, short weekInfo, String classroomId) {
         Map<String, Object> params = new HashMap<>();
-        params.put("courseTime", courseTime);
+        params.put("courseTimeIndex", courseTimeIndex);
         params.put("weekInfo", weekInfo);
         params.put("classroomId", classroomId);
         SmartResponse<TGStudyCourse> courseSmartResponse = this.courseService.findByParam(params);
@@ -255,6 +258,27 @@ public class StudyCourseController extends BaseController {
             course.setTeacherName(teacher.getName());
         }
     }
+
+    private String concatCourseName(TGStudyCourse course) {
+        StringBuilder builder = new StringBuilder();
+        builder.append(course.getTeacherName());
+        builder.append(getWeekInfoInCN(course.getWeekInfo()));
+	    builder.append(course.getCourseTimeIndex());
+        return builder.toString();
+    }
+
+	/**
+	 *
+	 * @param weekInfo
+	 * @return
+	 */
+	private String getWeekInfoInCN(short weekInfo) {
+		String[] weeks = {"一","二","三","四","五","六","天"};
+		if(weekInfo >= 1 && weekInfo <=7 ) {
+			return "星期" + weeks[weekInfo - 1];
+		}
+		return null;
+	}
 
     @Autowired
     private StudyCourseRecordService courseRecordService;

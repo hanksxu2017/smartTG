@@ -3,8 +3,12 @@ DELETE FROM tg_study_classroom;
 DELETE FROM tg_study_school;
 DELETE FROM tg_study_student;
 DELETE FROM tg_study_teacher;
+
 DELETE FROM tg_study_course;
+DELETE FROM tg_study_course_record;
+DELETE FROM tg_study_course_student_record;
 DELETE FROM tg_study_student_course_rel;
+
 
 
 
@@ -92,7 +96,7 @@ SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
 SELECT * FROM t_user WHERE YEARWEEK(DATE_FORMAT(addedTime,'%Y-%m-%d')) = YEARWEEK(NOW());    
 
 
-
+SELECT * FROM T_N_DICT;
 
 
 

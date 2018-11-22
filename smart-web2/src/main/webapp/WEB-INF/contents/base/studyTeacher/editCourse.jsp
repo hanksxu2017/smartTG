@@ -8,9 +8,11 @@
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/class-config.js"></script>
 <div class="wrap-content-dialog">
    <form class="form-horizontal" role="form" id="teacher-course-edit" action="studyCourse/subEditCourse" target=".bootstrap-dialog-message">
+	   <input type="hidden" name="id" value="${course.id}">
        <input type="hidden" name="teacherId" id="teacherId" value="${course.teacherId}">
-       <input type="hidden" name="schoolName" id="schoolName">
-       <input type="hidden" name="classroomName" id="classroomName">
+       <input type="hidden" name="schoolName" id="schoolName" value="${course.schoolName}">
+       <input type="hidden" name="classroomName" id="classroomName" value="${course.classroomName}">
+	   <input type="hidden" name="courseTime" id="courseTime" value="${course.courseTime}">
 
 	   <div class="form-group m-b-10">
 		   <label for="teacherNameForEditCourse" class="col-sm-2 control-label">教师</label>
@@ -32,13 +34,9 @@
            <div class="col-sm-9 p-l-0">
                <select name="weekInfo" class="form-control require" id="weekInfoForTechAddCourse">
                    <option value="">--请选择--</option>
-                   <option value="1"  <c:if test="${course.weekInfo eq '1'}">selected</c:if> >星期一</option>
-                   <option value="2"  <c:if test="${course.weekInfo eq '2'}">selected</c:if> >星期二</option>
-                   <option value="3"  <c:if test="${course.weekInfo eq '3'}">selected</c:if> >星期三</option>
-                   <option value="4"  <c:if test="${course.weekInfo eq '4'}">selected</c:if> >星期四</option>
-                   <option value="5"  <c:if test="${course.weekInfo eq '5'}">selected</c:if> >星期五</option>
-                   <option value="6"  <c:if test="${course.weekInfo eq '6'}">selected</c:if> >星期六</option>
-                   <option value="7"  <c:if test="${course.weekInfo eq '7'}">selected</c:if> >星期天</option>
+	               <c:forEach items="${weekInfoList}" var="weekInfo">
+		               <option value="${weekInfo.busiValue}"  <c:if test="${course.weekInfo eq weekInfo.busiValue}">selected</c:if> >${weekInfo.busiName}</option>
+	               </c:forEach>
                </select>
            </div>
        </div>
@@ -46,13 +44,11 @@
        <div class="form-group m-b-10">
            <label for="courseTimeForTechEditCourse" class="col-sm-2 control-label">授课时间</label>
            <div class="col-sm-9 p-l-0">
-               <select name="courseTime" class="form-control require" id="courseTimeForTechEditCourse">
+               <select name="courseTimeIndex" class="form-control require" id="courseTimeForTechEditCourse">
                    <option value="">--请选择--</option>
-                   <option value="7:30-9:00" <c:if test="${course.courseTime eq '7:30-9:00'}">selected</c:if> >7:30-9:00</option>
-                   <option value="9:00-10:30" <c:if test="${course.courseTime eq '9:00-10:30'}">selected</c:if> >9:00-10:30</option>
-                   <option value="13:30-15:00" <c:if test="${course.courseTime eq '13:30-15:00'}">selected</c:if> >13:30-15:00</option>
-                   <option value="15:30-17:00" <c:if test="${course.courseTime eq '15:30-17:00'}">selected</c:if> >15:30-17:00</option>
-                   <option value="18:30-20:00" <c:if test="${course.courseTime eq '18:30-20:00'}">selected</c:if> >18:30-20:00</option>
+	               <c:forEach items="${courseTimes}" var="courseTime">
+		               <option value="${courseTime.busiValue}"  <c:if test="${course.courseTimeIndex eq courseTime.busiValue}">selected</c:if> >${courseTime.busiName}</option>
+	               </c:forEach>
                </select>
            </div>
        </div>
@@ -74,6 +70,9 @@
            <div class="col-sm-9 p-l-0">
                <select name="classroomId" class="form-control require" id="classroomIdForTechEditCourse">
                    <option value="">--请选择--</option>
+	               <c:forEach items="${classrooms}" var="classroom">
+		               <option value="${classroom.id}"  <c:if test="${course.classroomId eq classroom.id}">selected</c:if> >${classroom.name}</option>
+	               </c:forEach>
                </select>
            </div>
        </div>
@@ -118,6 +117,11 @@
                     }
                 });
             }
+        });
+
+
+        $("#courseTimeForTechEditCourse").change(function () {
+            $("#courseTime").val($(this).find("option:selected").text());
         });
 
         $("#classroomIdForTechEditCourse").change(function () {
