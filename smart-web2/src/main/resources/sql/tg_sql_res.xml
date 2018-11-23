@@ -64,7 +64,7 @@
             from tg_study_student t
             where t.status = 'NORMAL'
             [ and t.name like '%:name%']
-            order by t.create_time asc
+            order by t.remain_course asc
         </sql>
     </sqlUnit>
 

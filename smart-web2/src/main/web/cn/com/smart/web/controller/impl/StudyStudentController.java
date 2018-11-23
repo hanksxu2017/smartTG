@@ -14,23 +14,40 @@ import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.*;
+import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.hssf.usermodel.HSSFCell;
+import org.apache.poi.hssf.usermodel.HSSFRow;
+import org.apache.poi.hssf.usermodel.HSSFSheet;
+import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.CellType;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.multipart.MultipartFile;
+import org.springframework.web.multipart.MultipartHttpServletRequest;
+import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.text.DecimalFormat;
 import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
+@Slf4j
 @Controller
 @RequestMapping("/studyStudent")
 public class StudyStudentController extends BaseController {
 
-    @Autowired
+	@Autowired
     private OPService opService;
     @Autowired
     private StudyStudentService studentService;
@@ -68,10 +85,17 @@ public class StudyStudentController extends BaseController {
 			    this.getUriPath() + "tempLeave?studentId=" + searchParam.getId(),"glyphicon-pause", BtnPropType.SelectType.ONE.getValue());
 	    customBtnTempLeave.setWidth("600");
 
-	    customBtns = new ArrayList<>(2);
+	    CustomBtn customBtnUploadBatch = new CustomBtn("uploadBatch", "信息导入", "学员信息导入",
+			    this.getUriPath() + "uploadBatch","glyphicon-upload", BtnPropType.SelectType.NONE.getValue());
+	    customBtnUploadBatch.setWidth("600");
+
+	    customBtns = new ArrayList<>(3);
 	    customBtns.add(customBtnReport);
 	    customBtns.add(customBtnTempLeave);
+	    customBtns.add(customBtnUploadBatch);
 	    modelMap.put("customBtns", customBtns);
+
+	    pageParam = new PageParam(this.getUriPath() + "list", null, page.getPage(), page.getPageSize());
 
 	    modelMap.put("addBtn", addBtn);
 	    modelMap.put("editBtn", editBtn);
@@ -103,7 +127,11 @@ public class StudyStudentController extends BaseController {
 	 */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> save(TGStudyStudent studyStudent) {
+    public SmartResponse<String> save(TGStudyStudent studyStudent, @RequestParam(value = "attachFile") MultipartFile userInfoFile) {
+
+	    log.info("file name:{}", userInfoFile.getOriginalFilename());
+
+
         studyStudent.setCreateTime(new Date());
 
         short parentType = studyStudent.getParentType();
@@ -775,4 +803,174 @@ public class StudyStudentController extends BaseController {
 		systemMessage.setCreateTime(new Date());
 		this.systemMessageService.save(systemMessage);
 	}
+
+	/**
+	 *
+	 * @return  JSP页面对象
+	 */
+	@RequestMapping(value = "/uploadBatch")
+	public ModelAndView uploadBatch() {
+		ModelAndView modelView = new ModelAndView();
+		modelView.setViewName(getPageDir() + "uploadBatch");
+
+		return modelView;
+	}
+
+	/**
+	 * 提交
+	 *
+	 * @return              修改结果
+	 */
+	@RequestMapping(value = "/subUploadStudent", method = RequestMethod.POST)
+	@ResponseBody
+	public SmartResponse<String> subUploadStudent(HttpServletRequest request, HttpServletResponse response) throws IOException {
+		SmartResponse<String> smartResponse = new SmartResponse<>();
+
+		CommonsMultipartResolver multipartResolver = new CommonsMultipartResolver(
+				request.getSession().getServletContext());
+		//检查form中是否有enctype="multipart/form-data"
+		if(multipartResolver.isMultipart(request)) {
+			//将request变成多部分request
+			MultipartHttpServletRequest multiRequest = (MultipartHttpServletRequest)request;
+			//获取multiRequest 中所有的文件名
+			Iterator iterator = multiRequest.getFileNames();
+
+			while(iterator.hasNext())
+			{
+				//一次遍历所有文件
+				MultipartFile file = multiRequest.getFile(iterator.next().toString());
+				if (file != null && (file.getOriginalFilename().endsWith(".xls") || file.getOriginalFilename().endsWith(".xlsx"))) {
+
+					List<Map<String, String>> dataMap = this.getResultList(file, this.getUploadTitles());
+					// 学生信息写入数据库
+					if(CollectionUtils.isNotEmpty(dataMap)) {
+						this.syncDataToDb(dataMap);
+					}
+				} else {
+					smartResponse.setMsg("导入文件格式不正确");
+					return smartResponse;
+				}
+			}
+
+		}
+
+		smartResponse.setResult(IConstant.OP_SUCCESS);
+		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
+		return smartResponse;
+	}
+
+
+	private List<Map<String, String>> getResultList(MultipartFile userInfoFile, List<String> titleList) {
+		List<Map<String, String>> relist= new LinkedList<>();
+		// 读取
+		HSSFWorkbook wb;
+		try {
+			wb = new HSSFWorkbook(userInfoFile.getInputStream());
+			HSSFSheet sheet = wb.getSheetAt(0);
+			int size = titleList.size();
+			for (int j = 0; j < sheet.getLastRowNum() + 1; j++) {
+				HSSFRow row = sheet.getRow(j);
+				Map<String, String> tempMap = new HashMap<>();
+				for (int i1 = 0; i1 < row.getLastCellNum() && i1 < size; i1++) {
+					HSSFCell cell = row.getCell(i1);
+					if(null == cell) {
+						continue;
+					}
+					CellType cellType = cell.getCellTypeEnum();
+					String msg = "";
+					if (cellType == CellType.STRING) {
+						msg = cell.getStringCellValue();
+					} else if(cellType == CellType.NUMERIC) {
+						msg = new DecimalFormat("#.##").format(cell.getNumericCellValue());
+					}
+
+					tempMap.put(titleList.get(i1), msg);
+
+/*					// 排除文件头部标题行
+					if(j!=0) {
+						tempMap.put(titleList.get(i1), msg);
+					}*/
+				}
+
+				relist.add(tempMap);
+			}
+		} catch (IOException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+
+		return relist;
+	}
+
+	/**
+	 *
+	 * @return  数据项列表
+	 */
+	private List<String> getUploadTitles() {
+		List<String> titleList = new ArrayList<>();
+		titleList.add("name");
+		titleList.add("sex");
+		// 格式: yyyy.MM.dd
+		titleList.add("birthday");
+		titleList.add("schoolName");
+		titleList.add("idCard");
+		titleList.add("studySchoolName");
+		titleList.add("level");
+		titleList.add("phone");
+
+		return titleList;
+	}
+
+	/**
+	 *
+	 * @param dataMap   数据列表
+	 * @return          写入数据库的学生数量
+	 */
+	private int syncDataToDb(List<Map<String, String>> dataMap) {
+
+		int count = 0;
+		TGStudyStudent student;
+
+		for(Map<String, String> data : dataMap) {
+			student = new TGStudyStudent();
+			student.setName(data.get("name"));
+			student.setSex(StringUtils.equals("男", data.get("sex")) ? (short)1 : (short)2);
+			student.setBirthday(DateUtil.dateToStr(DateUtil.parseDate(data.get("birthday"), "yyyy.MM.dd"), "yyyy-MM-dd"));
+			student.setSchoolName(data.get("schoolName"));
+			student.setLevel(Integer.valueOf(StringUtils.isNotBlank(data.get("level")) ? parseLevel(data.get("level")) : "0"));
+			student.setParentPhone(this.parsePhone(data.get("phone")));
+
+			if(StringUtils.isNotBlank(student.getName()) && StringUtils.isNotBlank(student.getParentPhone())) {
+				Map<String, Object> params = new HashMap<>();
+				params.put("parentPhone", student.getParentPhone());
+				params.put("name", student.getName());
+				if(this.studentService.findByParam(params).getTotalNum() <= 0) {
+					// 避免重复导入
+					this.studentService.save(student);
+					count++;
+				}
+			}
+		}
+
+		return count;
+	}
+
+	private String parseLevel(String levelStr) {
+		Pattern p = Pattern.compile("\\d+");
+		Matcher matcher = p.matcher(levelStr);
+		while(matcher.find()) {
+			return matcher.group();
+		}
+		return "";
+	}
+
+	private String parsePhone(String phone) {
+		if(StringUtils.isNotBlank(phone)) {
+			if(phone.length() > 11) {
+				return phone.substring(0, 11);
+			}
+		}
+		return phone;
+	}
+
 }
