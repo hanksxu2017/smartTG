@@ -74,6 +74,7 @@
 
         <div class="text-center">
             <button type="button"
+					<c:if test="${null != disableSign and disableSign eq 'yes'}">disabled</c:if>
                     class="btn btn-sm btn-success cnoj-class-config-submit"
                     data-uri="studyStudent/subSign"
                     data-config-id="${courseRecord.id}"

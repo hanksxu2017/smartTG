@@ -21,7 +21,8 @@
             </form>
         </div>
 
-        <cnoj:table smartResp="${smartResp}" headers="姓名,等级,剩余课时,入学时间,状态"
+        <cnoj:table smartResp="${smartResp}" headers="姓名,等级,剩余课时,状态,入学时间"
+                    headerWidths="30%,10%,20%,10%,30%"
                     isCheckbox="1"
                     isRowSelected="1"
                     page="${pageParam }"

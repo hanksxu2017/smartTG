@@ -17,7 +17,7 @@ import cn.com.smart.validate.Validate;
  *
  */
 @Entity
-@Table(name = "T_N_DICT")
+@Table(name = "t_n_dict")
 public class TNDict implements BaseTree {
 
 	/**

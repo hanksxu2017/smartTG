@@ -15,7 +15,7 @@ import cn.com.smart.bean.BaseBeanImpl;
  *
  */
 @Entity
-@Table(name = "T_N_ROLE_USER")
+@Table(name = "t_n_role_user")
 public class TNRoleUser extends BaseBeanImpl {
 
 	private static final long serialVersionUID = 1L;

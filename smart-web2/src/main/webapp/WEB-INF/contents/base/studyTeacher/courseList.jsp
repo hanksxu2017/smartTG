@@ -19,8 +19,8 @@
           </div>
 
 		<cnoj:table smartResp="${smartResp }"
-					headers="名称,星期,时间,教室,状态,学生数,开班时间,描述"
-		            headerWidths="15%,10%,10%,15%,10%,10%,10%,20%"
+					headers="名称,星期,时间,教室,学生数"
+		            headerWidths="30%,20%,20%,20%,10%"
 					isCheckbox="1" isRowSelected="1"
 					page="${pageParam }"
 					currentUri="${currentUri }"

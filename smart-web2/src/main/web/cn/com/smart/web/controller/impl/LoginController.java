@@ -120,12 +120,9 @@ public class LoginController extends BaseController {
      * @return
      */
 	private boolean isCorrectVerifyCode(String code, HttpSession session) {
-/*        Object codeStr = session.getAttribute(SESSION_CAPTCHA_LOGIN);
+        Object codeStr = session.getAttribute(SESSION_CAPTCHA_LOGIN);
         return null != codeStr && StringUtils.isNotEmpty(codeStr.toString())
-                && codeStr.toString().equalsIgnoreCase(code);*/
-
-        // TODO TEST
-        return true;
+                && codeStr.toString().equalsIgnoreCase(code);
     }
 	
 }

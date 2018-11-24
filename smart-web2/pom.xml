@@ -5,7 +5,7 @@
 	<artifactId>smart-web2</artifactId>
 	<version>1.2.4</version>
 	<packaging>war</packaging>
-	<name>smart-web2</name>
+	<name>tg-manager</name>
 	<description />
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -96,7 +96,7 @@ SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
 SELECT * FROM t_user WHERE YEARWEEK(DATE_FORMAT(addedTime,'%Y-%m-%d')) = YEARWEEK(NOW());    
 
 
-SELECT * FROM T_N_DICT;
+SELECT * FROM t_n_dict;
 
 
 

@@ -97,10 +97,7 @@
                 temp.week_info,
                 temp.course_time,
                 temp.classroom_name,
-                temp.status,
-                (SELECT COUNT(rel.id) AS studentCount FROM tg_study_student_course_rel rel WHERE rel.course_id = temp.id AND rel.status = 'NORMAL'),
-                DATE_FORMAT(temp.create_time, '%Y-%m-%e'),
-                temp.description
+                (SELECT COUNT(rel.id) AS studentCount FROM tg_study_student_course_rel rel WHERE rel.course_id = temp.id AND rel.status = 'NORMAL')
             FROM (
                 SELECT t.id,
                     t.name,
@@ -234,10 +231,14 @@
     <!-- 每周课时关联的学生列表 -->
     <sqlUnit name="courseRecord_student_list">
         <sql>
-            select t.id, t.name, t.level, t.remain_course, t.create_time,
+            select t.id, t.name, t.level, t.remain_course,
             CASE record.status WHEN 'NORMAL' THEN '正常'
-            WHEN 'NORMAL_END' THEN '已结课'
-            ELSE '未定义' END
+            WHEN 'SIGNED' THEN '已签到'
+            WHEN 'PERSONAL_LEAVE' THEN '事假'
+            WHEN 'PLAY_TRUANT' THEN '旷课'
+            WHEN 'OTHER_ABSENT' THEN '缺席'
+            WHEN 'CANCEL_AS_EXIT' THEN '退班'
+            ELSE '未定义' END, t.create_time
             from tg_study_student t, tg_study_course_student_record record
             where t.id = record.student_id
             and record.course_record_id = :courseRecordId
@@ -260,6 +261,18 @@
             t.create_time, t.process_time, t.process_desc
             from tg_study_system_message t
             order by t.level desc, t.create_time desc
+        </sql>
+    </sqlUnit>
+    <sqlUnit name="student_has_absent_course_list">
+        <sql>
+            select t.student_id, t.student_name
+            from tg_study_course_student_record t
+            where t.create_time &lt; NOW()
+            and (status = 'PERSONAL_LEAVE'
+            OR status = 'PLAY_TRUANT'
+            OR status = 'OTHER_ABSENT'
+            OR status = 'CANCEL_AS_EXIT')
+            [and t.name like '%:name%']
         </sql>
     </sqlUnit>
 

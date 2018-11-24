@@ -31,7 +31,7 @@
     <!-- table -->
     <cnoj:table
         smartResp="${smartResp }"
-        headers="姓名,性别,出生日期,就读学校,联系方式,等级,状态,剩余课时,入职时间"
+        headers="姓名,性别,出生日期,就读学校,联系方式,等级,状态,剩余课时,入学时间"
         headerWidths="10%,5%,15%,15%,10%,10%,5%,10%,20%"
         isCheckbox="1"
         isRowSelected="1"

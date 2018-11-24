@@ -25,7 +25,7 @@ import cn.com.smart.validate.Validate;
  *
  */
 @Entity
-@Table(name = "T_N_ROLE")
+@Table(name = "t_n_role")
 public class TNRole implements DateBean {
 
 	private static final long serialVersionUID = 1L;

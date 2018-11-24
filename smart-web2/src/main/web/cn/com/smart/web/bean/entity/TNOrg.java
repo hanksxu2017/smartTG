@@ -23,7 +23,7 @@ import cn.com.smart.validate.Validate;
  *
  */
 @Entity
-@Table(name = "T_N_ORG")
+@Table(name = "t_n_org")
 public class TNOrg extends BaseBeanImpl implements BaseTree,DateBean {
 
 	public static final String PREFIX = "ORG";

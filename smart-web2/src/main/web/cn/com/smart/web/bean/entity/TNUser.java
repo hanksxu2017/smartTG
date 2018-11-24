@@ -23,7 +23,7 @@ import cn.com.smart.validate.Validate;
  *
  */
 @Entity
-@Table(name = "T_N_USER")
+@Table(name = "t_n_user")
 public class TNUser extends BaseBeanImpl implements DateBean {
 
 	public static final String PREFIX = "U";

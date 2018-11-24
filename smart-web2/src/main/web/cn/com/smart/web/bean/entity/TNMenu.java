@@ -17,7 +17,7 @@ import cn.com.smart.validate.Validate;
  *
  */
 @Entity
-@Table(name = "T_N_MENU")
+@Table(name = "t_n_menu")
 public class TNMenu implements BaseTree {
 
 	private static final long serialVersionUID = -516084667117152167L;
