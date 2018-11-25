@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
-
-import com.mixsmart.utils.StringUtils;
 
 import cn.com.smart.bean.BaseBean;
 import cn.com.smart.dao.IQueryDao;

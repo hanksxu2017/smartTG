@@ -1,7 +1,7 @@
 package cn.com.smart.filter.bean;
 
 import cn.com.smart.filter.HandleFilterParam;
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.stereotype.Component;
 
 import java.io.UnsupportedEncodingException;
@@ -73,7 +73,7 @@ public class FilterParam implements IFilterParam {
 			paramBuilder = new StringBuilder();
 			Set<Map.Entry<String, Object>> sets = map.entrySet();
 			for (Map.Entry<String, Object> entry : sets) {
-				paramBuilder.append(entry.getKey()+"="+StringUtils.handleNull(entry.getValue())+"&");
+				paramBuilder.append(entry.getKey()+"="+DataUtil.handleNull(entry.getValue())+"&");
 			}
 			paramBuilder.delete(paramBuilder.length()-1, paramBuilder.length());
 		}

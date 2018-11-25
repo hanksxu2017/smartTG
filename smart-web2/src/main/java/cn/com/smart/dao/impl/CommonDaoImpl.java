@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang.NullArgumentException;
+import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
@@ -28,9 +30,6 @@ import cn.com.smart.res.sqlmap.SQLVarParamFilter;
 import cn.com.smart.validate.ExecuteValidator;
 import cn.com.smart.validate.ValidateException;
 import cn.com.smart.validate.Validator;
-
-import com.mixsmart.exception.NullArgumentException;
-import com.mixsmart.utils.StringUtils;
 
 public class CommonDaoImpl implements ICommonDao {
     
