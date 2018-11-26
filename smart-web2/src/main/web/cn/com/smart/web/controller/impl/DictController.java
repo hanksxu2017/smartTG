@@ -1,5 +1,13 @@
 package cn.com.smart.web.controller.impl;
 
+import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.web.bean.entity.TNDict;
+import cn.com.smart.web.controller.base.BaseController;
+import cn.com.smart.web.service.DictService;
+import cn.com.smart.web.tag.bean.DelBtn;
+import cn.com.smart.web.tag.bean.EditBtn;
+import cn.com.smart.web.tag.bean.RefreshBtn;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -8,16 +16,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
-
-import cn.com.smart.bean.SmartResponse;
-import cn.com.smart.web.bean.entity.TNDict;
-import cn.com.smart.web.controller.base.BaseController;
-import cn.com.smart.web.service.DictService;
-import cn.com.smart.web.tag.bean.DelBtn;
-import cn.com.smart.web.tag.bean.EditBtn;
-import cn.com.smart.web.tag.bean.RefreshBtn;
-
-import com.mixsmart.utils.StringUtils;
 
 /**
  * 数据字典
@@ -103,7 +101,7 @@ public class DictController extends BaseController {
 	
 	/**
 	 * 获取数据字典内容
-	 * @param busiValue
+	 * @param id
 	 * @param name
 	 * @return
 	 * @throws Exception

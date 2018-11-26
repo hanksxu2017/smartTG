@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import cn.com.smart.constant.IConstant;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import cn.com.smart.ISmart;
@@ -17,8 +18,6 @@ import cn.com.smart.filter.HandleFilterParam;
 import cn.com.smart.filter.bean.FilterParam;
 import cn.com.smart.service.IBaseEntityService;
 import cn.com.smart.web.helper.PageHelper;
-
-import com.mixsmart.utils.StringUtils;
 
 /**
  * @author XUWENYI

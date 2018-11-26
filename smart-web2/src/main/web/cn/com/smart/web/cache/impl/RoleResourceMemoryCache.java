@@ -8,6 +8,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -23,8 +24,7 @@ import cn.com.smart.web.bean.entity.TNRoleResource;
 import cn.com.smart.web.dao.IRoleResourceDao;
 import cn.com.smart.web.dao.impl.RoleResourceDao;
 
-import com.mixsmart.utils.ArrayUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 角色资源缓存
@@ -89,7 +89,7 @@ public class RoleResourceMemoryCache  implements InitCache,ICacheManagerAware, I
 				for (TNRoleResource roleRes : roleResources) {
 					if(roleRes.getRoleId().equals(roleId)) {
 						if(StringUtils.isNotEmpty(roleRes.getOpAuths())) {
-							auths = authCache.queryAuths(ArrayUtils.stringToArray(roleRes.getOpAuths(),","));
+							auths = authCache.queryAuths(DataUtil.stringToArray(roleRes.getOpAuths(),","));
 						}
 						authMaps.put(roleRes.getResourceId(), auths);
 					}

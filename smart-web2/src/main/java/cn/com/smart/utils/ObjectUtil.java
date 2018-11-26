@@ -1,6 +1,7 @@
 package cn.com.smart.utils;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 简单对象工具类
@@ -21,9 +22,9 @@ public class ObjectUtil {
 		Object obj = null;
 		String valueStr = value.toString();
 		if(StringUtils.isNotEmpty(valueStr)) {
-			if(StringUtils.isInteger(valueStr)) {
+			if(DataUtil.isInteger(valueStr)) {
 				obj = Integer.parseInt(valueStr);
-			} else if(StringUtils.isDecimal(valueStr)) {
+			} else if(DataUtil.isDecimal(valueStr)) {
 				obj = Double.parseDouble(valueStr);
 			} else {
 				obj = value;

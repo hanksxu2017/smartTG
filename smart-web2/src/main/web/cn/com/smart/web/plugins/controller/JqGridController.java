@@ -16,7 +16,7 @@ import cn.com.smart.web.plugins.JqGridData;
 import cn.com.smart.web.plugins.JqGridRequest;
 import cn.com.smart.web.plugins.service.JqGridService;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * JqGrid插件控制器

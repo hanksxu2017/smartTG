@@ -71,17 +71,6 @@
 	           <value>cn.com.smart.*.*.entity</value>
 	        </list>
 	    </property>
-	    <property name="mappingResources">
-	       <list>
-	          <value>hbm/snaker.task.hbm.xml</value>
-	          <value>hbm/snaker.order.hbm.xml</value>
-	          <value>hbm/snaker.ccorder.hbm.xml</value>
-	          <value>hbm/snaker.process.hbm.xml</value>
-	          <value>hbm/snaker.taskactor.hbm.xml</value>
-	          <value>hbm/snaker.workitem.hbm.xml</value>
-	          <value>hbm/snaker.surrogate.hbm.xml</value>
-	       </list>
-	    </property>
 	</bean>
 
 	<!-- 事务管理器配置,单数据源事务 -->
@@ -98,20 +87,7 @@
 			<tx:method name="update*" propagation="REQUIRED" />
 			<tx:method name="remove*" propagation="REQUIRED" />
 			<tx:method name="create*" propagation="REQUIRED" />
-			
-			<!-- snaker事务 -->
-			<tx:method name="start*" propagation="REQUIRED"/>
-			<tx:method name="assign*" propagation="REQUIRED" /> 
-			<tx:method name="complete*" propagation="REQUIRED" />
-			<tx:method name="finish*" propagation="REQUIRED" />
-			<tx:method name="terminate*" propagation="REQUIRED" /> 
-			<tx:method name="take*" propagation="REQUIRED" />
-			<tx:method name="deploy*" propagation="REQUIRED" />
-			<tx:method name="undeploy*" propagation="REQUIRED" />
-			<tx:method name="redeploy*" propagation="REQUIRED" />
-			<tx:method name="change*" propagation="REQUIRED" />
-			<tx:method name="resume*" propagation="REQUIRED" />
-			
+
 			<tx:method name="search*" propagation="REQUIRED" read-only="true" />
 			<tx:method name="is*" propagation="REQUIRED" read-only="true" />
  			<tx:method name="get*" propagation="REQUIRED" read-only="true" />
@@ -127,34 +103,11 @@
 		<aop:advisor advice-ref="txAdvice" pointcut="execution(* cn.com.smart.dao..*.*(..))
 		or execution(* cn.com.smart.*.dao..*.*(..)) 
 		or execution(* cn.com.smart.service.impl..*.*(..)) 
-		or execution(* cn.com.smart.*.service..*.*(..)) 
-		or execution(* org.snaker.engine.core..*.*(..))" />
+		or execution(* cn.com.smart.*.service..*.*(..))" />
 	</aop:config>
 	<aop:aspectj-autoproxy proxy-target-class="true" />
     <!-- 支持注解事物 -->
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
-	
-	<!-- 定义用于执行定时任务的类(扫描任务定时器)-->
-	<bean id="scanProcess" class="cn.com.smart.flow.timer.ScanProcessTimer" />
-	<!-- 定时器配置 -->
-	<bean id="scanProcessJob" class="org.springframework.scheduling.quartz.MethodInvokingJobDetailFactoryBean">
-		<property name="targetObject" ref="scanProcess" />
-		<property name="targetMethod" value="run" />
-		<!-- 是否允许任务并发执行。当值为false时，表示必须等到前一个线程处理完毕后才再启一个新的线程 -->  
-		<property name="concurrent" value="false"></property>
-	</bean>
-	<!-- 定义时间间隔触发器 -->
-	<bean id="scanProcessTigger" class="org.springframework.scheduling.quartz.SimpleTriggerFactoryBean">
-		<property name="jobDetail" ref="scanProcessJob" />
-		<property name="startDelay" value="300000" /><!-- 调度工厂实例化后，经过1分钟开始执行调度 -->  
-		<property name="repeatInterval" value="3600000" /><!-- 每一个小时调度一次 -->  
-	</bean>
-	<!-- 启动定时器 -->
-	<bean id="startJob" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-		<property name="triggers">
-			<list>
-				<ref bean="scanProcessTigger" />
-			</list>
-		</property>
-	</bean>
+
+
 </beans>

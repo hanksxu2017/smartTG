@@ -11,7 +11,8 @@ import cn.com.smart.config.ConfigImpl;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.init.Init;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 初始化系统配置文件
@@ -100,7 +101,7 @@ public class InitSysConfig extends ConfigImpl implements Init {
 		String value = null;
 		if(null != prop && StringUtils.isNotEmpty(key)){
 			try {
-				value = StringUtils.handleNull(prop.get(key));
+				value = DataUtil.handleNull(prop.get(key));
 				value = handleSysVar(value);
 				value = handleVar(value);
 			} catch (Exception e) {

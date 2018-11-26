@@ -1,7 +1,5 @@
 package cn.com.smart.web.plugins.bean;
 
-import com.mixsmart.enums.YesNoType;
-
 /**
  * ZTreeCheck节点
  * @author XUWENYI <br />
@@ -12,15 +10,15 @@ import com.mixsmart.enums.YesNoType;
 public class ZTreeNodeCheck extends ZTreeNode {
 
 	
-	private Boolean checked = YesNoType.NO.getValue();
+	private Boolean checked = false;
 	
-	private Boolean nocheck = YesNoType.NO.getValue();
+	private Boolean nocheck = false;
 	
-	private Boolean chkDisabled = YesNoType.NO.getValue();
+	private Boolean chkDisabled = false;
 	
-	private Boolean doCheck = YesNoType.YES.getValue();
+	private Boolean doCheck = true;
 	
-	private Boolean halfCheck = YesNoType.NO.getValue();
+	private Boolean halfCheck = false;
 
 	public Boolean getChecked() {
 		return checked;

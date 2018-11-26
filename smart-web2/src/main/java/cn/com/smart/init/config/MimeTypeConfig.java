@@ -1,25 +1,25 @@
 package cn.com.smart.init.config;
 
+import cn.com.smart.constant.IConstant;
+import cn.com.smart.init.Init;
+import cn.com.smart.web.utils.DataUtil;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import cn.com.smart.constant.IConstant;
-import cn.com.smart.init.Init;
-
-import com.mixsmart.utils.LoggerUtils;
-import com.mixsmart.utils.StringUtils;
-
 /**
  * 初始化系统配置文件
  * @author XUWENYI
  *
  */
+@Slf4j
 public class MimeTypeConfig implements Init {
 	
 	private static MimeTypeConfig instance;
@@ -69,7 +69,7 @@ public class MimeTypeConfig implements Init {
 	
 	
 	protected void init() {
-		LoggerUtils.info(logger,"初始化mime配置文件-------");
+		log.info("初始化mime配置文件-------");
 		InputStream in = null;
 		try {
 		  in = getClass().getResourceAsStream(MIME_CONFIG_FILE);
@@ -82,7 +82,7 @@ public class MimeTypeConfig implements Init {
 		  lastModifyTime  = file.lastModified();
 		  path = null;
 		  file = null;
-		  LoggerUtils.info(logger,"初始化mime配置文件[结束]-------");
+			log.info("初始化mime配置文件[结束]-------");
 		} catch (Exception e) {
 			e.printStackTrace();
 		} finally {
@@ -106,7 +106,7 @@ public class MimeTypeConfig implements Init {
 		String value = null;
 		if(null != prop && StringUtils.isNotEmpty(key)){
 			try {
-				value = StringUtils.handleNull(prop.get(key));
+				value = DataUtil.handleNull(prop.get(key));
 			} catch (Exception e) {
 				e.printStackTrace();
 			}

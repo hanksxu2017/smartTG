@@ -1,6 +1,6 @@
 package cn.com.smart.web.plugins;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  *  ZTree插件---组织机构与用户树形数据结构类

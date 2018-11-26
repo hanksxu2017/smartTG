@@ -3,6 +3,7 @@ package cn.com.smart.web.dao.impl;
 import java.util.HashMap;
 import java.util.Map;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.stereotype.Repository;
 
 import cn.com.smart.dao.impl.BaseDaoImpl;
@@ -11,7 +12,7 @@ import cn.com.smart.res.SQLResUtil;
 import cn.com.smart.res.sqlmap.SqlMapping;
 import cn.com.smart.web.bean.entity.TNRoleUser;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -31,7 +32,7 @@ public class RoleUserDao extends BaseDaoImpl<TNRoleUser>{
 	public boolean delete(Map<String, Object> param) throws DaoException {
 		boolean is = false;
 		if(null != param && param.size()>0) {
-			String flag = StringUtils.handleNull(param.get("flag"));
+			String flag = DataUtil.handleNull(param.get("flag"));
 			String delSql = null;
 			if(StringUtils.isEmpty(flag)) {
 				delSql = sqlMap.getSQL("del_role_user");
@@ -45,7 +46,7 @@ public class RoleUserDao extends BaseDaoImpl<TNRoleUser>{
 				//判断处理是否有逗号分割的多条数据组合
 				for (String key : param.keySet()) {
 					if(!param.get(key).getClass().isArray()) {
-						String value = StringUtils.handleNull(param.get(key));
+						String value = DataUtil.handleNull(param.get(key));
 						if(StringUtils.isNotEmpty(value) && value.indexOf(",")>-1) {
 							String[] values = value.split(",");
 							param.put(key, values);

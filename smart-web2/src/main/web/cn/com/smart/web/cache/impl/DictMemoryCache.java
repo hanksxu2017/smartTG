@@ -19,8 +19,7 @@ import cn.com.smart.web.bean.entity.TNDict;
 import cn.com.smart.web.dao.IDictDao;
 import cn.com.smart.web.dao.impl.DictDao;
 
-import com.mixsmart.enums.YesNoType;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 数据字典缓存
@@ -136,7 +135,7 @@ public class DictMemoryCache implements InitCache,ICacheManagerAware,IDictDao {
 					} else {
 						isAdd = id.equals(dict.getParentId());
 					}
-					if(isAdd && YesNoType.YES.getStrValue().equals(dict.getState())) {
+					if(isAdd && "1".equals(dict.getState())) {
 						datas = new String[3];
 						datas[0] = dict.getBusiValue();
 						datas[1] = dict.getBusiName();

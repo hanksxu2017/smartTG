@@ -17,7 +17,8 @@ import cn.com.smart.web.tag.bean.DelBtn;
 import cn.com.smart.web.tag.bean.EditBtn;
 import cn.com.smart.web.tag.bean.PageParam;
 import cn.com.smart.web.tag.bean.RefreshBtn;
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.collections.CollectionUtils;
 
 /**
@@ -78,7 +79,7 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
     			count++;
     			List<String> btnList = new ArrayList<String>();
     			btnStyleFlag = "${btnListStyle}";
-    			htmlContent.append("<div class='btn-list' "+ StringUtils.handleNull(btnStyleFlag)+"><div class='btn-group cnoj-op-btn-list'>");
+    			htmlContent.append("<div class='btn-list' "+ DataUtil.handleNull(btnStyleFlag)+"><div class='btn-group cnoj-op-btn-list'>");
     			String btnHtml = null;
     			String authUrl = null;
     			if(null != addBtn && (!addBtn.getIsAuth() || authServ.isAuth(currentUri, addBtn, userInfo.getRoleIds()))) {
@@ -86,8 +87,8 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
     				if(StringUtils.isEmpty(addBtn.getSelectedType()))
     					addBtn.setSelectedType(BtnPropType.SelectType.NONE.getValue());
     				btnHtml = "<button type='button' id='"+addBtn.getId()+"' class='btn "+(StringUtils.isEmpty(addBtn.getBtnStyle())?BTN_DEFAULT_THEME:addBtn.getBtnStyle())+" add param' data-selected-type='"+
-    		    			StringUtils.handleNull(addBtn.getSelectedType())+"' data-uri='"+authUrl+"' data-title='"+StringUtils.handleNull(addBtn.getTitle())+"' data-busi='"+
-    		    			StringUtils.handleNull(addBtn.getBusi())+"' data-value='' data-width='"+StringUtils.handleNull(addBtn.getWidth())+"' data-before-check='"+StringUtils.handleNull(addBtn.getBeforeCheck())+"'><i class='glyphicon glyphicon-plus'></i> "
+    		    			DataUtil.handleNull(addBtn.getSelectedType())+"' data-uri='"+authUrl+"' data-title='"+DataUtil.handleNull(addBtn.getTitle())+"' data-busi='"+
+    		    			DataUtil.handleNull(addBtn.getBusi())+"' data-value='' data-width='"+DataUtil.handleNull(addBtn.getWidth())+"' data-before-check='"+DataUtil.handleNull(addBtn.getBeforeCheck())+"'><i class='glyphicon glyphicon-plus'></i> "
     		    			+(StringUtils.isEmpty(addBtn.getName())?"添加":addBtn.getName())+"</button>";
     				addBtnHtmlToList(btnList, addBtn, btnHtml);
     			}
@@ -95,23 +96,23 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
     			    authUrl = WebSecurityHelper.addUriAuth(currentUri, editBtn.getId(), editBtn.getUri());
     			    if(StringUtils.isEmpty(editBtn.getSelectedType()))
     					editBtn.setSelectedType(BtnPropType.SelectType.MULTI.getValue());
-    				btnHtml = "<button type='button' id='"+editBtn.getId()+"' class='btn "+(StringUtils.isEmpty(editBtn.getBtnStyle())?BTN_DEFAULT_THEME:editBtn.getBtnStyle())+" edit param' data-selected-type='"+StringUtils.handleNull(editBtn.getSelectedType())+"' data-uri='"+
-    						authUrl+"' data-title='"+StringUtils.handleNull(editBtn.getTitle())+"' data-busi='"+StringUtils.handleNull(editBtn.getBusi())+"' data-value='' data-width='"+StringUtils.handleNull(editBtn.getWidth())+"' data-before-check='"+
-    						StringUtils.handleNull(editBtn.getBeforeCheck())+"'><i class='glyphicon glyphicon-pencil'></i> "+(StringUtils.isEmpty(editBtn.getName())?"编辑":editBtn.getName())+"</button>";
+    				btnHtml = "<button type='button' id='"+editBtn.getId()+"' class='btn "+(StringUtils.isEmpty(editBtn.getBtnStyle())?BTN_DEFAULT_THEME:editBtn.getBtnStyle())+" edit param' data-selected-type='"+DataUtil.handleNull(editBtn.getSelectedType())+"' data-uri='"+
+    						authUrl+"' data-title='"+DataUtil.handleNull(editBtn.getTitle())+"' data-busi='"+DataUtil.handleNull(editBtn.getBusi())+"' data-value='' data-width='"+DataUtil.handleNull(editBtn.getWidth())+"' data-before-check='"+
+    						DataUtil.handleNull(editBtn.getBeforeCheck())+"'><i class='glyphicon glyphicon-pencil'></i> "+(StringUtils.isEmpty(editBtn.getName())?"编辑":editBtn.getName())+"</button>";
     				addBtnHtmlToList(btnList, editBtn, btnHtml);
     			}
     			if(null != delBtn && (!delBtn.getIsAuth() || authServ.isAuth(currentUri, delBtn, userInfo.getRoleIds()))) {
     			    authUrl = WebSecurityHelper.addUriAuth(currentUri, delBtn.getId(), delBtn.getUri());
     			    if(StringUtils.isEmpty(delBtn.getSelectedType()))
     					delBtn.setSelectedType(BtnPropType.SelectType.MULTI.getValue());
-    				btnHtml = "<button type='button' id='"+delBtn.getId()+"' class='btn "+(StringUtils.isEmpty(delBtn.getBtnStyle())?BTN_DEFAULT_THEME:delBtn.getBtnStyle())+" del param' data-selected-type='"+StringUtils.handleNull(delBtn.getSelectedType())+"' data-uri='"+
-    				        authUrl+"' data-busi='"+StringUtils.handleNull(delBtn.getBusi())+"' data-msg='"+StringUtils.handleNull(delBtn.getMsg())+"' data-value='' data-refresh-uri='"+StringUtils.handleNull(delBtn.getRefreshUri())+"' data-target='"+
-    						StringUtils.handleNull(delBtn.getTarget())+"' data-delAfter='"+StringUtils.handleNull(delBtn.getCallback())+"' ><i class='glyphicon glyphicon-trash'></i> "+(StringUtils.isEmpty(delBtn.getName())?"删除":delBtn.getName())+"</button>";
+    				btnHtml = "<button type='button' id='"+delBtn.getId()+"' class='btn "+(StringUtils.isEmpty(delBtn.getBtnStyle())?BTN_DEFAULT_THEME:delBtn.getBtnStyle())+" del param' data-selected-type='"+DataUtil.handleNull(delBtn.getSelectedType())+"' data-uri='"+
+    				        authUrl+"' data-busi='"+DataUtil.handleNull(delBtn.getBusi())+"' data-msg='"+DataUtil.handleNull(delBtn.getMsg())+"' data-value='' data-refresh-uri='"+DataUtil.handleNull(delBtn.getRefreshUri())+"' data-target='"+
+    						DataUtil.handleNull(delBtn.getTarget())+"' data-delAfter='"+DataUtil.handleNull(delBtn.getCallback())+"' ><i class='glyphicon glyphicon-trash'></i> "+(StringUtils.isEmpty(delBtn.getName())?"删除":delBtn.getName())+"</button>";
     				addBtnHtmlToList(btnList, delBtn, btnHtml);
     			}
     			if(null != refreshBtn && (!refreshBtn.getIsAuth() || authServ.isAuth(currentUri, refreshBtn, userInfo.getRoleIds()))) {
-    				btnHtml = "<button type='button' id='"+refreshBtn.getId()+"' class='btn "+(StringUtils.isEmpty(refreshBtn.getBtnStyle())?BTN_DEFAULT_THEME:refreshBtn.getBtnStyle())+" refresh' data-uri='"+StringUtils.handleNull(refreshBtn.getUri())+"' data-busi='"+
-    			              StringUtils.handleNull(refreshBtn.getBusi())+"' data-target='"+StringUtils.handleNull(refreshBtn.getTarget())+"' ><i class='glyphicon glyphicon-refresh'></i> "+(StringUtils.isEmpty(refreshBtn.getName())?"刷新":refreshBtn.getName())+"</button>";
+    				btnHtml = "<button type='button' id='"+refreshBtn.getId()+"' class='btn "+(StringUtils.isEmpty(refreshBtn.getBtnStyle())?BTN_DEFAULT_THEME:refreshBtn.getBtnStyle())+" refresh' data-uri='"+DataUtil.handleNull(refreshBtn.getUri())+"' data-busi='"+
+    			              DataUtil.handleNull(refreshBtn.getBusi())+"' data-target='"+DataUtil.handleNull(refreshBtn.getTarget())+"' ><i class='glyphicon glyphicon-refresh'></i> "+(StringUtils.isEmpty(refreshBtn.getName())?"刷新":refreshBtn.getName())+"</button>";
     				addBtnHtmlToList(btnList, refreshBtn, btnHtml);
     			}
     			if(null != customBtns && customBtns.size()>0) {
@@ -122,21 +123,21 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
     						authUrl = WebSecurityHelper.addUriAuth(currentUri, customBtn.getId(), customBtn.getUri());
 	    					if(StringUtils.isNotEmpty(customBtn.getBtnIcon())) {
 	    						if(customBtn.getBtnIcon().split(" ").length > 1) {
-	    							icon = "<i class='"+StringUtils.handleNull(customBtn.getBtnIcon())+"'></i>";
+	    							icon = "<i class='"+DataUtil.handleNull(customBtn.getBtnIcon())+"'></i>";
 	    						} else {
-	    							icon = "<i class='glyphicon "+StringUtils.handleNull(customBtn.getBtnIcon())+"'></i>";
+	    							icon = "<i class='glyphicon "+DataUtil.handleNull(customBtn.getBtnIcon())+"'></i>";
 	    						}
 	    					}
 
-	    					btnHtml = "<button type='button' id='"+customBtn.getId()+"' class='btn "+StringUtils.handleNull(customBtn.getBtnStyle())+" "+customBtn.getOpenStyle().getValue()+" param' data-selected-type='"+StringUtils.handleNull(customBtn.getSelectedType())+"' "
-	    					        + "data-uri='"+authUrl+"' data-title='"+StringUtils.handleNull(customBtn.getTitle())+"' data-value='' data-param-name='"+StringUtils.handleNull(customBtn.getParamName())+"' data-width='"+StringUtils.handleNull(customBtn.getWidth())+
-	    					           "' data-before-check='"+StringUtils.handleNull(customBtn.getBeforeCheck()) + "'";
+	    					btnHtml = "<button type='button' id='"+customBtn.getId()+"' class='btn "+DataUtil.handleNull(customBtn.getBtnStyle())+" "+customBtn.getOpenStyle().getValue()+" param' data-selected-type='"+DataUtil.handleNull(customBtn.getSelectedType())+"' "
+	    					        + "data-uri='"+authUrl+"' data-title='"+DataUtil.handleNull(customBtn.getTitle())+"' data-value='' data-param-name='"+DataUtil.handleNull(customBtn.getParamName())+"' data-width='"+DataUtil.handleNull(customBtn.getWidth())+
+	    					           "' data-before-check='"+DataUtil.handleNull(customBtn.getBeforeCheck()) + "'";
 
 	    					if(StringUtils.isNotEmpty(customBtn.getModalBodyId())) {
 							    btnHtml += " data-modal-body-id='" + customBtn.getModalBodyId();
 						    }
 
-						    btnHtml += "'>"+icon+" "+StringUtils.handleNull(customBtn.getName())+"</button>";
+						    btnHtml += "'>"+icon+" "+DataUtil.handleNull(customBtn.getName())+"</button>";
 
 	    					addBtnHtmlToList(btnList, customBtn, btnHtml);
     					}
@@ -159,7 +160,7 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
     			String pageUri = page.getUri();
         		if(StringUtils.isNotEmpty(pageUri)) {
         			pageUri = pageUri.replaceAll("page=\\d+&|page=\\d+|\\?page=\\d+$", "");
-            		pageUri += (StringUtils.isContains(pageUri, "?")?"&":"?")+"page=";
+            		pageUri += (DataUtil.isContains(pageUri, "?")?"&":"?")+"page=";
         		} else {
         			pageUri = "";
         		}
@@ -168,12 +169,12 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
         			searchPanel = "data-search-panel-tag='"+searchPanelTag+"'";
         		}
     			pageStyleFlag = "${btnPageStyle}";
-    			htmlContent.append("<div class='btn-page' "+StringUtils.handleNull(pageStyleFlag)+">");
+    			htmlContent.append("<div class='btn-page' "+DataUtil.handleNull(pageStyleFlag)+">");
     			htmlContent.append("<div class='page'><ul class='pagination'><li class='"+(page.getPage()==1?"disabled":"")+"'>");
     			if(page.getPage() == 1) {
     				htmlContent.append("<a href='javascript:void(0)' "+searchPanel+" class='pre-page'>&laquo;</a>");
     			} else {
-    				htmlContent.append("<a data-uri='"+pageUri+(page.getPage()-1)+"' "+searchPanel+" href='#' class='cnoj-change-page pre-page' data-target='"+StringUtils.handleNull(page.getTarget())+"'>&laquo;</a>");
+    				htmlContent.append("<a data-uri='"+pageUri+(page.getPage()-1)+"' "+searchPanel+" href='#' class='cnoj-change-page pre-page' data-target='"+DataUtil.handleNull(page.getTarget())+"'>&laquo;</a>");
     			}
     			htmlContent.append("</li>");
     			if(smartResp.getTotalPage()>1) {
@@ -199,24 +200,24 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
     					first = (last-first)<(showPageNum-1)?(last-showPageNum+1):first;
     				
     				for (int i = first; i <= last; i++) {
-						htmlContent.append("<li class='"+(page.getPage()==i?"active":"")+"'><a class='cnoj-change-page' "+searchPanel+" data-uri='"+pageUri+i+"' href='#' data-target='"+StringUtils.handleNull(page.getTarget())+"'>"+i+"</a></li>");
+						htmlContent.append("<li class='"+(page.getPage()==i?"active":"")+"'><a class='cnoj-change-page' "+searchPanel+" data-uri='"+pageUri+i+"' href='#' data-target='"+DataUtil.handleNull(page.getTarget())+"'>"+i+"</a></li>");
 					}
     			}
     			htmlContent.append("<li class='"+(page.getPage()>=smartResp.getTotalPage()?"disabled":"")+"'>");
     			if(page.getPage()>=smartResp.getTotalPage()) {
     				htmlContent.append("<a href='javascript:void(0)' "+searchPanel+" class='next-page'>&raquo;</a>");
     			} else {
-    				htmlContent.append("<a href='#' data-uri='"+pageUri+(page.getPage()+1)+"' "+searchPanel+" class='cnoj-change-page next-page' data-target='"+StringUtils.handleNull(page.getTarget())+"'>&raquo;</a>");
+    				htmlContent.append("<a href='#' data-uri='"+pageUri+(page.getPage()+1)+"' "+searchPanel+" class='cnoj-change-page next-page' data-target='"+DataUtil.handleNull(page.getTarget())+"'>&raquo;</a>");
     			}
     			htmlContent.append("</li>");
-    			htmlContent.append("<li>&nbsp;到<input class='form-control btn-sm goto-page-input' name='page' value='' />页<button data-uri='"+pageUri+"' class='btn btn-default btn-sm cnoj-goto-page' "+searchPanel+" data-target='"+StringUtils.handleNull(page.getTarget())+"'>确定</button></li>");
+    			htmlContent.append("<li>&nbsp;到<input class='form-control btn-sm goto-page-input' name='page' value='' />页<button data-uri='"+pageUri+"' class='btn btn-default btn-sm cnoj-goto-page' "+searchPanel+" data-target='"+DataUtil.handleNull(page.getTarget())+"'>确定</button></li>");
     			htmlContent.append("</ul>");
     			htmlContent.append("</div>");
     			htmlContent.append("</div>");
     		}
     		count++;
 			infoStyleFlag = "${infoStyle}";
-    		htmlContent.append("<div class='page-info' "+ StringUtils.handleNull(infoStyleFlag) +">");
+    		htmlContent.append("<div class='page-info' "+ DataUtil.handleNull(infoStyleFlag) +">");
     		if(null != page) {
     			htmlContent.append("<span>"+(smartResp.getTotalPage()>0?page.getPage():"0")+" - "+smartResp.getTotalPage()+"</span>");
     		}
@@ -231,7 +232,7 @@ public abstract class AbstractPanelFooterTag extends BaseTag {
 				Integer[] showPageSizeArray = PageHelper.getShowPageSize();
 				showPageBuilder = new StringBuilder();
 				if(null != showPageSizeArray && showPageSizeArray.length>0) {
-					showPageBuilder.append("<select class='form-control input-sm cnoj-change-pagesize' "+searchPanel+" data-uri='"+page.getUri()+"' data-target='"+StringUtils.handleNull(page.getTarget())+"'>");
+					showPageBuilder.append("<select class='form-control input-sm cnoj-change-pagesize' "+searchPanel+" data-uri='"+page.getUri()+"' data-target='"+DataUtil.handleNull(page.getTarget())+"'>");
 					for (int i = 0; i < showPageSizeArray.length; i++) {
 						if(defaultPageSize == showPageSizeArray[i]) {
 							showPageBuilder.append("<option selected='selected' value='"+showPageSizeArray[i]+"'>"+showPageSizeArray[i]+"</option>");

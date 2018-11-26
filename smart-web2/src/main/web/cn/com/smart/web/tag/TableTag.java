@@ -9,9 +9,9 @@ import javax.servlet.jsp.JspWriter;
 import cn.com.smart.web.tag.bean.ALink;
 import cn.com.smart.web.tag.bean.CustomTableCell;
 
-import com.mixsmart.enums.YesNoType;
-import com.mixsmart.utils.CollectionUtils;
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 自定义表格标签
@@ -41,7 +41,7 @@ public class TableTag extends AbstractPanelFooterTag {
 	 * 否则把表格头和表格内容拆分后重新计算表格单元格的宽度; 
 	 * 默认为非原始表格，允许JS对表格进行处理
 	 */
-	private Integer isOriginalTable = YesNoType.NO.getIndex();
+	private Integer isOriginalTable = 0;
 	
 	//数据中是否包含ID
     protected int isId = 1;
@@ -121,7 +121,7 @@ public class TableTag extends AbstractPanelFooterTag {
 	    		out.println("<div>");
 	    	} else {
 	    		try {
-	    			if(YesNoType.YES.getIndex() == getIsOriginalTable()) {
+	    			if(1 == getIsOriginalTable()) {
 	    				out.println("<div class='cnoj-table-wrap table-wrap-limit' data-subtract-height='"+this.subtractHeight+"'>");
 	    			} else {
 	    				int height = Integer.parseInt(limitHeight);
@@ -145,7 +145,7 @@ public class TableTag extends AbstractPanelFooterTag {
 	    	} else {
 	    		tableClassStyle = "";
 	    	}
-	    	out.println("<table "+(StringUtils.isNotEmpty(this.tableId)?"id='"+this.tableId+"'":"")+" class='table "+tableClassStyle+" "+tableStyles+" "+StringUtils.handleNull(divTag)+" "+(isCheckbox==1?"cnoj-checkbox-wrap":"")+" '>");
+	    	out.println("<table "+(StringUtils.isNotEmpty(this.tableId)?"id='"+this.tableId+"'":"")+" class='table "+tableClassStyle+" "+tableStyles+" "+ DataUtil.handleNull(divTag)+" "+(isCheckbox==1?"cnoj-checkbox-wrap":"")+" '>");
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
@@ -242,14 +242,14 @@ public class TableTag extends AbstractPanelFooterTag {
 	    			for (Object obj : objs) {
 						Object[] objArray = (Object[])obj;
 						if(isRowSelected==1 && isCheckbox==1) {
-							out.println("<tr id='t-"+StringUtils.handleNull(objArray[0])+"' class='tr-selected tr-mutil-selected'>");
+							out.println("<tr id='t-"+DataUtil.handleNull(objArray[0])+"' class='tr-selected tr-mutil-selected'>");
 						} else if(isRowSelected == 1 && isCheckbox==0){
-							out.println("<tr id='t-"+StringUtils.handleNull(objArray[0])+"' class='tr-selected tr-one-selected'>");
+							out.println("<tr id='t-"+DataUtil.handleNull(objArray[0])+"' class='tr-selected tr-one-selected'>");
 						} else {
-							out.println("<tr id='t-"+StringUtils.handleNull(objArray[0])+"'>");
+							out.println("<tr id='t-"+DataUtil.handleNull(objArray[0])+"'>");
 						}
 						if(isCheckbox==1) {
-							out.println("<td class='td-checkbox' style=\"width:30px;\"><div class='checkbox'><label><input type='checkbox' class='one-checkbox cnoj-op-checkbox' value='"+StringUtils.handleNull(objArray[0])+"'></label></div></td>");
+							out.println("<td class='td-checkbox' style=\"width:30px;\"><div class='checkbox'><label><input type='checkbox' class='one-checkbox cnoj-op-checkbox' value='"+DataUtil.handleNull(objArray[0])+"'></label></div></td>");
 						}
 						int count = 0;
 						for (int i = 0; i < objArray.length;i++) {
@@ -263,7 +263,7 @@ public class TableTag extends AbstractPanelFooterTag {
 							if(isId == 1 && isIdShow != 1 && i==0) {
 								continue;
 							}
-							String tdContent = StringUtils.handleNull(objArray[i]);
+							String tdContent = DataUtil.handleNull(objArray[i]);
 							String a = getTdContent(objArray, row, tdContent, count, i);
 							out.println("<td "+(StringUtils.isEmpty(tdStyle)?"":"class='"+tdStyle+"'")+" "+getTdWidthStyle(thWidth, count)+">"+a+"</td>");
 							count++;
@@ -388,7 +388,7 @@ public class TableTag extends AbstractPanelFooterTag {
     
     /**
 	 * 获取TD宽度
-	 * @param tdStyles
+	 * @param tdWidths
 	 * @param index
 	 * @return
 	 */
@@ -402,7 +402,7 @@ public class TableTag extends AbstractPanelFooterTag {
     /**
 	 * 获取TD宽度样式
 	 * @param tdWidths
-	 * @param count
+	 * @param index
 	 * @return
 	 */
     protected String getTdWidthStyle(String[] tdWidths, int index) {
@@ -425,9 +425,9 @@ public class TableTag extends AbstractPanelFooterTag {
     	String[] paramNameArray = alink.getParamName().split(",");
 		String[] paramIndexArray = alink.getParamIndex().split(",");
 		for (int j = 0; j < paramNameArray.length; j++) {
-			paramBuilder.append(StringUtils.handleNull(paramNameArray[j])+"=");
+			paramBuilder.append(DataUtil.handleNull(paramNameArray[j])+"=");
 			if(paramIndexArray[j].startsWith("'") && paramIndexArray[j].endsWith("'")) {
-				paramBuilder.append(StringUtils.handleNull(paramIndexArray[j].substring(1,paramIndexArray[j].length()-1)));
+				paramBuilder.append(DataUtil.handleNull(paramIndexArray[j].substring(1,paramIndexArray[j].length()-1)));
 			} else {
 				paramBuilder.append(objArray[Integer.parseInt(paramIndexArray[j].trim())]);
 			}

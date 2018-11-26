@@ -6,7 +6,7 @@ import java.util.Map;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.BaseBean;
 import cn.com.smart.dao.impl.BaseDaoImpl;

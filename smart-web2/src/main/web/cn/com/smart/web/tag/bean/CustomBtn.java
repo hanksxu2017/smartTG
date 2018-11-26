@@ -2,7 +2,7 @@ package cn.com.smart.web.tag.bean;
 
 import cn.com.smart.web.constant.enums.BtnPropType;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**

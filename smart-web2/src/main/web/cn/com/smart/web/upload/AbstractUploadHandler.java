@@ -5,6 +5,8 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Date;
 
+import cn.com.smart.web.utils.DataUtil;
+import cn.com.smart.web.utils.IdUtil;
 import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -15,9 +17,7 @@ import cn.com.smart.init.config.InitSysConfig;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.UploadFileInfo;
 
-import com.mixsmart.utils.ArrayUtils;
-import com.mixsmart.utils.LoggerUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 上传处理者
@@ -43,7 +43,7 @@ public abstract class AbstractUploadHandler implements IConstant {
 		SmartResponse<UploadFileInfo> chRes = new SmartResponse<UploadFileInfo>();
 		String msg = null;
 		if (StringUtils.isNotEmpty(uploadFileName)) {
-			String extTmp = StringUtils.getFileSuffix(uploadFileName);
+			String extTmp = DataUtil.getFileSuffix(uploadFileName);
 			UploadFileInfo uploadFileInfo = new UploadFileInfo();
 			uploadFileInfo.setFileName(uploadFileName);
 			uploadFileInfo.setFileSuffix(extTmp);
@@ -72,7 +72,6 @@ public abstract class AbstractUploadHandler implements IConstant {
 			}
 		    if(StringUtils.isEmpty(uploadDir)) {
 		    	msg = "“"+uploadFileName+"”文件类型不支持上传";
-		    	LoggerUtils.error(logger, msg);
 		    	chRes.setMsg("文件类型不支持上传");
 		    } else {
 		    	File dirFile = new File(uploadDir);
@@ -82,10 +81,9 @@ public abstract class AbstractUploadHandler implements IConstant {
 		    	dirFile = null;
 				if (fileSize > getUploadMaxSize()) {
 					msg = "“"+uploadFileName+"”文件太大，不支持上传";
-					LoggerUtils.error(logger, msg);
 			    	chRes.setMsg("文件太大，不支持上传");
 				} else {
-					String targetFileName = StringUtils.uuid() + "." + extTmp;
+					String targetFileName = IdUtil.generateIdByUUid() + "." + extTmp;
 					if(StringUtils.isNotEmpty(destFileName)) {
 						targetFileName = destFileName+"."+extTmp;
 					}
@@ -106,7 +104,6 @@ public abstract class AbstractUploadHandler implements IConstant {
 						uploadFileInfo.setFileType(contentType);
 						chRes.setResult(OP_SUCCESS);
 						msg = "“"+uploadFileName+"”文件上传成功";
-						LoggerUtils.info(logger, msg);
 				    	chRes.setMsg(msg);
 					}
 					targetFile = null;
@@ -198,13 +195,10 @@ public abstract class AbstractUploadHandler implements IConstant {
 	 */
 	public boolean saveUploadFile(File source, File target) {
 		boolean is = false;
-		LoggerUtils.info(logger, "正在保存文件...");
 		try {
 			FileUtils.copyFile(source, target);
 			is = true;
-			LoggerUtils.info(logger, "文件保存[成功]....");
 		} catch (IOException ex) {
-			LoggerUtils.error(logger, "保存文件[异常]...");
 			ex.printStackTrace();
 		}
 		return is;
@@ -219,7 +213,6 @@ public abstract class AbstractUploadHandler implements IConstant {
 	 */
 	protected boolean saveUploadFile(InputStream source, File target) {
 		boolean is = false;
-		LoggerUtils.info(logger, "正在保存文件...");
 		try {
 			if(null != source) {	
 				FileUtils.copyInputStreamToFile(source, target);
@@ -227,9 +220,7 @@ public abstract class AbstractUploadHandler implements IConstant {
 					source.close();
 		        is = true;
 			}
-			LoggerUtils.info(logger, "文件保存[成功]....");
 		} catch (IOException ex) {
-			LoggerUtils.error(logger, "保存文件[异常]...");
 			ex.printStackTrace();
 		}
 		return is;
@@ -247,9 +238,7 @@ public abstract class AbstractUploadHandler implements IConstant {
 		if(StringUtils.isNotEmpty(fileSuffix)) {
 			String imageType = InitSysConfig.getInstance().getValue("upload.image.type");
 			if(StringUtils.isNotEmpty(imageType)) {
-				is = ArrayUtils.isArrayContainsIgnoreCase(imageType, fileSuffix, ",");
-			} else {
-				LoggerUtils.error(logger, "配置文件中没定义[upload.image.type]属性,所以不支持改该类文件的上传");
+				is = DataUtil.isArrayContains(imageType, fileSuffix, ",");
 			}
 		}
 		return is;
@@ -267,9 +256,7 @@ public abstract class AbstractUploadHandler implements IConstant {
 		if(StringUtils.isNotEmpty(fileSuffix)) {
 			String docType = InitSysConfig.getInstance().getValue("upload.doc.type");
 			if(StringUtils.isNotEmpty(docType)) {
-				is = ArrayUtils.isArrayContainsIgnoreCase(docType, fileSuffix, ",");
-			} else {
-				LoggerUtils.error(logger, "配置文件中没定义[upload.doc.type]属性,所以不支持改该类文件的上传");
+				is = DataUtil.isArrayContains(docType, fileSuffix, ",");
 			}
 		}
 		return is;
@@ -286,9 +273,7 @@ public abstract class AbstractUploadHandler implements IConstant {
 		if(StringUtils.isNotEmpty(fileSuffix)) {
 			String videoType = InitSysConfig.getInstance().getValue("upload.video.type");
 			if(StringUtils.isNotEmpty(videoType)) {
-				is = ArrayUtils.isArrayContainsIgnoreCase(videoType, fileSuffix, ",");
-			} else {
-				LoggerUtils.error(logger, "配置文件中没定义[upload.video.type]属性,所以不支持改该类文件的上传");
+				is = DataUtil.isArrayContains(videoType, fileSuffix, ",");
 			}
 		}
 		return is;
@@ -306,9 +291,7 @@ public abstract class AbstractUploadHandler implements IConstant {
 		if(StringUtils.isNotEmpty(fileSuffix)) {
 			String audioType = InitSysConfig.getInstance().getValue("upload.audio.type");
 			if(StringUtils.isNotEmpty(audioType)) {
-				is = ArrayUtils.isArrayContainsIgnoreCase(audioType, fileSuffix, ",");
-			} else {
-				LoggerUtils.error(logger, "配置文件中没定义[upload.audio.type]属性,所以不支持改该类文件的上传");
+				is = DataUtil.isArrayContains(audioType, fileSuffix, ",");
 			}
 		}
 		return is;
@@ -326,9 +309,7 @@ public abstract class AbstractUploadHandler implements IConstant {
 		if(StringUtils.isNotEmpty(fileSuffix)) {
 			String fileType = InitSysConfig.getInstance().getValue("upload.file.type");
 			if(StringUtils.isNotEmpty(fileType)) {
-				is = ArrayUtils.isArrayContainsIgnoreCase(fileType, fileSuffix, ",");
-			} else {
-				LoggerUtils.error(logger, "配置文件中没定义[upload.file.type]属性,无法验证该文件类型");
+				is = DataUtil.isArrayContains(fileType, fileSuffix, ",");
 			}
 		}
 		return is;

@@ -1,8 +1,5 @@
 package cn.com.smart.web.tag.bean;
 
-import com.mixsmart.enums.YesNoType;
-
-
 /**
  * 操作按钮基类
  * @author XUWENYI
@@ -36,7 +33,7 @@ public class BaseBtn {
 	/**
 	 * 是否控制权限
 	 */
-	protected Boolean isAuth = YesNoType.YES.getValue();
+	protected Boolean isAuth = true;
 	
 	public BaseBtn() {
 		

@@ -1,10 +1,7 @@
 package cn.com.smart.service.impl;
 
 import java.io.Serializable;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import cn.com.smart.bean.BaseBean;
 import cn.com.smart.bean.BaseBeanImpl;
@@ -14,10 +11,9 @@ import cn.com.smart.exception.DaoException;
 import cn.com.smart.exception.ServiceException;
 import cn.com.smart.res.SQLResUtil;
 import cn.com.smart.service.IMgrService;
-
-import com.mixsmart.exception.NullArgumentException;
-import com.mixsmart.utils.CollectionUtils;
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 管理服务实现类
@@ -126,10 +122,22 @@ public abstract class MgrServiceImpl<T extends BaseBean> extends BaseEntityServi
 			if(CollectionUtils.isNotEmpty(ids)) {
 				smartResp.setResult(OP_SUCCESS);
 				smartResp.setMsg("保存成功");
-				smartResp.setDatas(CollectionUtils.toString(ids));
+				smartResp.setDatas(toString(ids));
 			}
 		}
 		return smartResp;
+	}
+
+	private List<String> toString(Collection<?> objs) {
+		List<String> list = new ArrayList();
+		Iterator var3 = objs.iterator();
+
+		while(var3.hasNext()) {
+			Object obj = var3.next();
+			list.add(obj.toString());
+		}
+
+		return list.size() > 0 ? list : null;
 	}
 
 	@Override
@@ -150,13 +158,13 @@ public abstract class MgrServiceImpl<T extends BaseBean> extends BaseEntityServi
 		int result = -1;
 		SmartResponse<String> smartResp = new SmartResponse<String>();
 		if(StringUtils.isEmpty(resId)) {
-			throw new NullArgumentException();
+			throw new RuntimeException("参数无效");
 		}
 		//判断处理是否有逗号分割的多条数据组合
 		if(null != params && params.size()>0) {
 			for (String key : params.keySet()) {
 				if(!params.get(key).getClass().isArray()) {
-					String value = StringUtils.handleNull(params.get(key));
+					String value = DataUtil.handleNull(params.get(key));
 					if(StringUtils.isNotEmpty(value) && value.indexOf(",")>-1) {
 						String[] values = value.split(",");
 						params.put(key, values);

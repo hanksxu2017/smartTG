@@ -7,7 +7,7 @@ import cn.com.smart.cache.CacheException;
 import cn.com.smart.cache.ICache;
 import cn.com.smart.cache.ICacheManager;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 内存缓存管理

@@ -136,13 +136,11 @@ public class DelBtn extends BaseBtn {
 	}
 
     @Override
-    @Deprecated
     public String getBusi() {
         return super.getBusi();
     }
 
     @Override
-    @Deprecated
     public void setBusi(String busi) {
         super.setBusi(busi);
     }

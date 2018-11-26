@@ -3,7 +3,8 @@ package cn.com.smart.web.tag;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.web.bean.UserInfo;
 import cn.com.smart.web.service.OPAuthService;
@@ -43,7 +44,7 @@ public class RefreshBtnTag extends BtnTag {
    			UserInfo userInfo = getUserInfo();
    			OPAuthService authServ = (OPAuthService)getService("opAuthServ");
    			if(authServ.isAuth(currentUri, refreshBtn, userInfo.getRoleIds())) {
-   				out.println("<button type='button'  class='btn "+refreshBtn.getBtnStyle()+" refresh' data-uri='"+StringUtils.handleNull(refreshBtn.getUri())+"' data-busi='"+StringUtils.handleNull(refreshBtn.getBusi())+"' data-target='"+StringUtils.handleNull(refreshBtn.getTarget())+"' ><i class='glyphicon glyphicon-refresh'></i> "+refreshBtn.getName()+"</button>");
+   				out.println("<button type='button'  class='btn "+refreshBtn.getBtnStyle()+" refresh' data-uri='"+DataUtil.handleNull(refreshBtn.getUri())+"' data-busi='"+ DataUtil.handleNull(refreshBtn.getBusi())+"' data-target='"+DataUtil.handleNull(refreshBtn.getTarget())+"' ><i class='glyphicon glyphicon-refresh'></i> "+refreshBtn.getName()+"</button>");
    			}
    			userInfo = null;
    			authServ = null;

@@ -8,6 +8,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.web.utils.IdUtil;
 import org.apache.commons.lang.NullArgumentException;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
@@ -207,7 +208,7 @@ public class CommonDaoImpl implements ICommonDao {
 		if(null != bean){
 			if(StringUtils.isEmpty(bean.getId())) {
 				String prefix = bean.getPrefix();
-				String idNum = StringUtils.createSerialNum();
+				String idNum = IdUtil.generateIdByUUid();
 				if(StringUtils.isNotEmpty(prefix)) {
 					idNum = prefix.toUpperCase()+"_"+idNum; 
 				}
@@ -258,7 +259,7 @@ public class CommonDaoImpl implements ICommonDao {
 				for (BaseBean o : beans) {
 					if(StringUtils.isEmpty(o.getId())) {
 						String prefix = o.getPrefix();
-						String idNum = StringUtils.createSerialNum();
+						String idNum = IdUtil.generateIdByUUid();
 						if(StringUtils.isNotEmpty(prefix)) {
 							idNum = prefix.toUpperCase()+"-"+idNum; 
 						}
@@ -580,7 +581,7 @@ public class CommonDaoImpl implements ICommonDao {
 	
 	private void getAllFields(List<Field> fields,Class<?> toBeanClass) {
 		if(null == fields || null == toBeanClass) {
-			throw new NullArgumentException();
+			return;
 		}
 		Field[] array = toBeanClass.getDeclaredFields();
 		if(array.length > 0) {

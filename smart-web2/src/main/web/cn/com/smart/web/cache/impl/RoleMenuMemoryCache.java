@@ -19,7 +19,7 @@ import cn.com.smart.web.bean.entity.TNRoleMenu;
 import cn.com.smart.web.dao.IRoleMenuDao;
 import cn.com.smart.web.dao.impl.RoleMenuDao;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 角色菜单缓存

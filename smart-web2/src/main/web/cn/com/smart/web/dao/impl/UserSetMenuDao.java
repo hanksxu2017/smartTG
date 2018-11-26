@@ -1,16 +1,14 @@
 package cn.com.smart.web.dao.impl;
 
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
-import com.mixsmart.utils.StringUtils;
-
 import cn.com.smart.dao.impl.BaseDaoImpl;
 import cn.com.smart.exception.DaoException;
 import cn.com.smart.res.SQLResUtil;
 import cn.com.smart.res.sqlmap.SqlMapping;
 import cn.com.smart.web.bean.entity.TNUserSetMenu;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Repository;
+
+import java.util.List;
 
 /**
  * 未使用到

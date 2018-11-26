@@ -3,12 +3,12 @@ package cn.com.smart.web.service;
 import java.io.Serializable;
 import java.util.List;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mixsmart.utils.CollectionUtils;
-import com.mixsmart.utils.LoggerUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.exception.DaoException;
@@ -24,6 +24,7 @@ import cn.com.smart.web.dao.impl.DictDao;
  * @author XUWENYI
  *
  */
+@Slf4j
 @Service("dictServ")
 public class DictService extends MgrServiceImpl<TNDict> {
 
@@ -48,7 +49,7 @@ public class DictService extends MgrServiceImpl<TNDict> {
 			List<Object> lists = dictCache.getItems(busiValue, name);
 			//如果缓存中没有获取到数据，则从数据库中获取
 			if(lists == null) {
-				LoggerUtils.debug(logger, "缓存中未获取到[数据字典]数据");
+				log.debug("缓存中未获取到[数据字典]数据");
 				lists = dictDao.getItems(busiValue,name);
 			}
 			if(CollectionUtils.isNotEmpty(lists)) {
@@ -84,7 +85,7 @@ public class DictService extends MgrServiceImpl<TNDict> {
 			List<TNDict> lists = dictCache.getItems(parentBusiValue);
 			//如果缓存中没有获取到数据，则从数据库中获取
 			if(CollectionUtils.isEmpty(lists)) {
-				LoggerUtils.debug(logger, "缓存中未获取到[数据字典]数据");
+				log.debug("缓存中未获取到[数据字典]数据");
 				lists = dictDao.getItems(parentBusiValue);
 			}
 			if(CollectionUtils.isNotEmpty(lists)) {
@@ -118,7 +119,7 @@ public class DictService extends MgrServiceImpl<TNDict> {
 			List<Object> lists = dictCache.getItemById(id, name);
 			//如果缓存中没有获取到数据，则从数据库中获取
 			if(lists == null) {
-				LoggerUtils.debug(logger, "缓存中未获取到[数据字典]数据");
+				log.debug("缓存中未获取到[数据字典]数据");
 			    lists = dictDao.getItemById(id,name);
 			}
 			if(CollectionUtils.isNotEmpty(lists)) {
@@ -154,7 +155,7 @@ public class DictService extends MgrServiceImpl<TNDict> {
 			List<TNDict> lists = dictCache.getItems(busiValue);
 			//如果缓存中没有获取到数据，则从数据库中获取
 			if(lists == null) {
-				LoggerUtils.debug(logger, "缓存中未获取到[数据字典]数据");
+				log.debug("缓存中未获取到[数据字典]数据");
 				lists = dictDao.getItems(busiValue);
 			}
 			if(CollectionUtils.isNotEmpty(lists)) {
@@ -280,7 +281,7 @@ public class DictService extends MgrServiceImpl<TNDict> {
 			List<Object> objs = dictCache.queryObjAll();
 			//如果缓存中没有获取到数据，则从数据库中获取
 			if(objs == null) {
-				LoggerUtils.debug(logger, "缓存中未获取到[数据字典]数据");
+				log.debug("缓存中未获取到[数据字典]数据");
 			    objs = dictDao.queryObjAll();
 			}
 			if(CollectionUtils.isNotEmpty(objs)) {

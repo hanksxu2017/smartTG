@@ -4,13 +4,12 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Repository;
 
 import cn.com.smart.dao.impl.BaseDaoImpl;
 import cn.com.smart.web.bean.entity.TNVersion;
 import cn.com.smart.web.constant.enums.VersionType;
-
-import com.mixsmart.utils.CollectionUtils;
 
 /**
  * 版本DAO
@@ -131,7 +130,7 @@ public class VersionDao extends BaseDaoImpl<TNVersion> {
 	/**
 	 * 获取版本信息根据版本类型及版本号
 	 * @param versionType 版本类型
-	 * @param version 版本号
+	 * @param numVersion 版本号
 	 * @return 返回版本对象
 	 */
 	public TNVersion getVersionByNum(VersionType versionType, Long numVersion) {

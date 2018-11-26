@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -15,7 +16,7 @@ import cn.com.smart.web.plugins.JqGridRows;
 import cn.com.smart.web.plugins.JqGridSearch;
 import cn.com.smart.web.service.OPService;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * JqGrid插件服务类
@@ -83,7 +84,7 @@ public class JqGridService {
 				for (Object obj : objs) {
 					Object[] objArray = (Object[])obj;
 					jqGridRow = new JqGridRows();
-					jqGridRow.setId(StringUtils.handleNull(objArray[0]));
+					jqGridRow.setId(DataUtil.handleNull(objArray[0]));
 					jqGridRow.setCell(obj);
 					jqGridRows.add(jqGridRow);
 				}

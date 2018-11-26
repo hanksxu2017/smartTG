@@ -1,7 +1,5 @@
 package cn.com.smart.web.tag.bean;
 
-import com.mixsmart.enums.YesNoType;
-
 /**
  * 页面参数
  * @author XUWENYI
@@ -15,7 +13,7 @@ public class PageParam extends BaseBtn {
 	
 	private String target;
 	
-	private Boolean isSelectSize = YesNoType.YES.getValue();
+	private Boolean isSelectSize = true;
 	
 	public PageParam(String uri,String target,int page) {
 		this.uri = uri;

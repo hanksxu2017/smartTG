@@ -9,8 +9,7 @@ import java.util.Map;
 import org.hibernate.HibernateException;
 import org.springframework.stereotype.Repository;
 
-import com.mixsmart.enums.YesNoType;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.dao.impl.BaseDaoImpl;
 import cn.com.smart.exception.DaoException;
@@ -150,7 +149,7 @@ public class DictDao extends BaseDaoImpl<TNDict> implements IDictDao {
     public List<TNDict> findValidAll() {
 		List<TNDict> list = null;
 		try {
-			list = getQuery(" from "+TNDict.class.getName()+" where state='"+YesNoType.YES.getStrValue()+"'",false).list();
+			list = getQuery(" from "+TNDict.class.getName()+" where state='1'",false).list();
 		} catch (HibernateException e) {
 			e.printStackTrace();
 		} catch (Exception e) {

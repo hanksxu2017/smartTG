@@ -9,8 +9,7 @@ import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.mixsmart.enums.YesNoType;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.cache.CacheException;
 import cn.com.smart.cache.ICache;
@@ -151,7 +150,7 @@ public class MenuMemoryCache implements ICacheManagerAware, InitCache, IMenuDao 
 			List<TNMenu> menus = getMenus();
 			if(null != menus && menus.size()>0) {
 				for (TNMenu menu : menus) {
-					if(YesNoType.YES.getStrValue().equals(menu.getState())) 
+					if("1".equals(menu.getState()))
 						lists.add(menu);
 				}//for
 			}
@@ -177,7 +176,7 @@ public class MenuMemoryCache implements ICacheManagerAware, InitCache, IMenuDao 
 					lists = new ArrayList<TNMenu>();
 					for (String menuId : menuIds) {
 						for (TNMenu menu : menus) {
-							if(menuId.equals(menu.getId()) && YesNoType.YES.getStrValue().equals(menu.getState())) {
+							if(menuId.equals(menu.getId()) && "1".equals(menu.getState())) {
 								lists.add(menu);
 								break;
 							}

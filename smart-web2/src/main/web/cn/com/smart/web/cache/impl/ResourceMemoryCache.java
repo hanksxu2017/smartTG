@@ -7,13 +7,12 @@ package cn.com.smart.web.cache.impl;
 import java.util.ArrayList;
 import java.util.List;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.mixsmart.enums.YesNoType;
-import com.mixsmart.utils.ArrayUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.cache.CacheException;
 import cn.com.smart.cache.ICache;
@@ -62,7 +61,7 @@ public class ResourceMemoryCache implements InitCache,ICacheManagerAware,IResour
 			if(null != datas && datas.size()>0) {
 				for (TNResource res : datas) {
 					if(StringUtils.isNotEmpty(res.getOpAuths())) {
-						List<TNOPAuth> auths = authDao.queryAuths(ArrayUtils.stringToArray(res.getOpAuths(), ","));
+						List<TNOPAuth> auths = authDao.queryAuths(DataUtil.stringToArray(res.getOpAuths(), ","));
 						if(null != auths && !auths.isEmpty())
 							res.setAuths(auths);
 					}
@@ -97,9 +96,9 @@ public class ResourceMemoryCache implements InitCache,ICacheManagerAware,IResour
 				for (TNResource res : resources) {
 					isAdd = false;
 					if(StringUtils.isNotEmpty(name))
-						isAdd = (YesNoType.YES.getStrValue().equals(res.getState()) && res.getName().contains(name));
+						isAdd = ("1".equals(res.getState()) && res.getName().contains(name));
 					else 
-						isAdd = YesNoType.YES.getStrValue().equals(res.getState());
+						isAdd = "1".equals(res.getState());
 					if(isAdd)
 						lists.add(res);
 				}

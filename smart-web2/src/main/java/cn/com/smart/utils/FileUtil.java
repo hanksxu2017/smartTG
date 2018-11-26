@@ -12,7 +12,7 @@ import java.io.OutputStreamWriter;
 
 import org.apache.log4j.Logger;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 文件工具类

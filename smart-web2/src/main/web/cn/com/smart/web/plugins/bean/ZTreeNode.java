@@ -1,7 +1,7 @@
 package cn.com.smart.web.plugins.bean;
 
-import com.mixsmart.enums.YesNoType;
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * ZTree基础属性
@@ -18,9 +18,9 @@ public class ZTreeNode {
 	
 	protected String name;
 	
-	protected Boolean open = YesNoType.NO.getValue();
+	protected Boolean open = true;
 	
-	protected Boolean isParent = YesNoType.NO.getValue();
+	protected Boolean isParent = false;
 
 	public String getId() {
 		return id;
@@ -51,10 +51,9 @@ public class ZTreeNode {
 	}
 
 	public void setOpen(Object open) {
-		String openStr = StringUtils.handleNull(open);
+		String openStr = DataUtil.handleNull(open);
 		if(StringUtils.isNotEmpty(openStr)) {
-			YesNoType yesNo = YesNoType.getObjByStrValue(openStr);
-			this.open = (null != yesNo) ? yesNo.getValue():YesNoType.NO.getValue();
+			this.open = StringUtils.equals("1", openStr);
 		}
 	}
 
@@ -63,10 +62,9 @@ public class ZTreeNode {
 	}
 
 	public void setIsParent(Object isParent) {
-		String isParentStr = StringUtils.handleNull(isParent);
+		String isParentStr = DataUtil.handleNull(isParent);
 		if(StringUtils.isNotEmpty(isParentStr)) {
-			YesNoType yesNo = YesNoType.getObjByStrValue(isParentStr);
-			this.isParent = (null != yesNo) ? yesNo.getValue():YesNoType.NO.getValue();
+			this.open = StringUtils.equals("1", isParentStr);
 		}
 	}
 	

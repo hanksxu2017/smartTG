@@ -2,7 +2,8 @@ package cn.com.smart.bean;
 
 import cn.com.smart.init.config.InitSysConfig;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 项目属性
@@ -128,12 +129,12 @@ public class ProjectInfo {
 		if(StringUtils.isNotEmpty(prefix)) {
 			prefix += ".";
 		}
-		this.name = StringUtils.handleNull(config.getValue(prefix+"name"));
+		this.name = DataUtil.handleNull(config.getValue(prefix+"name"));
 		
-		this.devModel = StringUtils.handleNull(config.getValue(prefix+"devModel"));
-		this.copyright = StringUtils.handleNull(config.getValue(prefix+"copyright"));
+		this.devModel = DataUtil.handleNull(config.getValue(prefix+"devModel"));
+		this.copyright = DataUtil.handleNull(config.getValue(prefix+"copyright"));
 			
-		this.contactInfo = StringUtils.handleNull(config.getValue(prefix+"contactInfo"));
-		this.version = StringUtils.handleNull(config.getValue(prefix+"version"));
+		this.contactInfo = DataUtil.handleNull(config.getValue(prefix+"contactInfo"));
+		this.version = DataUtil.handleNull(config.getValue(prefix+"version"));
 	}
 }

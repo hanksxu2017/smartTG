@@ -14,12 +14,12 @@ import cn.com.smart.constant.IConstant;
 import cn.com.smart.filter.bean.FilterParam;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
-import com.mixsmart.utils.CollectionUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import com.mixsmart.utils.StringUtils;
 
 import cn.com.smart.Smart;
 import cn.com.smart.dao.impl.BaseDaoImpl;
@@ -258,7 +258,7 @@ public abstract class BaseController extends Smart implements IBaseController {
 		}
 		UserInfo userInfo = getUserInfoFromSession(request);
 		if(isOrgFilter) {
-			paramMaps.put("orgIds", StringUtils.list2Array(userInfo.getOrgIds()));
+			paramMaps.put("orgIds", DataUtil.list2Array(userInfo.getOrgIds()));
 			paramMaps.put("orgId", userInfo.getOrgId());
 		}
 		curParamMaps = null;
@@ -292,7 +292,7 @@ public abstract class BaseController extends Smart implements IBaseController {
 		}
 		UserInfo userInfo = getUserInfoFromSession(session);
 		if(isOrgFilter) {
-			params.put("orgIds", StringUtils.list2Array(userInfo.getOrgIds()));
+			params.put("orgIds", DataUtil.list2Array(userInfo.getOrgIds()));
 			params.put("orgId", userInfo.getOrgId());
 		}
 		return params;
@@ -320,9 +320,9 @@ public abstract class BaseController extends Smart implements IBaseController {
 		param.put("positionId", userInfo.getPositionId());
 		param.put("username", userInfo.getUsername());
 		if(CollectionUtils.isNotEmpty(userInfo.getOrgIds()))
-			param.put("orgIds", StringUtils.list2Array(userInfo.getOrgIds()));
+			param.put("orgIds", DataUtil.list2Array(userInfo.getOrgIds()));
 		if(CollectionUtils.isNotEmpty(userInfo.getRoleIds()))
-			param.put("roleIds", StringUtils.list2Array(userInfo.getRoleIds()));
+			param.put("roleIds", DataUtil.list2Array(userInfo.getRoleIds()));
 	}
 
     protected final void setSubDir(String subDir) {

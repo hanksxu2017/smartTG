@@ -6,11 +6,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
-import com.mixsmart.utils.ArrayUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.dao.impl.BaseDaoImpl;
 import cn.com.smart.exception.DaoException;
@@ -65,7 +65,7 @@ public class ResourceDao extends BaseDaoImpl<TNResource> implements IResourceDao
 				//删除菜单
 				List<Object> menuIds = menuDao.queryMenuIdByResourceId(ids);
 				if(null != menuIds && menuIds.size()>0) 
-					menuDao.delete(ArrayUtils.arrayToString(menuIds.toArray(), ","));
+					menuDao.delete(DataUtil.arrayToString(menuIds.toArray(), ","));
 			}
 		}
 		return is;
@@ -91,8 +91,6 @@ public class ResourceDao extends BaseDaoImpl<TNResource> implements IResourceDao
 	/**
 	 * 统计用户列表--
 	 * @param searchParam 搜索参数
-	 * @param start
-	 * @param rows
 	 * @return
 	 */
 	public long queryObjCount(FilterParam searchParam) throws DaoException {
@@ -124,7 +122,7 @@ public class ResourceDao extends BaseDaoImpl<TNResource> implements IResourceDao
 					if(StringUtils.isNotEmpty(res.getOpAuths())) {
 						for (int i = 0; i < values.length; i++) {
 							if(StringUtils.isNotEmpty(res.getOpAuths()) 
-									&& ArrayUtils.isArrayContains(res.getOpAuths(), values[i], ",")) {
+									&& DataUtil.isArrayContains(res.getOpAuths(), values[i], ",")) {
 								regex = ","+values[i]+",|"+values[i]+",|,"+values[i];
 								res.setOpAuths(res.getOpAuths().replaceAll(regex, ""));
 								isDel = true;
@@ -151,7 +149,7 @@ public class ResourceDao extends BaseDaoImpl<TNResource> implements IResourceDao
 	/**
 	 * 更新权限
 	 * @param srcValue
-	 * @param desValues
+	 * @param desValue
 	 * @return
 	 */
 	public boolean updateAuth(String srcValue,String desValue) throws DaoException  {
@@ -162,7 +160,7 @@ public class ResourceDao extends BaseDaoImpl<TNResource> implements IResourceDao
 			if(null != lists && lists.size()>0) {
 				for (TNResource res : lists) {
 					if(StringUtils.isNotEmpty(res.getOpAuths())) {
-						if(ArrayUtils.isArrayContains(res.getOpAuths(), srcValue, ",")) {
+						if(DataUtil.isArrayContains(res.getOpAuths(), srcValue, ",")) {
 						 	res.setOpAuths(res.getOpAuths().replaceAll(srcValue+",", desValue+","));
 						 	updateList.add(res);
 						}

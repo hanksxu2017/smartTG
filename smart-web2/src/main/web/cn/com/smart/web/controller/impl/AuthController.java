@@ -1,14 +1,5 @@
 package cn.com.smart.web.controller.impl;
 
-import javax.servlet.http.HttpSession;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Controller;
-import org.springframework.ui.ModelMap;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.servlet.ModelAndView;
-
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.web.bean.entity.TNOrg;
 import cn.com.smart.web.bean.entity.TNPosition;
@@ -18,8 +9,15 @@ import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.OPAuthService;
 import cn.com.smart.web.service.OPService;
 import cn.com.smart.web.tag.bean.BaseBtn;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.ResponseBody;
+import org.springframework.web.servlet.ModelAndView;
 
-import com.mixsmart.utils.StringUtils;
+import javax.servlet.http.HttpSession;
 
 /**
  * 权限控制

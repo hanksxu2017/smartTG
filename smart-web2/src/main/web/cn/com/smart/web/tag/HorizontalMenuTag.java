@@ -8,7 +8,8 @@ import java.util.Stack;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.helper.TreeHelper;
@@ -46,7 +47,7 @@ public class HorizontalMenuTag extends BaseTag {
 				} else {
 					activeClass = "";
 				}
-				out.println("<li "+activeClass+" id='p-"+menu.getId()+"'><a data-uri='"+StringUtils.handleNull(menu.getResource().getUri())+"' href=\"#\"><i class='glyphicon "+StringUtils.handleNull(menu.getIcon())+"'></i> "+StringUtils.handleNull(menu.getName())+"</a></li>");
+				out.println("<li "+activeClass+" id='p-"+menu.getId()+"'><a data-uri='"+ DataUtil.handleNull(menu.getResource().getUri())+"' href=\"#\"><i class='glyphicon "+DataUtil.handleNull(menu.getIcon())+"'></i> "+DataUtil.handleNull(menu.getName())+"</a></li>");
 				count++;
 			}
 			out.println("</ul></div><div class=\"clear\"></div>");
@@ -61,7 +62,7 @@ public class HorizontalMenuTag extends BaseTag {
 							if(isParent(menuTmp, subMenus)) {
 								//isp = true;
 								printEndTag(idStack, menuTmp.getParentId(), out);
-								out.println("<li class='li-sub-menu "+(countLayer(menuTmp.getParentId())>1?"li-sub-menu-tree":"")+" layer-"+countLayer(menuTmp.getParentId())+" p-"+menuTmp.getParentId()+"' id='p-"+menuTmp.getId()+"'><a class='op-sub sub-open' data-uri='"+StringUtils.handleNull(menuTmp.getResource().getUri())+"' href='#'><div class='ui-icon ui-icon-triangle-1-e left'></div><i class='glyphicon "+StringUtils.handleNull(menuTmp.getIcon())+"'></i> "+StringUtils.handleNull(menuTmp.getName())+"</a>");
+								out.println("<li class='li-sub-menu "+(countLayer(menuTmp.getParentId())>1?"li-sub-menu-tree":"")+" layer-"+countLayer(menuTmp.getParentId())+" p-"+menuTmp.getParentId()+"' id='p-"+menuTmp.getId()+"'><a class='op-sub sub-open' data-uri='"+DataUtil.handleNull(menuTmp.getResource().getUri())+"' href='#'><div class='ui-icon ui-icon-triangle-1-e left'></div><i class='glyphicon "+DataUtil.handleNull(menuTmp.getIcon())+"'></i> "+DataUtil.handleNull(menuTmp.getName())+"</a>");
 								if(countLayer(menuTmp.getParentId())==1) {
 									out.println("<ul class='sub-menu-pop-down p-"+menuTmp.getId()+"'>");
 								} else if(countLayer(menuTmp.getParentId())>1) {
@@ -72,7 +73,7 @@ public class HorizontalMenuTag extends BaseTag {
 								idStack.push(menuTmp.getId());
 							} else {
 								printEndTag(idStack, menuTmp.getParentId(), out);
-								out.println("<li class='li-sub-menu op-no-sub layer-"+countLayer(menuTmp.getParentId())+" p-"+menuTmp.getParentId()+"' id='p-"+menuTmp.getId()+"'><a data-uri='"+StringUtils.handleNull(menuTmp.getResource().getUri())+"' href='#'><i class='glyphicon "+StringUtils.handleNull(menuTmp.getIcon())+"'></i> "+StringUtils.handleNull(menuTmp.getName())+"</a></li>");
+								out.println("<li class='li-sub-menu op-no-sub layer-"+countLayer(menuTmp.getParentId())+" p-"+menuTmp.getParentId()+"' id='p-"+menuTmp.getId()+"'><a data-uri='"+DataUtil.handleNull(menuTmp.getResource().getUri())+"' href='#'><i class='glyphicon "+DataUtil.handleNull(menuTmp.getIcon())+"'></i> "+DataUtil.handleNull(menuTmp.getName())+"</a></li>");
 							}
 						}
 						while(!idStack.isEmpty()) {

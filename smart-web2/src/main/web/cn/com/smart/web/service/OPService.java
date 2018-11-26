@@ -4,11 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mixsmart.utils.CollectionUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
@@ -408,17 +409,17 @@ public class OPService extends BaseServiceImpl implements IOPService, IConstant 
 						Object[] objArray = (Object[]) obj;
 						autoComplete = new AutoComplete();
 						if(objArray.length>=3) {
-							autoComplete.setId(StringUtils.handleNull(objArray[0]));
-							autoComplete.setValue(StringUtils.handleNull(objArray[1]));
-							autoComplete.setLabel(StringUtils.handleNull(objArray[2]));
+							autoComplete.setId(DataUtil.handleNull(objArray[0]));
+							autoComplete.setValue(DataUtil.handleNull(objArray[1]));
+							autoComplete.setLabel(DataUtil.handleNull(objArray[2]));
 						} else if(objArray.length==2) {
-							autoComplete.setId(StringUtils.handleNull(objArray[0]));
-							autoComplete.setValue(StringUtils.handleNull(objArray[1]));
-							autoComplete.setLabel(StringUtils.handleNull(objArray[1]));
+							autoComplete.setId(DataUtil.handleNull(objArray[0]));
+							autoComplete.setValue(DataUtil.handleNull(objArray[1]));
+							autoComplete.setLabel(DataUtil.handleNull(objArray[1]));
 						} else if(objArray.length==1) {
-							autoComplete.setId(StringUtils.handleNull(objArray[0]));
-							autoComplete.setValue(StringUtils.handleNull(objArray[0]));
-							autoComplete.setLabel(StringUtils.handleNull(objArray[0]));
+							autoComplete.setId(DataUtil.handleNull(objArray[0]));
+							autoComplete.setValue(DataUtil.handleNull(objArray[0]));
+							autoComplete.setLabel(DataUtil.handleNull(objArray[0]));
 						} 
 						if(objArray.length>3) {
 							List<Object> otherValues = new ArrayList<Object>();
@@ -458,7 +459,7 @@ public class OPService extends BaseServiceImpl implements IOPService, IConstant 
 				for (String key : params.keySet()) {
 					Object objValue = params.get(key);
 					if(null != objValue && objValue.getClass().isArray()) {
-						String value = StringUtils.handleNull(objValue);
+						String value = DataUtil.handleNull(objValue);
 						if(StringUtils.isNotEmpty(value) && value.indexOf(MULTI_VALUE_SPLIT)>-1) {
 							String[] values = value.split(MULTI_VALUE_SPLIT);
 							params.put(key, values);
@@ -510,8 +511,12 @@ public class OPService extends BaseServiceImpl implements IOPService, IConstant 
 
 	@Override
 	public SmartResponse<Object> getDatasBySql(String sql, Map<String, Object> param) {
-		StringUtils.isAssert(sql, "SQL语句为空");
 		SmartResponse<Object> smartResp = new SmartResponse<Object>();
+		if(StringUtils.isBlank(sql)) {
+			smartResp.setMsg("查询SQL为空");
+			return smartResp;
+		}
+
 		smartResp.setMsg(OP_NOT_DATA_SUCCESS_MSG);
 		List<Object> list = getOPDao().queryObjSql(sql, param);
 		if(CollectionUtils.isNotEmpty(list)) {
@@ -524,9 +529,13 @@ public class OPService extends BaseServiceImpl implements IOPService, IConstant 
 
 	@Override
 	public SmartResponse<String> executeBySql(String sql, Map<String, Object> param) {
-		StringUtils.isAssert(sql, "SQL语句为空");
 		SmartResponse<String> smartResp = new SmartResponse<String>();
-		int result = getOPDao().executeSql(sql, param);
+		if(StringUtils.isBlank(sql)) {
+			smartResp.setMsg("SQL语句为空");
+			return smartResp;
+		}
+
+		getOPDao().executeSql(sql, param);
 		smartResp.setResult(OP_SUCCESS);
 		smartResp.setMsg(OP_SUCCESS_MSG);
 		return smartResp;
@@ -534,10 +543,15 @@ public class OPService extends BaseServiceImpl implements IOPService, IConstant 
 
 	@Override
 	public SmartResponse<String> executeBySql(String sql, List<Map<String, Object>> params) {
-		StringUtils.isAssert(sql, "SQL语句为空");
 		SmartResponse<String> smartResp = new SmartResponse<String>();
+
+		if(StringUtils.isBlank(sql)) {
+			smartResp.setMsg("查询SQL为空");
+			return smartResp;
+		}
 		if(CollectionUtils.isEmpty(params)) {
-			StringUtils.isAssert(sql, "SQL参数不能为空");
+			smartResp.setMsg("SQL参数不能为空");
+			return smartResp;
 		}
 		for(Map<String, Object> param : params) {
 			getOPDao().executeSql(sql, param);

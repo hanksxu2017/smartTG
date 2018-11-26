@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Stack;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -28,8 +29,7 @@ import cn.com.smart.web.plugins.OrgZTreeData;
 import cn.com.smart.web.plugins.ZTreeHelper;
 import cn.com.smart.web.utils.TreeUtil;
 
-import com.mixsmart.utils.LoggerUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -70,14 +70,6 @@ public class OrgService extends MgrServiceImpl<TNOrg> {
 				smartResp = super.save(bean);
 				if(OP_SUCCESS.equals(smartResp.getResult())) {
 					TNRole role = roleDao.adminRole();
-					if(null != role) {
-						LoggerUtils.info(logger, "把添加的组织机构添加到管理员角色里面（数据权限）");
-						if(OP_SUCCESS.equals(roleServ.addOrg2Role(role.getId(), new String[]{bean.getId()}))) {
-							LoggerUtils.info(logger, "组织机构添加到管理员角色里面[成功]");
-						} else {
-							LoggerUtils.info(logger, "组织机构添加到管理员角色里面[失败]");
-						}
-					}
 					orgCache.refreshCache();
 				}
 			}
@@ -106,7 +98,7 @@ public class OrgService extends MgrServiceImpl<TNOrg> {
 				bean.getParentId();
 				bean.getSeqParentIds();
 				if(null != parentOrg) {
-					bean.setSeqParentIds(StringUtils.handleNull(parentOrg.getSeqParentIds())+parentOrg.getId()+".");
+					bean.setSeqParentIds(DataUtil.handleNull(parentOrg.getSeqParentIds())+parentOrg.getId()+".");
 					if(OrgType.DEPARTMENT.getValue().equals(bean.getType())) {
 						bean.setSeqNames(parentOrg.getSeqNames()+">"+bean.getName());
 					} else {
@@ -130,7 +122,7 @@ public class OrgService extends MgrServiceImpl<TNOrg> {
 						List<TNOrg> subOrgs = getSubOrg(orgs,parentOrg);
 						if(null != subOrgs && subOrgs.size()>0) {
 							for (TNOrg orgTmp : subOrgs) {
-								orgTmp.setSeqParentIds(StringUtils.handleNull(parentOrg.getSeqParentIds())+parentOrg.getId()+".");
+								orgTmp.setSeqParentIds(DataUtil.handleNull(parentOrg.getSeqParentIds())+parentOrg.getId()+".");
 								orgTmp.setSeqNames(parentOrg.getSeqNames()+">"+orgTmp.getName());
 								updateOrgs.add(orgTmp);
 							}
@@ -252,8 +244,7 @@ public class OrgService extends MgrServiceImpl<TNOrg> {
 		try {
 			List<TNOrg> orgs = null;
 			if(null != orgIds && orgIds.size()>0) {
-				//orgs =  orgDao.find(StringUtil.list2Array(orgIds));
-				orgs =  orgCache.find(StringUtils.list2Array(orgIds));
+				orgs =  orgCache.find(DataUtil.list2Array(orgIds));
 			} else {
 				//orgs = orgDao.findAll();
 				orgs = orgCache.findAll();

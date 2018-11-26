@@ -10,7 +10,7 @@ import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TNAttachment;
 import cn.com.smart.web.dao.impl.AttachmentDao;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 附件  Service

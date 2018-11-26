@@ -2,9 +2,8 @@ package cn.com.smart.res.sqlmap;
 
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.apache.log4j.Logger;
-
-import com.mixsmart.utils.StringUtils;
 
 /**
  * SQL映射对象

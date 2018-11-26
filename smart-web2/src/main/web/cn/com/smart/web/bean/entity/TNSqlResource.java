@@ -1,18 +1,10 @@
 package cn.com.smart.web.bean.entity;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-
-import com.mixsmart.enums.YesNoType;
-
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
+
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 定义SQL语句资源实体类
@@ -33,7 +25,7 @@ public class TNSqlResource extends BaseBeanImpl implements DateBean {
     
     private String resName;
     
-    private Boolean isFilter = YesNoType.YES.getValue();
+    private Boolean isFilter = true;
     
     private String sql;
     

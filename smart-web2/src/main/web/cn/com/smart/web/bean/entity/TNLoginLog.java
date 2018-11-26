@@ -14,8 +14,6 @@ import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
 import cn.com.smart.web.constant.enums.LoginType;
 
-import com.mixsmart.enums.YesNoType;
-
 /**
  * 用户登录日志（实体Bean）
  * @author XUWENYI
@@ -35,7 +33,7 @@ public class TNLoginLog extends BaseBeanImpl implements DateBean {
 	
 	private String username;
 	
-	private Boolean state = YesNoType.NO.getValue();
+	private Boolean state = false;
 	
 	private String msg;
 	

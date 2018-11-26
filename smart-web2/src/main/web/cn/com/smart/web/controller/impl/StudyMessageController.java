@@ -4,24 +4,14 @@ import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.constant.enumEntity.SystemMessageEnum;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.UserInfo;
-import cn.com.smart.web.bean.entity.TGStudyClassroom;
-import cn.com.smart.web.bean.entity.TGStudySchool;
 import cn.com.smart.web.bean.entity.TGStudySystemMessage;
-import cn.com.smart.web.bean.search.ClassroomSearch;
 import cn.com.smart.web.bean.search.SystemMessageSearch;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.OPService;
-import cn.com.smart.web.service.StudyClassroomService;
-import cn.com.smart.web.service.StudySchoolService;
 import cn.com.smart.web.service.StudySystemMessageService;
-import cn.com.smart.web.tag.bean.DelBtn;
 import cn.com.smart.web.tag.bean.EditBtn;
 import cn.com.smart.web.tag.bean.RefreshBtn;
 import org.apache.commons.lang.StringUtils;
-import org.snaker.engine.access.Page;
-import org.snaker.engine.access.QueryFilter;
-import org.snaker.engine.entity.WorkItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -51,12 +41,11 @@ public class StudyMessageController extends BaseController {
     /**
      * 首页系统消息
      * @param request
-     * @param page
      * @return
      */
     @RequestMapping("/unProcessList")
     @ResponseBody
-    public SmartResponse<TGStudySystemMessage> indexTodo(HttpServletRequest request, Page<WorkItem> page) {
+    public SmartResponse<TGStudySystemMessage> indexTodo(HttpServletRequest request) {
 
         Map<String, Object> params = new HashMap<>();
 	    params.put("isProcess", IConstant.IS_PROCESS_NO);

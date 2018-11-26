@@ -1,6 +1,7 @@
 package cn.com.smart.web.tag;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 表格树
@@ -20,7 +21,7 @@ public class TableTreeTag extends AbstractTableTreeTag {
 		} else {
 			classOpTree = "tr-shrink-tree";
 		}
-		strBuff.append("<tr id='t-"+StringUtils.handleNull(objArray[0])+"' class='tr-tree "+classOpTree+" t-tree-layer"+layer+" t-"+StringUtils.handleNull(objArray[1])+"' parentid='t-"+StringUtils.handleNull(objArray[1])+"'>");
+		strBuff.append("<tr id='t-"+ DataUtil.handleNull(objArray[0])+"' class='tr-tree "+classOpTree+" t-tree-layer"+layer+" t-"+DataUtil.handleNull(objArray[1])+"' parentid='t-"+DataUtil.handleNull(objArray[1])+"'>");
 		int count = 0;
 		String a = getTdContent(objArray, row, defaultValue, count, startIndex);
 		String tdOpData =  "";
@@ -43,7 +44,7 @@ public class TableTreeTag extends AbstractTableTreeTag {
 			if(count > cols) {
 				break;
 			}
-			a = getTdContent(objArray, row, StringUtils.handleNull(objArray[i]), count, i);
+			a = getTdContent(objArray, row, DataUtil.handleNull(objArray[i]), count, i);
 			strBuff.append("<td "+(StringUtils.isEmpty(getTdClass(count))?"":"class='"+getTdClass(count)+"'")+" "+super.getTdWidthStyle(thWidth,count)+">"+a+"</td>");
 			count++;
 		}

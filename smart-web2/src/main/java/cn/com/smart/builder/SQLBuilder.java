@@ -1,6 +1,6 @@
 package cn.com.smart.builder;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * Builder SQL语句

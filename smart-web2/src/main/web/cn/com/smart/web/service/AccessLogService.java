@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TNAccessLog;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 访问日志服务类

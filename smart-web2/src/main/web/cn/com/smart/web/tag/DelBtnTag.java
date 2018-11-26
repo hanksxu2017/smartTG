@@ -8,7 +8,8 @@ import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.service.OPAuthService;
 import cn.com.smart.web.tag.bean.DelBtn;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 删除按钮标签
@@ -54,10 +55,10 @@ public class DelBtnTag extends BtnTag {
    			OPAuthService authServ = (OPAuthService)getService("opAuthServ");
    			if(!delBtn.getIsAuth() || authServ.isAuth(currentUri, delBtn, userInfo.getRoleIds())) {
    				out.println("<button type='button' class='btn "+delBtn.getBtnStyle()+" del param' "+
-   			            "data-selected-type='"+StringUtils.handleNull(delBtn.getSelectedType())+"' data-uri='"+StringUtils.handleNull(delBtn.getUri())+"' "+
-   						"data-busi='"+StringUtils.handleNull(delBtn.getBusi())+"' data-msg='"+StringUtils.handleNull(delBtn.getMsg())+"' "+
-   			            "data-value='' data-refresh-uri='"+StringUtils.handleNull(delBtn.getRefreshUri())+"' data-target='"+StringUtils.handleNull(delBtn.getTarget())+"' "+
-   						"data-delAfter='"+StringUtils.handleNull(delBtn.getCallback())+"' ><i class='glyphicon glyphicon-trash'></i> "+delBtn.getName()+"</button>");
+   			            "data-selected-type='"+ DataUtil.handleNull(delBtn.getSelectedType())+"' data-uri='"+DataUtil.handleNull(delBtn.getUri())+"' "+
+   						"data-busi='"+DataUtil.handleNull(delBtn.getBusi())+"' data-msg='"+DataUtil.handleNull(delBtn.getMsg())+"' "+
+   			            "data-value='' data-refresh-uri='"+DataUtil.handleNull(delBtn.getRefreshUri())+"' data-target='"+DataUtil.handleNull(delBtn.getTarget())+"' "+
+   						"data-delAfter='"+DataUtil.handleNull(delBtn.getCallback())+"' ><i class='glyphicon glyphicon-trash'></i> "+delBtn.getName()+"</button>");
    			}
    			userInfo = null;
    		} catch (Exception e) {

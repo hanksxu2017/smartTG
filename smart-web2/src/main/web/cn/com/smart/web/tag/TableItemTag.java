@@ -9,7 +9,8 @@ import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.web.tag.bean.ALink;
 import cn.com.smart.web.tag.bean.SelectedEventProp;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 
 /**
@@ -90,18 +91,18 @@ public class TableItemTag extends TableTag {
 	    			List<Object> objs = smartResp.getDatas();
 	    			String selectedEventPropTag = null;
 	    			if(null != selectedEventProp) {
-	    				selectedEventPropTag = "data-selected-type='"+StringUtils.handleNull(selectedEventProp.getEventType())+"' "+
-	    			                       "data-selected-uri='"+StringUtils.handleNull(selectedEventProp.getUri())+"' "+
-	    						           "data-selected-target='"+StringUtils.handleNull(selectedEventProp.getTarget())+"' "+
-	    			                       "data-selected-varname='"+StringUtils.handleNull(selectedEventProp.getVarParamName())+"'";
+	    				selectedEventPropTag = "data-selected-type='"+ DataUtil.handleNull(selectedEventProp.getEventType())+"' "+
+	    			                       "data-selected-uri='"+DataUtil.handleNull(selectedEventProp.getUri())+"' "+
+	    						           "data-selected-target='"+DataUtil.handleNull(selectedEventProp.getTarget())+"' "+
+	    			                       "data-selected-varname='"+DataUtil.handleNull(selectedEventProp.getVarParamName())+"'";
 	    			}
 	    			int row = 0;
 	    			for (Object obj : objs) {
 						Object[] objArray = (Object[])obj;
 						if(isRowSelected == 1){
-							out.println("<tr id='t-"+StringUtils.handleNull(objArray[0])+"' class='tr-selected tr-one-selected' "+StringUtils.handleNull(selectedEventPropTag)+" >");
+							out.println("<tr id='t-"+DataUtil.handleNull(objArray[0])+"' class='tr-selected tr-one-selected' "+DataUtil.handleNull(selectedEventPropTag)+" >");
 						} else {
-							out.println("<tr id='t-"+StringUtils.handleNull(objArray[0])+"'>");
+							out.println("<tr id='t-"+DataUtil.handleNull(objArray[0])+"'>");
 						}
 						int count = 0;
 						for (int i = 0; i < objArray.length;i++) {
@@ -125,16 +126,16 @@ public class TableItemTag extends TableTag {
 										} 
 										if(null == a) {
 											a = getALinkContent(alink, objArray);
-											a = "<a "+a+">"+StringUtils.handleNull(objArray[i])+"</a>";
+											a = "<a "+a+">"+DataUtil.handleNull(objArray[i])+"</a>";
 										}
 										break;
 									}
 								}
 							}
 							if(StringUtils.isEmpty(a)) {
-								a = StringUtils.handleNull(objArray[i]);
+								a = DataUtil.handleNull(objArray[i]);
 							}
-							out.println("<td "+(StringUtils.isEmpty(tdStyle)?"":"class='"+tdStyle+"'")+" "+widthStyle+" title='"+StringUtils.handleNull(objArray[i])+"'>"+a+"</td>");
+							out.println("<td "+(StringUtils.isEmpty(tdStyle)?"":"class='"+tdStyle+"'")+" "+widthStyle+" title='"+DataUtil.handleNull(objArray[i])+"'>"+a+"</td>");
 							count++;
 						}
 						out.println("</tr>");

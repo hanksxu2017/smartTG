@@ -5,7 +5,8 @@ import java.util.List;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 表格树
@@ -76,17 +77,17 @@ public abstract class AbstractTableTreeTag extends TableTag {
 					String cols1Value = null;
 					int startIndex = 0;
 					if(isId==1 && isIdShow==1) {
-						cols1Value = StringUtils.handleNull(objArray[3]);
+						cols1Value = DataUtil.handleNull(objArray[3]);
 						startIndex = 4;
 					} else if (isId==1 && isIdShow==0) {
-						cols1Value = StringUtils.handleNull(objArray[4]);
+						cols1Value = DataUtil.handleNull(objArray[4]);
 						startIndex = 5;
 					} else {
-						cols1Value = StringUtils.handleNull(objArray[3]);
+						cols1Value = DataUtil.handleNull(objArray[3]);
 						startIndex = 4;
 					}
-					out.println(getHtml(isParent(StringUtils.handleNull(objArray[3]), objs), objArray, row,
-							countLayer(StringUtils.handleNull(objArray[1]), objs), cols1Value, startIndex, cols, headerCount));
+					out.println(getHtml(isParent(DataUtil.handleNull(objArray[3]), objs), objArray, row,
+							countLayer(DataUtil.handleNull(objArray[1]), objs), cols1Value, startIndex, cols, headerCount));
 					row++;
 				}//for
     		}//else
@@ -107,7 +108,7 @@ public abstract class AbstractTableTreeTag extends TableTag {
 		boolean is = false;
 		for (Object obj : objs) {
 			Object[] objArray = (Object[]) obj;
-			if(id.equals(StringUtils.handleNull(objArray[1]))){
+			if(id.equals(DataUtil.handleNull(objArray[1]))){
 				is = true;
 				break;
 			}
@@ -126,9 +127,9 @@ public abstract class AbstractTableTreeTag extends TableTag {
 		int layer = 0;
 		for (int i = 0; i < objs.size();) {
 			Object[] objArray = (Object[]) objs.get(i);
-			if(parentId.equals(StringUtils.handleNull(objArray[0]))) {
+			if(parentId.equals(DataUtil.handleNull(objArray[0]))) {
 				layer++;
-				parentId = StringUtils.handleNull(objArray[1]);
+				parentId = DataUtil.handleNull(objArray[1]);
 				i = 0;
 			} else {
 				i++;

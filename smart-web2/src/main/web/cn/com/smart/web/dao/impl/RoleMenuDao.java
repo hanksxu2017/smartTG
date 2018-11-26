@@ -17,7 +17,7 @@ import cn.com.smart.web.bean.entity.TNMenu;
 import cn.com.smart.web.bean.entity.TNRoleMenu;
 import cn.com.smart.web.dao.IRoleMenuDao;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 

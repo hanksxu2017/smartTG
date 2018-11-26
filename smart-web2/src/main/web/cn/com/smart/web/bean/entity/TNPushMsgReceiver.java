@@ -7,8 +7,6 @@ import javax.persistence.Table;
 
 import cn.com.smart.bean.BaseBeanImpl;
 
-import com.mixsmart.enums.YesNoType;
-
 /**
  * 推送消息接收者
  * @author XUWENYI
@@ -31,7 +29,7 @@ public class TNPushMsgReceiver extends BaseBeanImpl implements Cloneable {
 	/**
 	 * 是否全发
 	 */
-	private Boolean isAll = YesNoType.NO.getValue();
+	private Boolean isAll = false;
 	
 	/**
 	 * 接收者；有可能是个人，或部门

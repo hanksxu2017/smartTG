@@ -5,9 +5,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
-
-import com.mixsmart.utils.StringUtils;
 
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.dao.impl.BaseDaoImpl;

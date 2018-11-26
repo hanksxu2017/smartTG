@@ -2,14 +2,7 @@ package cn.com.smart.web.dao.impl;
 
 import cn.com.smart.dao.impl.BaseDaoImpl;
 import cn.com.smart.web.bean.entity.TGStudySchool;
-import cn.com.smart.web.bean.entity.TNVersion;
-import cn.com.smart.web.constant.enums.VersionType;
-import com.mixsmart.utils.CollectionUtils;
 import org.springframework.stereotype.Repository;
-
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * 版本DAO

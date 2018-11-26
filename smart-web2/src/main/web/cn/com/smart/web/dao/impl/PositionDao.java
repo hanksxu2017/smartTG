@@ -14,7 +14,7 @@ import cn.com.smart.res.SQLResUtil;
 import cn.com.smart.res.sqlmap.SqlMapping;
 import cn.com.smart.web.bean.entity.TNPosition;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 岗位DAO

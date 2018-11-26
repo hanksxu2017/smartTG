@@ -4,7 +4,7 @@ import cn.com.smart.constant.IConstant;
 import cn.com.smart.init.config.InitSysConfig;
 import cn.com.smart.web.constant.IActionConstant;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 分页助手类

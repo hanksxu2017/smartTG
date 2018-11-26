@@ -1,7 +1,7 @@
 package cn.com.smart.web.helper;
 
-import com.mixsmart.security.SecurityUtils;
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.init.config.InitSysConfig;
 
@@ -22,7 +22,7 @@ public class WebSecurityHelper {
      */
     public static String encrypt(String value) {
         if(StringUtils.isNotEmpty(value)) {
-            value = SecurityUtils.desEncode(value, SECRET_KEY);
+            value = DataUtil.desEncode(value, SECRET_KEY);
         }
         return value;
     }
@@ -34,7 +34,7 @@ public class WebSecurityHelper {
      */
     public static String decrypt(String value) {
         if(StringUtils.isNotEmpty(value)) {
-            value = SecurityUtils.desDecode(value, SECRET_KEY);
+            value = DataUtil.desDecode(value, SECRET_KEY);
         }
         return value;
     }
@@ -58,7 +58,7 @@ public class WebSecurityHelper {
             }
             uri = uri + WebSecurityHelper.encrypt(token);
         }
-        return StringUtils.handleNull(uri);
+        return DataUtil.handleNull(uri);
     }
     
     /**

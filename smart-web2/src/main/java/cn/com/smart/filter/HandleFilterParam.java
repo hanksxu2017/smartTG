@@ -11,7 +11,7 @@ import java.util.Map;
 
 import cn.com.smart.filter.bean.FilterParam;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 处理搜索参数 过滤参数值为空的 <br />

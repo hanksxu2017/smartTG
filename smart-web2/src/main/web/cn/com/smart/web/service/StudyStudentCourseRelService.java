@@ -7,7 +7,7 @@ import cn.com.smart.exception.ServiceException;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
 import cn.com.smart.web.dao.impl.StudyStudentCourseRelDao;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;

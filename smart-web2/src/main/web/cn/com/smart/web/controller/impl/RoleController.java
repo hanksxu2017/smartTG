@@ -6,6 +6,7 @@ import java.util.Map;
 
 import javax.servlet.http.HttpSession;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.filter.bean.FilterParam;
@@ -150,7 +151,7 @@ public class RoleController extends BaseController {
 			if(null == searchParam) {
 				searchParam = new FilterParam();
 			}
-			searchParam.setRoleIds(StringUtils.list2Array(userInfo.getRoleIds()));
+			searchParam.setRoleIds(DataUtil.list2Array(userInfo.getRoleIds()));
 		}
 		SmartResponse<Object> smartResp = opServ.getDatas("role_simp_list",searchParam, page.getStartNum(), page.getPageSize());
 		pageParam = new PageParam(uri, "#role-tab", page.getPage(), page.getPageSize());
@@ -349,7 +350,6 @@ public class RoleController extends BaseController {
 	 * 
 	 * @param searchParam
 	 * @param modelView
-	 * @param id
 	 * @param page
 	 * @return
 	 * @throws Exception

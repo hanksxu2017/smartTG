@@ -1,6 +1,6 @@
 package cn.com.smart.web.constant.enums;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 图标类型

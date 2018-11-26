@@ -14,7 +14,7 @@ import javax.persistence.Transient;
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 资源（实体Bean）
@@ -120,7 +120,7 @@ public class TNResource extends BaseBeanImpl implements DateBean {
 		String authStr = "";
 		if(null != auths && auths.size()>0) {
 			for (TNOPAuth auth : auths) {
-				if(null != auth && !StringUtils.isEmpty(auth.getValue())) 
+				if(null != auth && !StringUtils.isEmpty(auth.getValue()))
 					authStr += auth.getValue()+",";
 			}
 		}

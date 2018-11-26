@@ -1,5 +1,6 @@
 package cn.com.smart.web.controller.impl;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -9,7 +10,7 @@ import org.springframework.web.servlet.ModelAndView;
 import cn.com.smart.dao.impl.BaseDaoImpl;
 import cn.com.smart.web.controller.base.BaseController;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 显示页面
@@ -37,10 +38,10 @@ public class ShowPageController extends BaseController {
 			String[] params = pagePath.split("_");
 			if(params.length>0) {
 				String dir = "";
-				String viewPage = StringUtils.filterFilePath(params[params.length-1]);
+				String viewPage = DataUtil.filterFilePath(params[params.length-1]);
 				if(params.length<5 && params.length>0){
 					for (int i = 0; i < (params.length-1); i++) {
-						dir += StringUtils.filterFilePath(params[i])+"/";
+						dir += DataUtil.filterFilePath(params[i])+"/";
 					}
 					viewPage = dir+viewPage;
 				}

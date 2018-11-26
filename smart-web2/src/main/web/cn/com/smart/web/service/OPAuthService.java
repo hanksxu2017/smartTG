@@ -1,35 +1,31 @@
 package cn.com.smart.web.service;
 
-import java.util.ArrayList;
-import java.util.List;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
-
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.exception.DaoException;
 import cn.com.smart.exception.ServiceException;
 import cn.com.smart.helper.ObjectHelper;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TNOPAuth;
-import cn.com.smart.web.bean.entity.TNRoleResource;
 import cn.com.smart.web.cache.impl.OPAuthMemoryCache;
 import cn.com.smart.web.cache.impl.ResourceMemoryCache;
 import cn.com.smart.web.cache.impl.RoleResourceMemoryCache;
 import cn.com.smart.web.dao.impl.OPAuthDao;
 import cn.com.smart.web.dao.impl.RoleResourceDao;
 import cn.com.smart.web.tag.bean.BaseBtn;
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
-import com.mixsmart.enums.YesNoType;
-import com.mixsmart.utils.ArrayUtils;
-import com.mixsmart.utils.LoggerUtils;
-import com.mixsmart.utils.StringUtils;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 
  * @author XUWENYI
  *
  */
+@Slf4j
 @Service("opAuthServ")
 public class OPAuthService extends MgrServiceImpl<TNOPAuth> {
 
@@ -90,7 +86,7 @@ public class OPAuthService extends MgrServiceImpl<TNOPAuth> {
 			List<TNOPAuth> lists = authCache.queryAll();
 			//如果缓存中没有获取到数据，则从数据库中获取
 			if(lists == null) {
-				LoggerUtils.debug(logger, "缓存中未获取到[操作权限]数据");
+				log.debug("缓存中未获取到[操作权限]数据");
 				lists = findAll().getDatas();
 			}
 			if(null != lists && lists.size()>0) {
@@ -123,7 +119,7 @@ public class OPAuthService extends MgrServiceImpl<TNOPAuth> {
 				List<TNOPAuth> all = authCache.queryAll();
 				//如果缓存中没有获取到数据，则从数据库中获取
 				if(all == null) {
-					LoggerUtils.debug(logger, "缓存中未获取到[操作权限]数据");
+					log.debug("缓存中未获取到[操作权限]数据");
 					all = super.findAll().getDatas();
 				}
 				List<TNOPAuth> newOpAuths = new ArrayList<TNOPAuth>();
@@ -133,7 +129,7 @@ public class OPAuthService extends MgrServiceImpl<TNOPAuth> {
 					//newOpAuth.setIsChecked(YesNoType.NO.getIndex());
 					for (int i=0;i<values.length;i++) {
 						if(noCheckBtn.getValue().equals(values[i])) {
-							newOpAuth.setIsChecked(YesNoType.YES.getIndex());
+							newOpAuth.setIsChecked(1);
 							break;
 						}
 					}

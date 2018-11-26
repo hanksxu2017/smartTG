@@ -8,7 +8,8 @@ import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.service.OPAuthService;
 import cn.com.smart.web.tag.bean.EditBtn;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 添加按钮标签
@@ -56,8 +57,8 @@ public class AddBtnTag extends BtnTag {
    			OPAuthService opAuthServ = (OPAuthService)getService("opAuthServ");
    			if(!addBtn.getIsAuth() || opAuthServ.isAuth(currentUri, addBtn, userInfo.getRoleIds())) {
    			   out.println("<button type='button' class='btn "+addBtn.getBtnStyle()+" add param' "+
-   			           "data-selected-type='"+StringUtils.handleNull(addBtn.getSelectedType())+"' data-uri='"+StringUtils.handleNull(addBtn.getUri())+"' "+
-   					   "data-title='"+StringUtils.handleNull(addBtn.getTitle())+"' data-busi='"+StringUtils.handleNull(addBtn.getBusi())+"' data-value='' "+
+   			           "data-selected-type='"+ DataUtil.handleNull(addBtn.getSelectedType())+"' data-uri='"+DataUtil.handleNull(addBtn.getUri())+"' "+
+   					   "data-title='"+DataUtil.handleNull(addBtn.getTitle())+"' data-busi='"+DataUtil.handleNull(addBtn.getBusi())+"' data-value='' "+
    			           "dialog-width='"+addBtn.getWidth()+"' ><i class='glyphicon glyphicon-plus'></i> "+addBtn.getName()+"</button>");
    			}
    			userInfo = null;

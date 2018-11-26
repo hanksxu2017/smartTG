@@ -7,7 +7,8 @@ import java.util.Stack;
 import javax.servlet.jsp.JspException;
 import javax.servlet.jsp.JspWriter;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.web.bean.UserInfo;
@@ -142,10 +143,10 @@ public class MenuTag extends BaseTag {
 	 */
 	private String getParentFirstLevelContentHtml(TNMenu menu,int index) {
 		String contents = "<li class='menu-li li-"+open+" layer-"+countLayer(menu.getParentId())+" "+(StringUtils.isEmpty(menu.getIcon())?"no-icon":"")+"' id='"+menu.getId()+"'>"+
-	            "<a href='#' data-index='"+index+"' class='"+open+"' data-title='"+menu.getName()+"' data-menu-type='"+(menu.getResource() != null ? StringUtils.handleNull(menu.getResource().getType()):"")+"'"+
-				" data-uri='"+(menu.getResource() != null ? StringUtils.handleNull(menu.getResource().getUri()):"")+"'>"+
+	            "<a href='#' data-index='"+index+"' class='"+open+"' data-title='"+menu.getName()+"' data-menu-type='"+(menu.getResource() != null ? DataUtil.handleNull(menu.getResource().getType()):"")+"'"+
+				" data-uri='"+(menu.getResource() != null ? DataUtil.handleNull(menu.getResource().getUri()):"")+"'>"+
 	            "<div class='ui-icon ui-icon-triangle-1-e left'></div>"+
-	            "<i class='glyphicon "+StringUtils.handleNull(menu.getIcon())+"'></i> "+menu.getName()+"</a><ul id='parent_"+menu.getId()+"'>";
+	            "<i class='glyphicon "+ DataUtil.handleNull(menu.getIcon())+"'></i> "+menu.getName()+"</a><ul id='parent_"+menu.getId()+"'>";
 		return contents;
 	}
 	
@@ -157,8 +158,8 @@ public class MenuTag extends BaseTag {
 	 */
 	private String getFirstLevelContentHtml(TNMenu menu,int index) {
 		String contents = "<li class='menu-li no-parent layer-"+countLayer(menu.getParentId())+" "+(StringUtils.isEmpty(menu.getIcon())?"no-icon":"")+"' id='"+menu.getId()+"'>"+
-	           "<a href='#' data-index='"+index+"' data-title='"+menu.getName()+"' data-menu-type='"+(menu.getResource() != null ? StringUtils.handleNull(menu.getResource().getType()):"")+"'"+
-				" data-uri='"+(menu.getResource() != null ? StringUtils.handleNull(menu.getResource().getUri()):"")+"'><i class='glyphicon "+StringUtils.handleNull(menu.getIcon())+"'></i>"+menu.getName()+"</a></li>";
+	           "<a href='#' data-index='"+index+"' data-title='"+menu.getName()+"' data-menu-type='"+(menu.getResource() != null ? DataUtil.handleNull(menu.getResource().getType()):"")+"'"+
+				" data-uri='"+(menu.getResource() != null ? DataUtil.handleNull(menu.getResource().getUri()):"")+"'><i class='glyphicon "+DataUtil.handleNull(menu.getIcon())+"'></i>"+menu.getName()+"</a></li>";
 		return contents;
 	}
 	
@@ -170,10 +171,10 @@ public class MenuTag extends BaseTag {
 	 */
 	private String getParentContentHtml(TNMenu menu,int index) {
 		String contents = "<li class='li-"+open+" layer-"+countLayer(menu.getParentId())+" "+(StringUtils.isEmpty(menu.getIcon())?"no-icon":"")+"' id='"+menu.getId()+"'>"+
-	            "<a href='#' data-index='"+index+"' class='"+open+"' data-title='"+menu.getName()+"' data-menu-type='"+(menu.getResource() != null ? StringUtils.handleNull(menu.getResource().getType()):"")+"'"+
-				" data-uri='"+(menu.getResource() != null ? StringUtils.handleNull(menu.getResource().getUri()):"")+"'>"+
+	            "<a href='#' data-index='"+index+"' class='"+open+"' data-title='"+menu.getName()+"' data-menu-type='"+(menu.getResource() != null ? DataUtil.handleNull(menu.getResource().getType()):"")+"'"+
+				" data-uri='"+(menu.getResource() != null ? DataUtil.handleNull(menu.getResource().getUri()):"")+"'>"+
 	            "<div class='ui-icon ui-icon-triangle-1-e left'></div>"+
-	            "<i class='glyphicon "+StringUtils.handleNull(menu.getIcon())+"'></i> "+menu.getName()+"</a><ul id='parent_"+menu.getId()+"'>";
+	            "<i class='glyphicon "+DataUtil.handleNull(menu.getIcon())+"'></i> "+menu.getName()+"</a><ul id='parent_"+menu.getId()+"'>";
 		return contents;
 	}
 	
@@ -185,7 +186,7 @@ public class MenuTag extends BaseTag {
 	 */
 	private String getContentHtml(TNMenu menu,int index) {
 		String contents = "<li class='no-parent layer-"+countLayer(menu.getParentId())+" "+(StringUtils.isEmpty(menu.getIcon())?"no-icon":"")+"' id='"+menu.getId()+"'>"+
-		           "<a href='#' data-index='"+index+"' data-title='"+menu.getName()+"' data-menu-type='"+(menu.getResource() != null ? StringUtils.handleNull(menu.getResource().getType()):"")+"' data-uri='"+(menu.getResource() != null ? StringUtils.handleNull(menu.getResource().getUri()):"")+"'><i class='glyphicon "+StringUtils.handleNull(menu.getIcon())+"'></i> "+menu.getName()+"</a></li>";
+		           "<a href='#' data-index='"+index+"' data-title='"+menu.getName()+"' data-menu-type='"+(menu.getResource() != null ? DataUtil.handleNull(menu.getResource().getType()):"")+"' data-uri='"+(menu.getResource() != null ? DataUtil.handleNull(menu.getResource().getUri()):"")+"'><i class='glyphicon "+DataUtil.handleNull(menu.getIcon())+"'></i> "+menu.getName()+"</a></li>";
 			return contents;
 	}
 	

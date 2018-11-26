@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
@@ -17,7 +18,7 @@ import cn.com.smart.res.sqlmap.SqlMapping;
 import cn.com.smart.web.bean.entity.TNUser;
 import cn.com.smart.web.filter.bean.UserSearchParam;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -146,8 +147,6 @@ public class UserDao extends BaseDaoImpl<TNUser> {
 	/**
 	 * 统计用户列表--
 	 * @param searchParam 搜索参数
-	 * @param start
-	 * @param rows
 	 * @return
 	 */
 	public long queryObjCount(UserSearchParam searchParam) throws DaoException {
@@ -209,7 +208,7 @@ public class UserDao extends BaseDaoImpl<TNUser> {
 	
 	/**
 	 * 修改用户密码
-	 * @param userIdArray
+	 * @param userId
 	 * @param newPwd
 	 * @return
 	 */
@@ -253,7 +252,6 @@ public class UserDao extends BaseDaoImpl<TNUser> {
 	/**
 	 * 查询角色ID
 	 * @param userId
-	 * @param flag
 	 * @return
 	 */
 	public List<String> queryMenuRoleIds(String userId) throws DaoException {
@@ -267,7 +265,7 @@ public class UserDao extends BaseDaoImpl<TNUser> {
 				if(null != lists && lists.size()>0) {
 					roleIds = new ArrayList<String>(lists.size());
 					for (Object obj : lists) {
-						roleIds.add(StringUtils.handleNull(obj));
+						roleIds.add(DataUtil.handleNull(obj));
 					}
 				}//if
 				lists = null;
@@ -280,7 +278,6 @@ public class UserDao extends BaseDaoImpl<TNUser> {
 	/**
 	 * 查询角色ID
 	 * @param userId
-	 * @param flag
 	 * @return
 	 */
 	public List<String> queryRoleIds(String userId) throws DaoException {
@@ -294,7 +291,7 @@ public class UserDao extends BaseDaoImpl<TNUser> {
 				if(null != lists && lists.size()>0) {
 					roleIds = new ArrayList<String>(lists.size());
 					for (Object obj : lists) {
-						roleIds.add(StringUtils.handleNull(obj));
+						roleIds.add(DataUtil.handleNull(obj));
 					}
 				}//if
 				lists = null;
@@ -321,7 +318,7 @@ public class UserDao extends BaseDaoImpl<TNUser> {
 				if(null != lists && lists.size()>0) {
 					orgIds = new ArrayList<String>(lists.size());
 					for (Object obj : lists) {
-						orgIds.add(StringUtils.handleNull(obj));
+						orgIds.add(DataUtil.handleNull(obj));
 					}
 				}//if
 				lists = null;

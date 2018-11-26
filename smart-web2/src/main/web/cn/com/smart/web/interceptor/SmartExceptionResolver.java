@@ -11,7 +11,7 @@ import org.springframework.web.servlet.View;
 import org.springframework.web.servlet.handler.AbstractHandlerExceptionResolver;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * SmartWeb异常处理器

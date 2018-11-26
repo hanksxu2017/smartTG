@@ -1,6 +1,7 @@
 package cn.com.smart.web.tag;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 表格异步树
@@ -28,7 +29,7 @@ public class TableAsyncTreeTag extends AbstractTableTreeTag {
 		if(StringUtils.isNotEmpty(this.asyncUrl) && this.asyncUrl.indexOf("?") == -1) {
 			this.asyncUrl += "?1=1";
 		}
-		strBuff.append("<tr data-col-num='"+colNum+"' data-layer='"+layer+"'  data-async-url='"+this.asyncUrl+"&parentId="+StringUtils.handleNull(objArray[0])+"' id='t-"+StringUtils.handleNull(objArray[0])+"' class='tr-tree tr-async-tree "+classOpTree+" t-tree-layer"+layer+" t-"+StringUtils.handleNull(objArray[1])+"' parentid='t-"+StringUtils.handleNull(objArray[1])+"'>");
+		strBuff.append("<tr data-col-num='"+colNum+"' data-layer='"+layer+"'  data-async-url='"+this.asyncUrl+"&parentId="+DataUtil.handleNull(objArray[0])+"' id='t-"+DataUtil.handleNull(objArray[0])+"' class='tr-tree tr-async-tree "+classOpTree+" t-tree-layer"+layer+" t-"+DataUtil.handleNull(objArray[1])+"' parentid='t-"+DataUtil.handleNull(objArray[1])+"'>");
 		int count = 0;
 		String tdOpData =  "";
         String uiIconOpData = "";
@@ -47,7 +48,7 @@ public class TableAsyncTreeTag extends AbstractTableTreeTag {
 			if(count > cols) {
 				break;
 			}
-			a = getTdContent(objArray, row,StringUtils.handleNull(objArray[i]), count, i);
+			a = getTdContent(objArray, row, DataUtil.handleNull(objArray[i]), count, i);
 			strBuff.append("<td "+(StringUtils.isEmpty(getTdClass(count))?"":"class='"+getTdClass(count)+"'")+" "+super.getTdWidthStyle(thWidth,count)+">"+a+"</td>");
 			
 		}

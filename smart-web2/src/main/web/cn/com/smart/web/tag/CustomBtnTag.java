@@ -9,7 +9,8 @@ import cn.com.smart.web.constant.enums.IconType;
 import cn.com.smart.web.service.OPAuthService;
 import cn.com.smart.web.tag.bean.CustomBtn;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 自定义按钮标签
@@ -70,8 +71,8 @@ public class CustomBtnTag extends BtnTag {
    			        }
    			    }
    			   out.println("<button type='button' id='"+customBtn.getId()+"' class='btn "+customBtn.getBtnStyle()+" "+customBtn.getOpenStyle().getValue()+" param' "+
-   			           "data-selected-type='"+StringUtils.handleNull(customBtn.getSelectedType())+"' data-uri='"+StringUtils.handleNull(customBtn.getUri())+"' "+
-   					   "data-title='"+StringUtils.handleNull(customBtn.getTitle())+"' data-value='' data-param-name='"+StringUtils.handleNull(customBtn.getParamName())+"' "+
+   			           "data-selected-type='"+ DataUtil.handleNull(customBtn.getSelectedType())+"' data-uri='"+DataUtil.handleNull(customBtn.getUri())+"' "+
+   					   "data-title='"+DataUtil.handleNull(customBtn.getTitle())+"' data-value='' data-param-name='"+DataUtil.handleNull(customBtn.getParamName())+"' "+
    			           "data-width='"+customBtn.getWidth()+"' >"+icon+customBtn.getName()+"</button>");
    			}
    			userInfo = null;

@@ -238,18 +238,6 @@
         </dependency>
 
 		<dependency>
-			<groupId>org.snaker</groupId>
-			<artifactId>snaker-core</artifactId>
-			<version>1.6.6</version>
-		</dependency>
-
-		<dependency>
-			<groupId>org.comet4j</groupId>
-			<artifactId>comet4j</artifactId>
-			<version>0.1.8</version>
-		</dependency>
-
-		<dependency>
 			<groupId>javax.servlet</groupId>
 			<artifactId>jstl</artifactId>
 			<version>1.2</version>
@@ -319,6 +307,7 @@
 		</plugins>
 	</build>
 	
+	<!--
 	<repositories>
         <repository>
             <id>mixsmart_maven</id>
@@ -332,4 +321,5 @@
             </snapshots>
         </repository>
     </repositories>
+	-->
 </project>

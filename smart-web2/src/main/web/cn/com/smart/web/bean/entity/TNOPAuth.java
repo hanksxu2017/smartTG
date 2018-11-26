@@ -1,20 +1,11 @@
 package cn.com.smart.web.bean.entity;
 
-import java.util.Date;
-
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
-import javax.persistence.Transient;
-
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
 import cn.com.smart.validate.Validate;
 
-import com.mixsmart.enums.YesNoType;
+import javax.persistence.*;
+import java.util.Date;
 
 /**
  * 操作权限 （实体Bean）
@@ -44,7 +35,7 @@ public class TNOPAuth extends BaseBeanImpl implements DateBean, Cloneable {
 	 * 1--选中
 	 * 0--未选中
 	 */
-	private int isChecked = YesNoType.NO.getIndex();
+	private int isChecked = 0;
 
 	@Id
 	@Column(name="id",length=50)

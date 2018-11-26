@@ -19,7 +19,7 @@ import cn.com.smart.web.bean.entity.TNOPAuth;
 import cn.com.smart.web.dao.IOPAuthDao;
 import cn.com.smart.web.dao.impl.OPAuthDao;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 操作权限缓存

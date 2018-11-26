@@ -3,7 +3,8 @@ package cn.com.smart.web.tag.bean;
 import java.util.Map;
 import java.util.Set;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 表格自定义单元格 <br />
@@ -63,10 +64,10 @@ public class CustomTableCell {
 			Set<String> params = paramsMap.keySet();
 			for (String param : params) {
 				Object value = paramsMap.get(param);
-				if(null != value && StringUtils.isInteger(value.toString())) {
+				if(null != value && DataUtil.isInteger(value.toString())) {
 					int index = Integer.parseInt(value.toString());
 					if(index < objArray.length) {
-						newContent = newContent.replace("${"+param+"}", StringUtils.handleNull(objArray[index]));
+						newContent = newContent.replace("${"+param+"}", DataUtil.handleNull(objArray[index]));
 					}
 				} //if
 			}//for

@@ -1,14 +1,12 @@
 package cn.com.smart.dao.impl;
 
-import java.util.List;
-import java.util.Map;
-
-import org.hibernate.Query;
-
-import com.mixsmart.utils.StringUtils;
-
 import cn.com.smart.dao.IExecuteDao;
 import cn.com.smart.exception.DaoException;
+import org.apache.commons.lang3.StringUtils;
+import org.hibernate.Query;
+
+import java.util.List;
+import java.util.Map;
 
 /**
  * 执行Dao实现类
@@ -17,7 +15,6 @@ import cn.com.smart.exception.DaoException;
  * @since JDK版本大于等于1.6
  * 
  * 2015年8月22日
- * @param <T>
  */
 public abstract class ExecuteDaoImpl extends CommonDaoImpl implements IExecuteDao {
     

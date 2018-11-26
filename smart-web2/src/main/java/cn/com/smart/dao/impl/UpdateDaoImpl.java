@@ -1,13 +1,5 @@
 package cn.com.smart.dao.impl;
 
-import java.io.Serializable;
-import java.util.Date;
-import java.util.List;
-
-import org.springframework.stereotype.Repository;
-
-import com.mixsmart.utils.StringUtils;
-
 import cn.com.smart.bean.BaseBean;
 import cn.com.smart.bean.DateBean;
 import cn.com.smart.dao.IUpdateDao;
@@ -15,6 +7,13 @@ import cn.com.smart.exception.DaoException;
 import cn.com.smart.validate.ExecuteValidator;
 import cn.com.smart.validate.ValidateException;
 import cn.com.smart.validate.Validator;
+import cn.com.smart.web.utils.IdUtil;
+import org.apache.commons.lang3.StringUtils;
+import org.springframework.stereotype.Repository;
+
+import java.io.Serializable;
+import java.util.Date;
+import java.util.List;
 
 /**
  * 更新Dao实现类
@@ -55,7 +54,7 @@ public abstract class UpdateDaoImpl<T extends BaseBean> extends DeleteDaoImpl<T>
 			log.info("保存或更新数据ID["+o.getId()+"]");
 			if(StringUtils.isEmpty(o.getId())) {
 				String prefix = o.getPrefix();
-				String idNum = StringUtils.createSerialNum();
+				String idNum = IdUtil.generateIdByUUid();
 				if(StringUtils.isNotEmpty(prefix)) {
 					idNum = prefix.toUpperCase()+idNum; 
 				}

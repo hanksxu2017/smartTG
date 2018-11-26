@@ -6,6 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.ArrayUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Repository;
 
@@ -18,8 +20,7 @@ import cn.com.smart.web.bean.entity.TNResource;
 import cn.com.smart.web.bean.entity.TNRoleResource;
 import cn.com.smart.web.dao.IRoleResourceDao;
 
-import com.mixsmart.utils.ArrayUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -139,7 +140,7 @@ public class RoleResourceDao extends BaseDaoImpl<TNRoleResource> implements IRol
 					if(StringUtils.isNotEmpty(roleRes.getOpAuths())) {
 						for (int i = 0; i < values.length; i++) {
 							if(StringUtils.isNotEmpty(roleRes.getOpAuths()) 
-									&& ArrayUtils.isArrayContains(roleRes.getOpAuths(), values[i], ",")) {
+									&& DataUtil.isArrayContains(roleRes.getOpAuths(), values[i], ",")) {
 								regex = ","+values[i]+",|"+values[i]+",|,"+values[i];
 								roleRes.setOpAuths(roleRes.getOpAuths().replaceAll(regex, ""));
 								isDel = true;
@@ -179,7 +180,7 @@ public class RoleResourceDao extends BaseDaoImpl<TNRoleResource> implements IRol
 			if(null != lists && lists.size()>0) {
 				for (TNRoleResource roleRes : lists) {
 					if(StringUtils.isNotEmpty(roleRes.getOpAuths())) {
-						if(ArrayUtils.isArrayContains(roleRes.getOpAuths(), srcValue, ",")) {
+						if(DataUtil.isArrayContains(roleRes.getOpAuths(), srcValue, ",")) {
 							roleRes.setOpAuths(roleRes.getOpAuths().replaceAll(srcValue+",", desValue+","));
 						 	updateList.add(roleRes);
 						}

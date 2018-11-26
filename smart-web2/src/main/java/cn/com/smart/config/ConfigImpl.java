@@ -3,11 +3,12 @@ package cn.com.smart.config;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.apache.log4j.Logger;
 
 import cn.com.smart.Smart;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 配置实现类
@@ -38,7 +39,7 @@ public abstract class ConfigImpl extends Smart implements IConfig {
 					if(StringUtils.isEmpty(val)) {
 						log.info("变量【"+val+"】没定义");
 					}
-					value = value.replace("${"+varName+"}", StringUtils.handleNull(val));
+					value = value.replace("${"+varName+"}", DataUtil.handleNull(val));
 				}
 			}
 			matcher = pattern.matcher(value);
@@ -68,7 +69,7 @@ public abstract class ConfigImpl extends Smart implements IConfig {
 					e.printStackTrace();
 					val = null;
 				}
-				value = value.replace("#{"+varName+"}", StringUtils.handleNull(val));
+				value = value.replace("#{"+varName+"}", DataUtil.handleNull(val));
 			}
 		}
 		matcher = pattern.matcher(value);

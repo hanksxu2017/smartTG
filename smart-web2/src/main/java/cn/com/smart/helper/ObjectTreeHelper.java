@@ -8,9 +8,10 @@ import java.util.Set;
 import java.util.Stack;
 import java.util.TreeSet;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.stereotype.Component;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 
@@ -95,12 +96,12 @@ public class ObjectTreeHelper {
 	protected List<Object> getChild(List<Object> lists, Object obj) {
 		List<Object> childs = new ArrayList<Object>();
 		for (Object objTmp : lists) {
-			if (StringUtils.handleNull(((Object[]) objTmp)[1]).equals(
-					StringUtils.handleNull(((Object[]) obj)[0]))) {
+			if (DataUtil.handleNull(((Object[]) objTmp)[1]).equals(
+					DataUtil.handleNull(((Object[]) obj)[0]))) {
 				// 此处保证集合中最后一个元素是需要显示在当前层级中第一个展示的子节点（因为堆栈中是最后一个元素先出）
 				if (childs != null
 						&& childs.size() != 0
-						&& Double.parseDouble(StringUtils.handleNumNull(((Object[]) objTmp)[2])) >= Double.parseDouble(StringUtils.handleNumNull(((Object[]) childs.get(0))[2]))) {
+						&& Double.parseDouble(DataUtil.handleNumNull(((Object[]) objTmp)[2])) >= Double.parseDouble(DataUtil.handleNumNull(((Object[]) childs.get(0))[2]))) {
 					childs.add(0, objTmp);
 				} else {
 					childs.add(objTmp);
@@ -148,9 +149,9 @@ public class ObjectTreeHelper {
 			roots = new TreeSet<Object>(new Comparator<Object>() {
 				@Override
 				public int compare(Object o1, Object o2) {
-					int compare = StringUtils.handObj2Integer(((Object[])o1)[2]).compareTo(StringUtils.handObj2Integer(((Object[])o2)[2]));
+					int compare = DataUtil.handleObj2Integer(((Object[])o1)[2]).compareTo(DataUtil.handleObj2Integer(((Object[])o2)[2]));
 					if(compare==0) {
-						if(StringUtils.handleNull(((Object[])o1)[0]).equals(StringUtils.handleNull(((Object[])o2)[0]))) {
+						if(DataUtil.handleNull(((Object[])o1)[0]).equals(DataUtil.handleNull(((Object[])o2)[0]))) {
 							compare = 0; 
 						} else {
 							compare = 1;
@@ -180,7 +181,7 @@ public class ObjectTreeHelper {
 			tmp = null;
 		}*/
 		for (Object tt : ts) {
-			if (StringUtils.handleNull(((Object[])tt)[0]).equals(StringUtils.handleNull(((Object[])t)[1]))) {
+			if (DataUtil.handleNull(((Object[])tt)[0]).equals(DataUtil.handleNull(((Object[])t)[1]))) {
 				tmp = tt;
 			}
 		}

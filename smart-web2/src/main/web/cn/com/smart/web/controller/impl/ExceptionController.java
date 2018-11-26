@@ -11,7 +11,7 @@ import org.springframework.web.servlet.ModelAndView;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.web.controller.base.BaseController;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 异常处理控制器

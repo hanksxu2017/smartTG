@@ -8,14 +8,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
-import com.mixsmart.security.SecurityUtils;
-import com.mixsmart.utils.LoggerUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.bean.TreeProp;
@@ -107,7 +106,7 @@ public class UserService extends MgrServiceImpl<TNUser> {
 					smartResp.setMsg("该用户名已存在，不能在注册！");
 					return smartResp;
 				}
-				user.setPassword(SecurityUtils.md5(user.getPassword()));
+				user.setPassword(DigestUtils.md5Hex(user.getPassword()));
 				Serializable  id = userDao.save(user);
 				if(null != id) {
 					smartResp.setResult(OP_SUCCESS);
@@ -199,18 +198,14 @@ public class UserService extends MgrServiceImpl<TNUser> {
 		SmartResponse<UserInfo> smartResp = new SmartResponse<UserInfo>();
 		try {
 			if(StringUtils.isNotEmpty(username) && StringUtils.isNotEmpty(password)) {
-				String md5Pwd = SecurityUtils.md5(password);
+				String md5Pwd = DigestUtils.md5Hex(password);
 				TNUser user = userDao.queryLogin(username, md5Pwd);
 				if(null != user) {
 					UserInfo userInfo = getUserInfo(user);
 					smartResp.setResult(OP_SUCCESS);
 					smartResp.setMsg(OP_SUCCESS_MSG);
 					smartResp.setData(userInfo);
-				} else {
-					LoggerUtils.info(logger, "用户名或密码错误--输入用户名["+username+"]---");
 				}
-			} else {
-				LoggerUtils.info(logger, "用户名或密码为空--");
 			}
 		} catch (DaoException e) {
 			throw new ServiceException(e.getMessage(),e.getCause());
@@ -274,7 +269,7 @@ public class UserService extends MgrServiceImpl<TNUser> {
 			if(StringUtils.isNotEmpty(userIds) && StringUtils.isNotEmpty(pwd) && StringUtils.isNotEmpty(confirmPwd)) {
 				if(pwd.equals(confirmPwd)) {
 					String[] userIdArray = userIds.split(",");
-					pwd = SecurityUtils.md5(pwd);
+					pwd = DigestUtils.md5Hex(pwd);
 					if(userDao.batchChangePwd(userIdArray, pwd)) {
 						smartResp.setResult(OP_SUCCESS);
 						smartResp.setMsg("密码修改成功");
@@ -311,9 +306,9 @@ public class UserService extends MgrServiceImpl<TNUser> {
 				if(newPwd.equals(confirmNewPwd)) {
 					TNUser user = userDao.find(userId);
 					if(null != user) {
-						String md5Pwd = SecurityUtils.md5(oldPwd);
+						String md5Pwd = DigestUtils.md5Hex(oldPwd);
 						if(user.getPassword().equals(md5Pwd)) {
-							String md5NewPwd = SecurityUtils.md5(newPwd);
+							String md5NewPwd = DigestUtils.md5Hex(newPwd);
 							if(userDao.changePwd(userId, md5NewPwd)) {
 								smartResp.setResult(OP_SUCCESS);
 								smartResp.setMsg("密码修改成功");

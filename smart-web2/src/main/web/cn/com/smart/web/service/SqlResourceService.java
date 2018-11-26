@@ -4,12 +4,11 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mixsmart.exception.NullArgumentException;
-import com.mixsmart.utils.CollectionUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.exception.ServiceException;
@@ -31,7 +30,7 @@ public class SqlResourceService extends MgrServiceImpl<TNSqlResource> {
      */
     public TNSqlResource findAssocUser(String id) {
         if(StringUtils.isEmpty(id)) {
-            throw new NullArgumentException();
+            return null;
         }
         TNSqlResource sqlResource = null;
         String sql = SQLResUtil.getOpSqlMap().getSQL("query_assoc_user_sql_resource");

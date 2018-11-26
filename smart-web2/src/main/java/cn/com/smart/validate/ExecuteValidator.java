@@ -9,11 +9,10 @@ import java.lang.reflect.Modifier;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.apache.log4j.Logger;
 
-import com.mixsmart.utils.ArrayUtils;
-import com.mixsmart.utils.IdCardValidator;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 执行验证器
@@ -156,7 +155,7 @@ public class ExecuteValidator implements Validator {
 		if(len.indexOf("|")>-1) {
 			String[] lens = len.split("\\|");
 			for (String lenStr : lens) {
-				if(StringUtils.isNum(lenStr.trim())) {
+				if(DataUtil.isNum(lenStr.trim())) {
 					long l = Long.parseLong(lenStr.trim());
 					is = (valueLen == l);
 				} else {
@@ -169,7 +168,7 @@ public class ExecuteValidator implements Validator {
 		} else if(len.indexOf(",")>-1) {
 			String[] lens = len.split(",");
 			if(lens.length==2) {
-				if(StringUtils.isNum(lens[0].trim()) && StringUtils.isNum(lens[1].trim())) {
+				if(DataUtil.isNum(lens[0].trim()) && DataUtil.isNum(lens[1].trim())) {
 					long startLen = Long.parseLong(lens[0].trim());
 					long endLen = Long.parseLong(lens[1].trim());
 					if(startLen<=endLen) {
@@ -184,7 +183,7 @@ public class ExecuteValidator implements Validator {
 				throw new ValidateException("["+methodName+"]Validate.length属性配置错误");
 			}
 		} else {
-			if(StringUtils.isNum(len.trim())) {
+			if(DataUtil.isNum(len.trim())) {
 				is = is && (valueLen == Long.parseLong(len.trim()));
 			} else {
 				throw new ValidateException("["+methodName+"]Validate.length属性配置错误");
@@ -207,55 +206,34 @@ public class ExecuteValidator implements Validator {
 	private boolean checkDataFormat(String value,String dataFormatType,String methodName) {
 		boolean is = true;
 		if(DataFormatType.NUM.equals(dataFormatType)) {
-			is = is && StringUtils.isNum(value);
+			is = is && DataUtil.isNum(value);
 			if(!is) {
 				log.error("["+methodName+"]--["+DataFormatType.NUM+"]数据类型验证失败");
 			}
 		} else if(DataFormatType.CHINESE.equals(dataFormatType)) {
-			is = is && StringUtils.isChinese(value);
+			is = is && DataUtil.isChinese(value);
 			if(!is) {
 				log.error("["+methodName+"]--["+DataFormatType.CHINESE+"]数据类型验证失败");
 			}
-		} else if(DataFormatType.ID_CARD.equals(dataFormatType)) {
-			IdCardValidator iv = new IdCardValidator();
-			is = is && iv.isValidatedAllIdcard(value);
-			if(!is) {
-				log.error("["+methodName+"]--["+DataFormatType.ID_CARD+"]数据格式验证失败");
-			}
 		} else if(DataFormatType.DECIMAL.equals(dataFormatType)) {
-			is = is && StringUtils.isDecimal(value);
+			is = is && DataUtil.isDecimal(value);
 			if(!is) {
 				log.error("["+methodName+"]--["+DataFormatType.DECIMAL+"]数据格式验证失败");
 			}
 		} else if(DataFormatType.EMAIL.equals(dataFormatType)) {
-			is = is && StringUtils.isEmail(value);
+			is = is && DataUtil.isEmail(value);
 			if(!is) {
 				log.error("["+methodName+"]--["+DataFormatType.EMAIL+"]数据格式验证失败");
 			}
-		} else if(DataFormatType.FIXED_TELPHONE.equals(dataFormatType)) {
-			is = is && StringUtils.isFixedTelephone(value);
-			if(!is) {
-				log.error("["+methodName+"]--["+DataFormatType.FIXED_TELPHONE+"]数据格式验证失败");
-			}
 		} else if(DataFormatType.INTEGER.equals(dataFormatType)) {
-			is = is && StringUtils.isInteger(value);
+			is = is && DataUtil.isInteger(value);
 			if(!is) {
 				log.error("["+methodName+"]--["+DataFormatType.INTEGER+"]数据格式验证失败");
 			}
-		} else if(DataFormatType.IP.equals(dataFormatType)) {
-			is = is && StringUtils.checkIp(value);
-			if(!is) {
-				log.error("["+methodName+"]--["+DataFormatType.IP+"]数据格式验证失败");
-			}
 		} else if(DataFormatType.MOBILE_PHONE.equals(dataFormatType)) {
-			is = is && StringUtils.isPhoneNO(value);
+			is = is && DataUtil.isPhoneNO(value);
 			if(!is) {
 				log.error("["+methodName+"]--["+DataFormatType.MOBILE_PHONE+"]数据格式验证失败");
-			}
-		} else if(DataFormatType.QQ.equals(dataFormatType)) {
-			is = is && StringUtils.isQQ(value);
-			if(!is) {
-				log.error("["+methodName+"]--["+DataFormatType.QQ+"]数据格式验证失败");
 			}
 		}
 		return is;
@@ -264,7 +242,7 @@ public class ExecuteValidator implements Validator {
 	
 	private boolean checkValueArea(String value,String valueArea,String methodName) {
 		boolean is = false;
-		if(ArrayUtils.isArrayContains(valueArea, value, ",")) {
+		if(DataUtil.isArrayContains(valueArea, value, ",")) {
 			is = true;
 		} else {
 			is = false;

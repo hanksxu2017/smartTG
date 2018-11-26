@@ -4,15 +4,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
-import com.mixsmart.exception.NullArgumentException;
-import com.mixsmart.utils.CollectionUtils;
-import com.mixsmart.utils.LoggerUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.cache.InitCache;
 import cn.com.smart.res.sqlmap.LoadingSQLMapFile;
@@ -36,7 +35,6 @@ public class SqlResourceMemoryCache implements InitCache {
     
     @Override
     public void initCache() {
-        LoggerUtils.debug(logger, "正在初始化SQL资源...");
         try {
             List<TNSqlResource> sqlResources = sqlResourceServ.findAll().getDatas();
             if(CollectionUtils.isNotEmpty(sqlResources)) {
@@ -52,7 +50,6 @@ public class SqlResourceMemoryCache implements InitCache {
                     }
                 }
             }
-            LoggerUtils.debug(logger, "初始化SQL资源[完成].");
         } catch (SQLMapException e) {
             e.printStackTrace();
         }
@@ -64,15 +61,13 @@ public class SqlResourceMemoryCache implements InitCache {
      * @param sql SQL语句
      */
     public synchronized void addOrUpdate(String resName, String sql) {
-        LoggerUtils.debug(logger, "添加或更新SQL资源...");
         if(StringUtils.isEmpty(resName) || StringUtils.isEmpty(sql)) {
-            throw new NullArgumentException();
+            return;
         }
         try {
             SQLMapFile sqlMapFile = LoadingSQLMapFile.getInstance().getDbSqlMap();
             Map<String, String> sqlMaps = sqlMapFile.getSqlMaps();
             sqlMaps.put(resName, sql);
-            LoggerUtils.debug(logger, "添加或更新SQL资源---[资源名称为:"+resName+"]---[成功]...");
         } catch (SQLMapException e) {
             e.printStackTrace();
         }
@@ -83,15 +78,13 @@ public class SqlResourceMemoryCache implements InitCache {
      * @param resName 资源名称
      */
     public synchronized void remove(String resName) {
-        LoggerUtils.debug(logger, "正在删除SQL资源[:"+resName+"]...");
         if(StringUtils.isEmpty(resName)) {
-            throw new NullArgumentException();
+            return;
         }
         try {
             SQLMapFile sqlMapFile = LoadingSQLMapFile.getInstance().getDbSqlMap();
             Map<String, String> sqlMaps = sqlMapFile.getSqlMaps();
             sqlMaps.remove(resName);
-            LoggerUtils.debug(logger, "删除SQL资源["+resName+"]---[成功]...");
         } catch (SQLMapException e) {
             e.printStackTrace();
         }

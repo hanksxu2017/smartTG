@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Repository;
 
 import cn.com.smart.bean.NullEntity;
@@ -12,9 +13,6 @@ import cn.com.smart.filter.HandleFilterParam;
 import cn.com.smart.filter.bean.FilterParam;
 import cn.com.smart.res.SQLResUtil;
 import cn.com.smart.res.sqlmap.SqlMapping;
-
-import com.mixsmart.exception.NullArgumentException;
-import com.mixsmart.utils.StringUtils;
 
 /**
  * 通用DAO操作
@@ -158,7 +156,7 @@ public class OPDao extends BaseDaoImpl<NullEntity> {
 	public <E> List<E> queryDatas(String resId, Map<String, Object> params, Class<?> clazz) {
 		List<E> lists = null;
 		if(StringUtils.isEmpty(resId) && null != clazz) {
-			throw new NullArgumentException();
+			throw new RuntimeException("参数错误");
 		}
 		String sql = sqlMap.getSQL(resId);
 		if(StringUtils.isNotEmpty(sql)) {

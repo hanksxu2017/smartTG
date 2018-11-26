@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.apache.commons.lang3.ArrayUtils;
 import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
@@ -17,7 +18,7 @@ import cn.com.smart.res.sqlmap.SqlMapping;
 import cn.com.smart.web.bean.entity.TNOrg;
 import cn.com.smart.web.dao.IOrgDao;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 组织机构DAO
@@ -140,7 +141,7 @@ public class OrgDao extends BaseDaoImpl<TNOrg> implements IOrgDao {
 			param.put("type", type);
 			list = queryObjSql(sql,param);
 			if (list.size() > 0&& null!=list) {
-				if(StringUtils.isNotEmpty(StringUtils.handleNull(list.get(0)))) {
+				if(StringUtils.isNotEmpty(DataUtil.handleNull(list.get(0)))) {
 					sortOrder = Integer.parseInt(list.get(0).toString())+1;
 				} else {
 					sortOrder = 1;

@@ -4,12 +4,11 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.mixsmart.utils.CollectionUtils;
-import com.mixsmart.utils.LoggerUtils;
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.exception.DaoException;
@@ -98,12 +97,7 @@ public class MenuService extends MgrServiceImpl<TNMenu> {
 					List<TNMenu> menuList = new ArrayList<TNMenu>();
 					menuList.add(menu);
 					if(null != role) {
-						LoggerUtils.info(logger, "把添加的菜单及权限添加到管理员角色里面");
-						if(roleMenuDao.save(role.getId(), menuList)) {
-							LoggerUtils.info(logger, "菜单添加到管理员角色里面[成功]");
-						} else {
-							LoggerUtils.info(logger, "菜单添加到管理员角色里面[失败]");
-						}
+						roleMenuDao.save(role.getId(), menuList);
 						menuList = null;
 					}
 					menuCache.refreshCache();
@@ -131,18 +125,12 @@ public class MenuService extends MgrServiceImpl<TNMenu> {
 				//获取管理员角色
 				TNRole role = roleDao.adminRole();
 				if(null != role) {
-					LoggerUtils.info(logger, "把更新的菜单及权限更新到管理员角色里面");
 					if(roleMenuDao.deleteByRoleMenu(role.getId(),menu.getId())) {
 						List<TNMenu> menuList = new ArrayList<TNMenu>();
 						menuList.add(menu);
-						if(roleMenuDao.save(role.getId(), menuList)) {
-							LoggerUtils.info(logger, "菜单更新到管理员角色里面[成功]");
-						} else {
-							LoggerUtils.info(logger, "菜单更新到管理员角色里面[成功]");
-						}
+						roleMenuDao.save(role.getId(), menuList);
 						menuList = null;
 				    }
-					LoggerUtils.info(logger, "菜单操作权限关联数据保存[成功]");
 					menuCache.refreshCache();
 					roleMenuCache.refreshCache();
 			    }

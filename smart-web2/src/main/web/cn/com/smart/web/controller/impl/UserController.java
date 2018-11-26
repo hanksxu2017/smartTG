@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import javax.servlet.http.HttpSession;
 
+import cn.com.smart.web.utils.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
@@ -13,7 +14,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.view.RedirectView;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.web.bean.RequestPage;
@@ -64,7 +65,7 @@ public class UserController extends BaseController {
 		if("0".equals(searchParam.getOrgId())) {
 			searchParam.setOrgId(null);
 		}
-		searchParam.setOrgIds(StringUtils.list2Array(getUserInfoFromSession(session).getOrgIds()));
+		searchParam.setOrgIds(DataUtil.list2Array(getUserInfoFromSession(session).getOrgIds()));
 		pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
 		
 		SmartResponse<Object> smartResp = userServ.findAllObj(searchParam, page.getStartNum(), page.getPageSize());
@@ -151,7 +152,7 @@ public class UserController extends BaseController {
     public ModelAndView simplist(HttpSession session,UserSearchParam searchParam,
     		ModelAndView modelView,RequestPage page) throws Exception {
 		String uri = "user/simplist";
-		searchParam.setOrgIds(StringUtils.list2Array(getUserInfoFromSession(session).getOrgIds()));
+		searchParam.setOrgIds(DataUtil.list2Array(getUserInfoFromSession(session).getOrgIds()));
 		SmartResponse<Object> smartResp = opServ.getDatas("user_simp_list",searchParam, page.getStartNum(), page.getPageSize());
 		pageParam = new PageParam(uri, "#user-tab", page.getPage(), page.getPageSize());
 		selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"auth/userHas","#has-auth-list","id");	

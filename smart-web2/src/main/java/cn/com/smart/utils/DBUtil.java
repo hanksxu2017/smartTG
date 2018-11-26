@@ -2,7 +2,7 @@ package cn.com.smart.utils;
 
 import org.hibernate.internal.SessionFactoryImpl;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 import cn.com.smart.service.SmartContextService;
 

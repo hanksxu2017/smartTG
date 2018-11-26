@@ -1,15 +1,15 @@
 package cn.com.smart.dao.impl;
 
+import cn.com.smart.bean.BaseBean;
+import cn.com.smart.dao.IBaseDao;
+import cn.com.smart.exception.DaoException;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
+
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
-import com.mixsmart.utils.StringUtils;
-
-import cn.com.smart.bean.BaseBean;
-import cn.com.smart.dao.IBaseDao;
-import cn.com.smart.exception.DaoException;
 
 /**
  * 基础Dao实现类
@@ -36,7 +36,7 @@ public abstract class BaseDaoImpl<T extends BaseBean> extends UpdateDaoImpl<T> i
 		if(null != lists && lists.size()>0) {
 			try {
 			  Object obj = lists.get(0);
-			  if(StringUtils.isDecimal(obj.toString())) {
+			  if(DataUtil.isDecimal(obj.toString())) {
 				  sortOrder = (int)Double.parseDouble(obj.toString());
 			  } else {
 				  sortOrder = Integer.parseInt(obj.toString());

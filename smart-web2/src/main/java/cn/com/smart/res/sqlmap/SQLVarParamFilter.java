@@ -9,7 +9,8 @@ import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import com.mixsmart.utils.StringUtils;
+import cn.com.smart.web.utils.DataUtil;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 过滤处理sql语句中有可选条件的变量参数 <br />
@@ -96,7 +97,7 @@ public class SQLVarParamFilter {
 			Set<String> sets = params.keySet();
 			for (String key : sets) {
 				Object value = this.params.get(key);
-				if(null != value && StringUtils.isNotEmpty(StringUtils.handleNull(value))) {
+				if(null != value && StringUtils.isNotEmpty(DataUtil.handleNull(value))) {
 					varParams.add(key);
 				}
 			}

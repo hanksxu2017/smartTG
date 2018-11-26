@@ -18,7 +18,7 @@ import cn.com.smart.cache.InitCache;
 import cn.com.smart.web.bean.entity.TNOrg;
 import cn.com.smart.web.dao.impl.OrgDao;
 
-import com.mixsmart.utils.StringUtils;
+import org.apache.commons.lang3.StringUtils;
 
 /**
  * 组织机构缓存
