@@ -100,10 +100,8 @@ public interface IConstant {
 	// 返校
 	String STATUS_BACK_STUDY = "BACK_STUDY";
 
-
 	// 退班
 	String STATUS_EXIT_COURSE = "EXIT_COURSE";
-
 	// 课时结课结束
 	String STATUS_COURSE_END = "NORMAL_END";
 	// 因退班而取消

@@ -4,6 +4,8 @@ import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
+import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
+import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
 import cn.com.smart.web.bean.entity.TGStudyTeacher;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.bean.search.TeacherCourseSearch;
@@ -14,6 +16,7 @@ import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.filter.bean.UserSearchParam;
 import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -25,10 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpSession;
 import javax.swing.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/studyTeacher")
@@ -147,6 +147,8 @@ public class StudyTeacherController extends BaseController {
 		editBtn.setSelectedType(BtnPropType.SelectType.ONE.getValue());
         refreshBtn = new RefreshBtn(uri, null,"#teacher-course-tab");
 
+	    delBtn = new DelBtn(this.getUriPath() + "deleteCourse", "确定删除班级吗？", this.getUriPath() + "courseList", "#teacher-course-tab", null);
+
         ModelMap modelMap = modelView.getModelMap();
         modelMap.put("smartResp", smartResp);
         modelMap.put("pageParam", pageParam);
@@ -154,6 +156,7 @@ public class StudyTeacherController extends BaseController {
         modelMap.put("addBtn", addBtn);
         modelMap.put("editBtn", editBtn);
         modelMap.put("refreshBtn", refreshBtn);
+        modelMap.put("delBtn", delBtn);
         pageParam = null;
 
 	    CustomBtn customBtnStudentList = new CustomBtn("studentList", "学生列表",
@@ -264,4 +267,35 @@ public class StudyTeacherController extends BaseController {
         return modelView;
     }
 
+	@Autowired
+	private StudyStudentCourseRelService studentCourseRelService;
+
+    @Autowired
+    private StudyCourseRecordService courseRecordService;
+
+	@RequestMapping(value = "/deleteCourse", method = RequestMethod.POST)
+	@ResponseBody
+	public SmartResponse<String> deleteCourse(String id) {
+		SmartResponse<String> smartResp = new SmartResponse<>();
+
+		// 查看报班学生是否都已退出
+		Map<String, Object> params = new HashMap<>();
+		params.put("courseId", id);
+		params.put("status", IConstant.STATUS_NORMAL);
+		List<TGStudyStudentCourseRel> studentCourseRelList = studentCourseRelService.findByParam(params).getDatas();
+		if (CollectionUtils.isNotEmpty(studentCourseRelList)) {
+			smartResp.setMsg("班级中仍有学生 " + studentCourseRelList.size() + "名,不可删除");
+			return smartResp;
+		}
+
+		// 清除未结课的课时记录信息
+		List<TGStudyCourseRecord> courseRecordList = courseRecordService.findByParam(params).getDatas();
+		if(CollectionUtils.isNotEmpty(courseRecordList)) {
+			//
+
+		}
+
+		this.courseService.delete(id);
+		return smartResp;
+	}
 }
