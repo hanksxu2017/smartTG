@@ -93,11 +93,11 @@ public class StudyStudentController extends BaseController {
         customBtnCourseInfo.setModalBodyId("student-course-list-dialog");
 
         CustomBtn customBtnUploadBatch = new CustomBtn("uploadBatch", "信息导入", "导入",
-                this.getUriPath() + "uploadBatch", "glyphicon-upload", BtnPropType.SelectType.NONE.getValue());
+                this.getUriPath() + "uploadBatch", "glyphicon-save", BtnPropType.SelectType.NONE.getValue());
         customBtnUploadBatch.setWidth("600");
 
         CustomBtn customBtnExport = new CustomBtn("exportStudent", "信息导出", "导出",
-                this.getUriPath() + "exportStudent", "glyphicon-export", BtnPropType.SelectType.NONE.getValue());
+                this.getUriPath() + "exportStudent", "glyphicon-open", BtnPropType.SelectType.NONE.getValue());
         customBtnExport.setOpenStyle(BtnPropType.OpenStyle.NONE);
         customBtnExport.setWidth("600");
 
