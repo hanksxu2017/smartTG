@@ -112,11 +112,7 @@
     <sqlUnit name="query_menuroleid_by_user">
        <sql>
          select distinct t.role_id from (
-          select ru.role_id from t_n_role_user ru where ru.user_id=:userId 
-          union 
-          select ro.role_id from t_n_role_org ro where ro.org_id=(select u.org_id from t_n_user u where u.id=:userId) and ro.flag='org'   
-          union 
-          select rp.role_id from t_n_role_position rp where rp.position_id=(select u.position_id from t_n_user u where u.id=:userId)) t 
+          select ru.role_id from t_n_role_user ru where ru.user_id=:userId) t
        </sql>
     </sqlUnit>
     
@@ -124,11 +120,7 @@
     <sqlUnit name="query_roleid_by_user">
        <sql>
          select distinct t.role_id from (
-          select ru.role_id from t_n_role_user ru where ru.user_id=:userId 
-          union 
-          select rp.role_id from t_n_role_position rp where rp.position_id=(select u.position_id from t_n_user u where u.id=:userId) 
-          union 
-          select ro.role_id from t_n_role_org ro where ro.org_id=(select u.org_id from t_n_user u where u.id='140426549285920094') and ro.flag='org') t 
+          select ru.role_id from t_n_role_user ru where ru.user_id=:userId) t
        </sql>
     </sqlUnit>
     

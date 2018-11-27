@@ -32,8 +32,6 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
 	
 	private String phone;
 
-	private String level;
-
 	private String status = IConstant.STATUS_NORMAL;
 
 	private Date createTime;
@@ -66,15 +64,6 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
 
     public void setPhone(String phone) {
         this.phone = phone;
-    }
-
-    @Column(name="level",length=16)
-    public String getLevel() {
-        return level;
-    }
-
-    public void setLevel(String level) {
-        this.level = level;
     }
 
     @Column(name="update_time",length=20)

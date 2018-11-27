@@ -112,4 +112,7 @@ public interface IConstant {
 	String IS_PROCESS_YES = "YES";
 	String IS_PROCESS_NO = "NO";
 
+	String IS_REGISTER_YES = "YES";
+	String IS_REGISTER_NO = "NO";
+
 }

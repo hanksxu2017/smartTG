@@ -17,13 +17,6 @@
 	   </div>
 
        <div class="form-group m-b-10">
-           <label for="input03" class="col-sm-2 control-label">围棋等级</label>
-           <div class="col-sm-9 p-l-0">
-               <input type="text" class="form-control require" name="level" data-label-name="围棋等级" id="input03" value="${objBean.level}" />
-           </div>
-       </div>
-
-       <div class="form-group m-b-10">
            <label for="input04" class="col-sm-2 control-label">状态</label>
            <div class="col-sm-9 p-l-0">
                <input type="text" class="form-control input-readonly" data-label-name="入职时间" id="input04" value="${objBean.status}" readonly/>

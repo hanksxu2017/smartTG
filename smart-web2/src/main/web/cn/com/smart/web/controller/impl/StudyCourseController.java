@@ -62,15 +62,9 @@ public class StudyCourseController extends BaseController {
 
         ModelAndView modelView = new ModelAndView();
         Map<String, Object> modelMap = modelView.getModelMap();
-//        addBtn = new EditBtn("add", this.getUriPath() + "add", null, "新增", "800");
-//        editBtn = new EditBtn("edit", this.getUriPath() + "edit", null, "修改", "800");
-//        delBtn = new DelBtn(this.getUriPath() + "delete", "确定要删除选中的信息吗？", this.subDir + "list", null, null);
         refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
         pageParam = new PageParam(this.getUriPath() + "list", null, page.getPage(), page.getPageSize());
 
-//        modelMap.put("addBtn", addBtn);
-//        modelMap.put("editBtn", editBtn);
-//        modelMap.put("delBtn", delBtn);
         modelMap.put("pageParam", pageParam);
         modelMap.put("refreshBtn", refreshBtn);
         modelMap.put("smartResp", smartResp);

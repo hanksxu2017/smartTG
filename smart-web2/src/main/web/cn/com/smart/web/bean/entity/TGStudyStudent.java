@@ -38,7 +38,7 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
 	private String schoolName;
 
-	private int level;
+	private String level;
 
 	private String parentPhone;
 
@@ -57,6 +57,8 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 	private Date updateTime;
 
 	private int courseSeriesUnSigned;
+
+	private String isRegister = IConstant.IS_REGISTER_NO;
 
 	@Id
 	@Column(name="id", length=64)
@@ -78,11 +80,11 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
     }
 
     @Column(name="level",length=8)
-    public int getLevel() {
+    public String getLevel() {
         return level;
     }
 
-    public void setLevel(int level) {
+    public void setLevel(String level) {
         this.level = level;
     }
 
@@ -201,5 +203,14 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
 	public void setCourseSeriesUnSigned(int courseSeriesUnSigned) {
 		this.courseSeriesUnSigned = courseSeriesUnSigned;
+	}
+
+	@Column(name="is_register", length = 8)
+	public String getIsRegister() {
+		return isRegister;
+	}
+
+	public void setIsRegister(String isRegiste) {
+		this.isRegister = isRegiste;
 	}
 }

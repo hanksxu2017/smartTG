@@ -18,12 +18,26 @@
 		   </div>
 	   </div>
 
+	   <div class="form-group m-b-10">
+		   <label for="amount" class="col-sm-2 control-label">补缴金额(单位元)</label>
+		   <div class="col-sm-9 p-l-0">
+			   <input type="text" class="form-control require" name="amount" data-label-name="补缴额度" id="amount" value="20"/>
+		   </div>
+	   </div>
+
        <div class="form-group m-b-10">
            <label for="courseCount" class="col-sm-2 control-label">新增课时</label>
            <div class="col-sm-9 p-l-0">
-               <input type="text" class="form-control require" name="courseCount" data-label-name="名称" id="courseCount" value="20"/>
+               <input type="text" class="form-control require" name="courseCount" data-label-name="新增课时" id="courseCount" value="20"/>
            </div>
        </div>
+
+	   <div class="form-group m-b-10">
+		   <label for="input10" class="col-sm-2 control-label">备注</label>
+		   <div class="col-sm-9 p-l-0">
+			   <textarea class="form-control" name="description" rows="3" id="input10" cols="60" />
+		   </div>
+	   </div>
 
 
        <div class="text-center">

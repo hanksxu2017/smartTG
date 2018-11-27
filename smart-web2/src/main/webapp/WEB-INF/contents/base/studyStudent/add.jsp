@@ -1,3 +1,4 @@
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
 <div class="wrap-content-dialog">
     <form class="form-horizontal" role="form" id="form-add" action="studyStudent/save">
@@ -32,9 +33,14 @@
         </div>
 
         <div class="form-group m-b-10">
-            <label for="level" class="col-sm-2 control-label">围棋等级</label>
+            <label for="tIdSelForAddStudent" class="col-sm-2 control-label">围棋等级</label>
             <div class="col-sm-9 p-l-0">
-                <input type="text" class="form-control" name="level" data-label-name="围棋等级" id="level" value="19"/>
+                <select class="form-control require" name="level" id="tIdSelForAddStudent">
+                    <option value="">--请选择--</option>
+                    <c:forEach items="${levels}" var="level">
+                        <option value="${level}" >${level}</option>
+                    </c:forEach>
+                </select>
             </div>
         </div>
 
@@ -64,10 +70,18 @@
             <label for="totalCourse" class="col-sm-2 control-label">初始课时</label>
             <div class="col-sm-9 p-l-0">
                 <input type="text" class="form-control require" name="totalCourse" data-label-name="初始课时"
-                       id="totalCourse"/>
+                       id="totalCourse" value="20"/>
             </div>
         </div>
-
+	    <div class="form-group m-b-10">
+		    <label for="isRegisterForAddStudent" class="col-sm-2 control-label">是否注册</label>
+		    <div class="col-sm-9 p-l-0">
+			    <select class="form-control require" name="isRegister" id="isRegisterForAddStudent">
+				    <option value="NO">未注册</option>
+				    <option value="YES">已注册</option>
+			    </select>
+		    </div>
+	    </div>
 
         <div class="text-center">
             <button type="button" class="btn btn-primary cnoj-data-submit" data-refresh-uri="studyStudent/list">

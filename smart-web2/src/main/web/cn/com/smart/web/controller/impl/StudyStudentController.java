@@ -6,6 +6,7 @@ import cn.com.smart.constant.enumEntity.CourseStudentStatusEnum;
 import cn.com.smart.constant.enumEntity.SystemMessageEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
+import cn.com.smart.web.bean.UserInfo;
 import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.bean.search.StudentSearch;
@@ -17,17 +18,15 @@ import cn.com.smart.web.tag.bean.*;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
-import org.apache.poi.hssf.usermodel.HSSFRow;
-import org.apache.poi.hssf.usermodel.HSSFSheet;
-import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.usermodel.*;
 import org.apache.poi.ss.usermodel.CellType;
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
+import org.openxmlformats.schemas.wordprocessingml.x2006.main.STUnderline;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.multipart.MultipartHttpServletRequest;
@@ -35,11 +34,12 @@ import org.springframework.web.multipart.commons.CommonsMultipartResolver;
 import org.springframework.web.servlet.ModelAndView;
 
 import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 @Slf4j
 @Controller
@@ -72,11 +72,14 @@ public class StudyStudentController extends BaseController {
         Map<String, Object> modelMap = modelView.getModelMap();
         addBtn = new EditBtn("add", this.getUriPath() + "add", null, "新增", "800");
         editBtn = new EditBtn("edit", this.getUriPath() + "edit", null, "修改", "800");
-        delBtn = new DelBtn(this.getUriPath() + "delete", "确定对该学员进行退学操作吗？", this.getUriPath() + "list", null, null);
+
+        delBtn = new DelBtn(this.getUriPath() + "delete", "确定进行退学操作吗？", this.getUriPath() + "list", null, null);
         delBtn.setName("退学");
+        delBtn.setSelectedType(BtnPropType.SelectType.MULTI.getValue());
+
         refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
 
-        CustomBtn customBtnReport = new CustomBtn("increaseRemainCourse", "课时续费", "课时续费",
+        CustomBtn customBtnReport = new CustomBtn("increaseRemainCourse", "课时续费", "续费",
                 this.getUriPath() + "increaseRemainCourse?studentId=" + searchParam.getId(), "glyphicon-plus", BtnPropType.SelectType.ONE.getValue());
         customBtnReport.setWidth("600");
 
@@ -84,14 +87,26 @@ public class StudyStudentController extends BaseController {
                 this.getUriPath() + "tempLeave?studentId=" + searchParam.getId(), "glyphicon-pause", BtnPropType.SelectType.ONE.getValue());
         customBtnTempLeave.setWidth("600");
 
-        CustomBtn customBtnUploadBatch = new CustomBtn("uploadBatch", "信息导入", "学员信息导入",
+        CustomBtn customBtnCourseInfo = new CustomBtn("courseInfo", "班级信息", "班级",
+                this.getUriPath() + "courseInfo", "glyphicon-align-justify", BtnPropType.SelectType.ONE.getValue());
+        customBtnCourseInfo.setWidth("800");
+        customBtnCourseInfo.setModalBodyId("student-course-list-dialog");
+
+        CustomBtn customBtnUploadBatch = new CustomBtn("uploadBatch", "信息导入", "导入",
                 this.getUriPath() + "uploadBatch", "glyphicon-upload", BtnPropType.SelectType.NONE.getValue());
         customBtnUploadBatch.setWidth("600");
 
-        customBtns = new ArrayList<>(3);
+        CustomBtn customBtnExport = new CustomBtn("exportStudent", "信息导出", "导出",
+                this.getUriPath() + "exportStudent", "glyphicon-export", BtnPropType.SelectType.NONE.getValue());
+        customBtnExport.setOpenStyle(BtnPropType.OpenStyle.NONE);
+        customBtnExport.setWidth("600");
+
+        customBtns = new ArrayList<>(5);
         customBtns.add(customBtnReport);
         customBtns.add(customBtnTempLeave);
+        customBtns.add(customBtnCourseInfo);
         customBtns.add(customBtnUploadBatch);
+        customBtns.add(customBtnExport);
         modelMap.put("customBtns", customBtns);
 
         pageParam = new PageParam(this.getUriPath() + "list", null, page.getPage(), page.getPageSize());
@@ -115,7 +130,21 @@ public class StudyStudentController extends BaseController {
     public ModelAndView add() {
         ModelAndView modelView = new ModelAndView();
         modelView.setViewName(getPageDir() + "add");
+
+        modelView.getModelMap().put("levels", getLevels());
+
         return modelView;
+    }
+
+    private List<String> getLevels() {
+        List<String> levels = new ArrayList<>();
+        for(int index = 1; index <= 25; index++) {
+            levels.add(String.valueOf(index) + "级");
+        }
+        for(int index = 1; index <= 5; index++) {
+            levels.add(String.valueOf(index) + "段");
+        }
+        return levels;
     }
 
     /**
@@ -124,19 +153,9 @@ public class StudyStudentController extends BaseController {
      */
     @RequestMapping(value = "/save", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> save(TGStudyStudent studyStudent, @RequestParam(value = "attachFile") MultipartFile userInfoFile) {
-
-        log.info("file name:{}", userInfoFile.getOriginalFilename());
-
+    public SmartResponse<String> save(TGStudyStudent studyStudent) {
 
         studyStudent.setCreateTime(new Date());
-
-        short parentType = studyStudent.getParentType();
-        if (1 == parentType) {
-            studyStudent.setParentName(studyStudent.getParentName() + "(父亲)");
-        } else if (2 == parentType) {
-            studyStudent.setParentName(studyStudent.getParentName() + "(母亲)");
-        }
 
         studyStudent.setRemainCourse(studyStudent.getTotalCourse());
 
@@ -211,7 +230,28 @@ public class StudyStudentController extends BaseController {
                 modelView.getModelMap().put("objBean", studyStudent);
             }
         }
+        modelView.getModelMap().put("levels", getLevels());
+
         modelView.setViewName(getPageDir() + "edit");
+        return modelView;
+    }
+
+
+    @RequestMapping(value = "/courseInfo")
+    public ModelAndView courseInfo(StudentCourseRelSearch searchParam, RequestPage page) {
+        ModelAndView modelView = new ModelAndView();
+
+        SmartResponse<Object> smartResp = this.opService.getDatas("student_course_list", searchParam, page.getStartNum(), page.getPageSize());
+        modelView.getModelMap().put("smartResp", smartResp);
+
+        pageParam = new PageParam(this.getUriPath() + "courseInfo", "#student-course-list-dialog", page.getPage(), page.getPageSize());
+        modelView.getModelMap().put("pageParam", pageParam);
+
+        modelView.setViewName(getPageDir() + "courseInfo");
+
+        refreshBtn = new RefreshBtn(this.getUriPath() + "courseInfo?id=" + searchParam.getId(), null,"#student-course-list-dialog");
+        modelView.getModelMap().put("refreshBtn", refreshBtn);
+
         return modelView;
     }
 
@@ -354,24 +394,43 @@ public class StudyStudentController extends BaseController {
         return modelView;
     }
 
+    @Autowired
+    private StudyRenewRecordService renewRecordService;
+
     /**
-     * 提交编辑
+     * 增加课时
      *
-     * @param studentId   学生编号
-     * @param courseCount 新增课时数量
+     * @param renewRecord   续费记录对象
      * @return 修改结果
      */
     @RequestMapping(value = "/subIncreaseRemainCourse", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> subIncreaseRemainCourse(String studentId, String courseCount) {
-        TGStudyStudent studyStudentDb = this.studentService.find(studentId).getData();
-        studyStudentDb.setCreateTime(studyStudentDb.getCreateTime());
-        studyStudentDb.setUpdateTime(new Date());
-        studyStudentDb.setRemainCourse(studyStudentDb.getRemainCourse() + Integer.valueOf(courseCount));
-        studyStudentDb.setTotalCourse(studyStudentDb.getTotalCourse() + Integer.valueOf(courseCount));
+    public SmartResponse<String> subIncreaseRemainCourse(TGStudyRenewRecord renewRecord, HttpServletRequest request) {
 
-        // TODO 增加续费日志记录
-        return studentService.update(studyStudentDb);
+        SmartResponse<String> smartResponse = new SmartResponse<>();
+
+        UserInfo userInfo = this.getUserInfoFromSession(request);
+        if(null != userInfo) {
+            renewRecord.setOperatorId(userInfo.getId());
+            renewRecord.setOperatorFullName(userInfo.getFullName());
+            renewRecord.setCreateTime(new Date());
+
+            TGStudyStudent studyStudentDb = this.studentService.find(renewRecord.getStudentId()).getData();
+            if(null != studyStudentDb) {
+                renewRecord.setStudentName(studyStudentDb.getName());
+
+                studyStudentDb.setCreateTime(studyStudentDb.getCreateTime());
+                studyStudentDb.setUpdateTime(new Date());
+                studyStudentDb.setRemainCourse(studyStudentDb.getRemainCourse() + renewRecord.getCourseCount());
+                studyStudentDb.setTotalCourse(studyStudentDb.getTotalCourse() + renewRecord.getCourseCount());
+                smartResponse = studentService.update(studyStudentDb);
+                if(smartResponse.isSuccess()) {
+                    smartResponse = renewRecordService.save(renewRecord);
+                }
+            }
+        }
+
+        return smartResponse;
     }
 
 
@@ -808,6 +867,141 @@ public class StudyStudentController extends BaseController {
         this.systemMessageService.save(systemMessage);
     }
 
+
+    @RequestMapping(value = "/exportStudent")
+    public void exportStudent(HttpServletResponse response) {
+        List<TGStudyStudent> studentList = this.studentService.findNormal().getDatas();
+        if(CollectionUtils.isNotEmpty(studentList)) {
+            this.backExcelFile(this.getExcelTitle(), response, "学生信息", studentList);
+        }
+    }
+
+    /**
+     * 获取导出EXCEL的标题
+     * @return  标题名称列表
+     */
+    private List<String> getExcelTitle() {
+        List<String> titleList = new ArrayList<>();
+        titleList.add("姓名");
+        titleList.add("性别");
+        titleList.add("出生日期");
+        titleList.add("就读学校");
+        titleList.add("联系方式");
+        titleList.add("等级");
+        titleList.add("剩余课时");
+        titleList.add("是否已注册");
+        titleList.add("入学时间");
+        return titleList;
+    }
+
+    /**
+     * 学生信息写入EXCEL文件并返回给请求客户端
+     * @param titleList     标题列表
+     * @param response      HTTP响应对象
+     * @param title         文件名称
+     */
+    public void backExcelFile(List<String> titleList, HttpServletResponse response, String title, List<TGStudyStudent> studentList) {
+
+        HSSFWorkbook wb = new HSSFWorkbook();
+
+        // 第二步，在webbook中添加一个sheet,对应Excel文件中的sheet
+
+        HSSFSheet sheet = wb.createSheet(title);
+
+        // 第三步，在sheet中添加表头第0行,注意老版本poi对Excel的行数列数有限制short
+
+        HSSFRow row = sheet.createRow(0);
+
+        // 第四步，创建单元格，并设置值表头 设置表头居中
+        HSSFCellStyle style = wb.createCellStyle();
+        style.setAlignment(HorizontalAlignment.CENTER);
+        HSSFCell cell = null;
+        int size = titleList.size();
+        for (int i = 0; i < size; i++) {
+            sheet.setDefaultColumnStyle(i, style);
+            sheet.setColumnWidth(i, 5000);
+            cell = row.createCell(i);
+            cell.setCellValue(new HSSFRichTextString(titleList.get(i)));
+        }
+
+        this.fillDataToExcel(sheet, style, studentList);
+
+        String sFileName = title + ".xls";
+        try {
+            response.setContentType("application/msexcel;charset=UTF-8");
+            response.setHeader("Content-Disposition",
+                    "attachment;filename=".concat(String.valueOf(URLEncoder.encode(sFileName, "UTF-8"))));
+            response.setHeader("Connection", "close");
+            response.setHeader("Content-Type", "application/vnd.ms-excel");
+
+            wb.write(response.getOutputStream());
+        } catch (UnsupportedEncodingException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+    }
+
+    private void fillDataToExcel(HSSFSheet sheet, HSSFCellStyle style, List<TGStudyStudent> studentList) {
+
+        TGStudyStudent student = null;
+        HSSFRow row = null;
+        HSSFCell cell = null;
+        // 记录行索引
+        for(int index = 0; index < studentList.size(); index++) {
+            student = studentList.get(index);
+
+            row = sheet.createRow(index + 1);
+
+            // 姓名
+            cell = row.createCell(0);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(student.getName()));
+
+            // 性别
+            cell = row.createCell(1);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(student.getSex() == 1 ? "男生" : "女生"));
+
+            // 出生日期
+            cell = row.createCell(2);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(student.getBirthday()));
+
+            // 就读学校
+            cell = row.createCell(3);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(student.getSchoolName()));
+
+            // 联系方式
+            cell = row.createCell(4);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(student.getParentPhone()));
+
+            // 等级
+            cell = row.createCell(5);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(student.getLevel()));
+
+            // 剩余课时
+            cell = row.createCell(6);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(String.valueOf(student.getRemainCourse())));
+
+            // 是否已注册
+            cell = row.createCell(7);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(StringUtils.equals(IConstant.IS_PROCESS_YES, student.getIsRegister()) ? "已注册" : "未注册"));
+
+            // 入学时间
+            cell = row.createCell(8);
+            cell.setCellStyle(style);
+            cell.setCellValue(new HSSFRichTextString(DateUtil.dateToStr(student.getCreateTime(), "yyyy-MM-dd")));
+        }
+
+    }
+
     /**
      * @return JSP页面对象
      */
@@ -924,7 +1118,6 @@ public class StudyStudentController extends BaseController {
 
     /**
      * @param dataMap 数据列表
-     * @return 写入数据库的学生数量
      */
     private void syncDataToDb(List<Map<String, String>> dataMap) {
 
@@ -936,7 +1129,7 @@ public class StudyStudentController extends BaseController {
             student.setSex(StringUtils.equals("男", data.get("sex")) ? (short) 1 : (short) 2);
             student.setBirthday(DateUtil.dateToStr(DateUtil.parseDate(data.get("birthday"), "yyyy.MM.dd"), "yyyy-MM-dd"));
             student.setSchoolName(data.get("schoolName"));
-            student.setLevel(parseLevel(data.get("level")));
+            student.setLevel(data.get("level"));
             student.setParentPhone(this.parsePhone(data.get("phone")));
 
             if (StringUtils.isNotBlank(student.getName()) && StringUtils.isNotBlank(student.getParentPhone())) {
@@ -949,22 +1142,6 @@ public class StudyStudentController extends BaseController {
                 }
             }
         }
-    }
-
-    private int parseLevel(String levelStr) {
-        try {
-            Pattern p = Pattern.compile("\\d+");
-            Matcher matcher = p.matcher(levelStr);
-            String resStr = "0";
-            while (matcher.find()) {
-                resStr = matcher.group();
-            }
-
-            return Integer.valueOf(resStr);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return 0;
     }
 
     private String parsePhone(String phone) {

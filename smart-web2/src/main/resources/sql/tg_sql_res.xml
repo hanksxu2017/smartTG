@@ -8,13 +8,21 @@
     <!-- 菜单列表树 -->
     <sqlUnit name="select_study_school_list">
         <sql>
-           select t.id, t.name, t.address, t.create_time from tg_study_school t order by t.create_time asc
+            select t.id, t.name, t.address
+            from tg_study_school t order by t.create_time asc
         </sql>
     </sqlUnit>
 
     <sqlUnit name="select_study_teacher_list">
         <sql>
-            select t.id, t.name, t.phone, t.level, t.create_time from tg_study_teacher t order by t.create_time asc
+            select t.id, t.name, t.phone, date_format(t.create_time, '%Y-%c-%d'),
+            (select count(id) from tg_study_course where teacher_id = t.id),
+            (SELECT COUNT(DISTINCT student_id) FROM tg_study_student_course_rel WHERE course_id IN (
+            SELECT id FROM tg_study_course WHERE teacher_id = t.id)),
+            (SELECT COUNT(id) FROM tg_study_student_course_rel WHERE course_id IN (
+            SELECT id FROM tg_study_course WHERE teacher_id = t.id))
+            from tg_study_teacher t
+            order by t.create_time asc
         </sql>
     </sqlUnit>
     <!-- 教师简单列表 -->
@@ -48,13 +56,15 @@
             CASE t.status WHEN 'NORMAL' THEN '正常'
             WHEN 'DROP_OUT' THEN '退学'
             WHEN 'TEMP_LEAVE' THEN "休学"
-            ELSE '未定义' END ,
-            t.remain_course, t.create_time
+            ELSE '未定义' END,
+            t.remain_course, date_format(t.create_time, '%Y-%c-%d'),
+            CASE t.is_register WHEN 'YES' THEN '已注册'
+            ELSE '未注册' END
             from tg_study_student t
             where 1=1
             [and t.name like '%:name%']
             [and t.status =:status]
-            order by t.create_time asc
+            order by t.create_time desc
         </sql>
     </sqlUnit>
     <!-- 学生简单列表 -->
@@ -81,7 +91,8 @@
             WHEN '5' THEN '星期五'
             WHEN '6' THEN '星期六'
             ELSE '未设置' END,
-            t.course_time, t.name, t.classroom_name, t.teacher_name
+            t.course_time, t.name, t.classroom_name, t.teacher_name,
+            (select count(student_id) from tg_study_student_course_rel where course_id = t.id)
             from tg_study_course t
             where t.status = 'NORMAL'
             [and t.teacher_id =:teacherId]
@@ -159,13 +170,12 @@
             t.course_time, t.classroom_name, t.teacher_name,
             CASE rel.status WHEN "NORMAL" THEN '正常'
             WHEN 'EXIT_COURSE' THEN '已退班'
-            ELSE '未定义' END,
-            t.create_time, t.description
+            ELSE '未定义' END
             from tg_study_course t, tg_study_student_course_rel rel
             where rel.student_id =:id and rel.course_id = t.id
             [and rel.status =:status]
             [and rel.student_name like '%:studentName%']
-            order by t.create_time asc
+            order by t.week_info, t.course_time_index
         </sql>
     </sqlUnit>
 

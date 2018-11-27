@@ -40,7 +40,7 @@
         <property name="maxIdleTime" value="${c3p0.pool.maxIdleTime}" />
         <property name="acquireIncrement" value="${c3p0.pool.acquireIncrement}" />
         <property name="idleConnectionTestPeriod" value="${c3p0.pool.idleConnectionTestPeriod}" />
-        <property name="automaticTestTable" value="${c3p0.pool.automaticTestTable}" />
+        <!--<property name="automaticTestTable" value="${c3p0.pool.automaticTestTable}" />-->
 	</bean>
 	
 	<!-- Hibernate配置 -->

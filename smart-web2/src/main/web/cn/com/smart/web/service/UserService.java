@@ -217,7 +217,6 @@ public class UserService extends MgrServiceImpl<TNUser> {
         userInfo.setFullName(user.getFullName());
         userInfo.setMenuRoleIds(userDao.queryMenuRoleIds(user.getId()));
         userInfo.setRoleIds(userDao.queryRoleIds(user.getId()));
-        userInfo.setOrgIds(userDao.queryOrgIds(user.getId()));
         return userInfo;
 	}
 	
