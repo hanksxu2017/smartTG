@@ -1,8 +1,6 @@
 package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
-import cn.com.smart.web.bean.entity.TNOrg;
-import cn.com.smart.web.bean.entity.TNPosition;
 import cn.com.smart.web.bean.entity.TNRole;
 import cn.com.smart.web.bean.entity.TNUser;
 import cn.com.smart.web.controller.base.BaseController;
@@ -93,41 +91,4 @@ public class AuthController extends BaseController {
 		modelView.setViewName(VIEW_DIR+"/userHas");
 		return modelView;
 	}
-	
-	@RequestMapping("/orgHas")
-	public ModelAndView orgHas(ModelAndView modelView,String id) throws Exception {
-		if(StringUtils.isNotEmpty(id)) {
-			SmartResponse<Object> smartResp = opServ.find(TNOrg.class, id);
-			ModelMap modelMap = modelView.getModelMap();
-			modelMap.put("id", id);
-			if(smartResp.getResult().equals(OP_SUCCESS)) {
-				TNOrg org = (TNOrg) smartResp.getData();
-				String name = (null != org)?org.getName():null;
-				modelMap.put("name", name);
-				org = null;
-			}
-			smartResp = null;
-		}
-		modelView.setViewName(VIEW_DIR+"/orgHas");
-		return modelView;
-	}
-	
-	@RequestMapping("/positionHas")
-	public ModelAndView positionHas(ModelAndView modelView,String id) throws Exception {
-		if(StringUtils.isNotEmpty(id)) {
-			SmartResponse<Object> smartResp = opServ.find(TNPosition.class, id);
-			ModelMap modelMap = modelView.getModelMap();
-			modelMap.put("id", id);
-			if(smartResp.getResult().equals(OP_SUCCESS)) {
-				TNPosition position = (TNPosition) smartResp.getData();
-				String name = (null != position)?position.getName():null;
-				modelMap.put("name", name);
-				position = null;
-			}
-			smartResp = null;
-		}
-		modelView.setViewName(VIEW_DIR+"/positionHas");
-		return modelView;
-	}
-	
 }

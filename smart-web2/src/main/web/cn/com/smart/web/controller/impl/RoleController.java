@@ -366,57 +366,5 @@ public class RoleController extends BaseController {
 		modelView.setViewName(VIEW_DIR+"/addOrg");
 		return modelView;
 	}
-	
-	/**
-	 * 
-	 * @param submitDatas
-	 * @param id
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="/saveOrg",method=RequestMethod.POST)
-	public @ResponseBody SmartResponse<String> saveOrg(String submitDatas,String id) throws Exception {
-		SmartResponse<String> smartResp = new SmartResponse<String>();
-		if(StringUtils.isNotEmpty(submitDatas) && StringUtils.isNotEmpty(id)) {
-			String[] values = submitDatas.split(",");
-			smartResp = roleServ.addOrg2Role(id, values);
-		}
-		return smartResp;
-	}
-	
 
-	/**
-	 * 角色中添加岗位
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping("/addPosition")
-	public ModelAndView addPosition(FilterParam searchParam,ModelAndView modelView,RequestPage page) throws Exception {
-			String uri = "role/addPosition";
-			SmartResponse<Object> smartResp = opServ.getDatas("role_addposition_list",searchParam, page.getStartNum(), page.getPageSize());
-			pageParam = new PageParam(uri, ".bootstrap-dialog-message", page.getPage(), page.getPageSize());
-			ModelMap modelMap = modelView.getModelMap();
-			modelMap.put("smartResp", smartResp);
-			modelMap.put("pageParam", pageParam);
-			modelMap.put("searchParam", searchParam);
-			modelView.setViewName(VIEW_DIR+"/addPosition");
-			return modelView;
-	}
-	
-	/**
-	 * 角色中添加岗位
-	 * @return
-	 * @throws Exception
-	 */
-	@RequestMapping(value="/savePosition",method=RequestMethod.POST)
-	public @ResponseBody SmartResponse<String> savePosition(String submitDatas,String id) throws Exception {
-		SmartResponse<String> smartResp = new SmartResponse<String>();
-		if(StringUtils.isNotEmpty(submitDatas) && StringUtils.isNotEmpty(id)) {
-			String[] values = submitDatas.split(",");
-			smartResp = roleServ.addPosition2Role(id, values);
-		}
-		return smartResp;
-	}
-	
-	
 }

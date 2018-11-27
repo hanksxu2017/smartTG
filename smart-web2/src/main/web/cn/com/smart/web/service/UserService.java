@@ -23,13 +23,9 @@ import cn.com.smart.exception.ServiceException;
 import cn.com.smart.helper.ObjectHelper;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.UserInfo;
-import cn.com.smart.web.bean.entity.TNOrg;
-import cn.com.smart.web.bean.entity.TNPosition;
 import cn.com.smart.web.bean.entity.TNRoleUser;
 import cn.com.smart.web.bean.entity.TNUser;
 import cn.com.smart.web.constant.enums.OrgType;
-import cn.com.smart.web.dao.impl.OrgDao;
-import cn.com.smart.web.dao.impl.PositionDao;
 import cn.com.smart.web.dao.impl.RoleUserDao;
 import cn.com.smart.web.dao.impl.UserDao;
 import cn.com.smart.web.filter.bean.UserSearchParam;
@@ -48,16 +44,10 @@ public class UserService extends MgrServiceImpl<TNUser> {
     @Autowired
 	private UserDao userDao;
     @Autowired
-	private OrgDao orgDao;
-    @Autowired
 	private RoleUserDao roleUserDao;
     @Autowired
     private TreeCombinHelper treeCombinHelper;
-    @Autowired
-	private OrgService orgServ;
-    @Autowired
-    private PositionDao posDao;
-	
+
 	/**
 	 * 根据searchParam参数查询用户信息
 	 * @param searchParam
@@ -225,29 +215,6 @@ public class UserService extends MgrServiceImpl<TNUser> {
         userInfo.setId(user.getId());
         userInfo.setUsername(user.getUsername());
         userInfo.setFullName(user.getFullName());
-        TNOrg org =  orgDao.find(user.getOrgId());
-        String deptName = null;
-        String seqDeptName = null;
-        if(null != org) {
-            deptName = org.getName();
-            seqDeptName = org.getSeqNames();
-            userInfo.setOrgId(org.getId());
-            if(OrgType.DEPARTMENT.getValue().equals(org.getType())) {
-                userInfo.setDepartmentId(org.getId());
-            }
-        } else {
-            userInfo.setOrgId(user.getOrgId());
-        }
-        userInfo.setPositionId(user.getPositionId());
-        if(StringUtils.isNotEmpty(user.getPositionId())){
-            TNPosition position = posDao.find(user.getPositionId());
-            if(null != position) {
-                userInfo.setPositionName(position.getName());
-            }
-            position = null;
-        }
-        userInfo.setDeptName(deptName);
-        userInfo.setSeqDeptNames(seqDeptName);
         userInfo.setMenuRoleIds(userDao.queryMenuRoleIds(user.getId()));
         userInfo.setRoleIds(userDao.queryRoleIds(user.getId()));
         userInfo.setOrgIds(userDao.queryOrgIds(user.getId()));
@@ -374,174 +341,6 @@ public class UserService extends MgrServiceImpl<TNUser> {
 			throw new ServiceException(e.getMessage(),e.getCause());
 		} catch (Exception e) {
 			throw new ServiceException(e.getCause());
-		}
-		return smartResp;
-	}
-	
-	
-	/**
-	 * 获取组织机构用户树
-	 * @param orgIds
-	 * @param userId 过滤用户
-	 * @return
-	 * @throws ServiceException
-	 */
-	public SmartResponse<OrgUserZTreeData> getOrgUserZTree(List<String> orgIds,String userId) throws ServiceException {
-		SmartResponse<OrgUserZTreeData> smartResp = new SmartResponse<OrgUserZTreeData>();
-		List<TreeProp> ztreeProps = orgServ.getTree(orgIds);
-		if(null != ztreeProps && ztreeProps.size()>0) {
-			String[] orgIdArray = new String[ztreeProps.size()];
-			int count = 0;
-			for(TreeProp treeProp : ztreeProps) {
-				orgIdArray[count] = treeProp.getId();
-				count++;
-			}
-			try {
-				List<TNUser> users = userDao.queryByOrgIds(orgIdArray);
-				if(null != users && users.size()>0) {
-					TreeProp treeProp = null;
-					List<TreeProp> newTreeProp = new ArrayList<TreeProp>();
-					count = 1;
-					for(int i = 0; i < ztreeProps.size(); i++) {
-						newTreeProp.add(ztreeProps.get(i));
-						count++;
-						for(TNUser userTmp : users) {
-							if(ztreeProps.get(i).getId().equals(userTmp.getOrgId()) && !userId.equals(userTmp.getId())) {
-								treeProp = new TreeProp();
-								treeProp.setFlag("user");
-								treeProp.setId(userTmp.getId());
-								String fullName = userTmp.getFullName();
-								if(StringUtils.isEmpty(fullName))
-									fullName = userTmp.getUsername();
-								treeProp.setName(fullName);
-								treeProp.setSortOrder(count);
-								treeProp.setParentId(ztreeProps.get(i).getId());
-								newTreeProp.add(treeProp);
-								count++;
-							}
-						}
-					}//for;
-					treeProp = null;
-					ztreeProps = null;
-					users = null;
-					
-					ZTreeHelper<OrgUserZTreeData> zTreeHelper = new ZTreeHelper<OrgUserZTreeData>(OrgUserZTreeData.class, newTreeProp);
-					List<OrgUserZTreeData> ztreeDatas = zTreeHelper.convert("user");
-					zTreeHelper = null;
-					if(null != ztreeDatas && ztreeDatas.size()>0) {
-						smartResp.setResult(OP_SUCCESS);
-						smartResp.setMsg(OP_SUCCESS_MSG);
-						smartResp.setDatas(ztreeDatas);
-					}
-					ztreeDatas = null;
-				}
-			} catch (DaoException e) {
-				throw new ServiceException(e);
-			} finally {
-				orgIdArray = null;
-			}
-		}
-		return smartResp;
-	}
-	
-	/**
-	 * 获取组织机构用户树
-	 * @param orgIds
-	 * @return
-	 * @throws ServiceException
-	 */
-	public SmartResponse<OrgUserZTreeData> getOrgUserZTree(List<String> orgIds) throws ServiceException {
-		SmartResponse<OrgUserZTreeData> smartResp = new SmartResponse<OrgUserZTreeData>();
-		List<TreeProp> ztreeProps = orgServ.getTree(orgIds);
-		if(null != ztreeProps && ztreeProps.size()>0) {
-			String[] orgIdArray = new String[ztreeProps.size()];
-			int count = 0;
-			for(TreeProp treeProp : ztreeProps) {
-				orgIdArray[count] = treeProp.getId();
-				count++;
-			}
-			try {
-				smartResp = getOrgUserZTree(ztreeProps, userDao.queryByOrgIds(orgIdArray));
-			} catch (DaoException e) {
-				throw new ServiceException(e);
-			} finally {
-				orgIdArray = null;
-			}
-		}
-		return smartResp;
-	}
-	
-	/**
-	 * 获取组织机构用户树
-	 * @param users
-	 * @return
-	 * @throws ServiceException
-	 */
-	public SmartResponse<OrgUserZTreeData> getOrgUserZTreeByUser(List<TNUser> users) throws ServiceException {
-		SmartResponse<OrgUserZTreeData> smartResp = new SmartResponse<OrgUserZTreeData>();
-		if(null != users && users.size()>0) {
-			Set<String> orgIds = new HashSet<String>();
-			for(TNUser user : users) {
-				orgIds.add(user.getOrgId());
-			}
-			List<TreeProp> ztreeProps = orgServ.getTree(null);
-			try {
-				smartResp = getOrgUserZTree(ztreeProps, users);
-			} catch (ServiceException e) {
-				throw new ServiceException(e);
-			} finally {
-				orgIds = null;
-			}
-		}
-		return smartResp;
-	}
-	
-	/**
-	 * 
-	 * @param ztreeProps
-	 * @param users
-	 * @return
-	 * @throws ServiceException
-	 */
-	private SmartResponse<OrgUserZTreeData> getOrgUserZTree(List<TreeProp> ztreeProps,List<TNUser> users) throws ServiceException {
-		SmartResponse<OrgUserZTreeData> smartResp = new SmartResponse<OrgUserZTreeData>();
-		if(null != users && users.size()>0  && null != ztreeProps && ztreeProps.size()>0) {
-			int count = 0;
-			TreeProp treeProp = null;
-			List<TreeProp> newTreeProp = new ArrayList<TreeProp>();
-			count = 1;
-			for(int i = 0; i < ztreeProps.size(); i++) {
-				newTreeProp.add(ztreeProps.get(i));
-				count++;
-				for(TNUser userTmp : users) {
-					if(ztreeProps.get(i).getId().equals(userTmp.getOrgId())) {
-						treeProp = new TreeProp();
-						treeProp.setFlag("user");
-						treeProp.setId(userTmp.getId());
-						String fullName = userTmp.getFullName();
-						if(StringUtils.isEmpty(fullName))
-							fullName = userTmp.getUsername();
-						treeProp.setName(fullName);
-						treeProp.setSortOrder(count);
-						treeProp.setParentId(ztreeProps.get(i).getId());
-						newTreeProp.add(treeProp);
-						count++;
-					}
-				}
-			}//for;
-			treeProp = null;
-			ztreeProps = null;
-			users = null;
-			ZTreeHelper<OrgUserZTreeData> zTreeHelper = new ZTreeHelper<OrgUserZTreeData>(OrgUserZTreeData.class, newTreeProp);
-			List<OrgUserZTreeData> ztreeDatas = zTreeHelper.convert("user");
-			zTreeHelper = null;
-			treeCombinHelper.trimLeaf(ztreeDatas);
-			if(null != ztreeDatas && ztreeDatas.size()>0) {
-				smartResp.setResult(OP_SUCCESS);
-				smartResp.setMsg(OP_SUCCESS_MSG);
-				smartResp.setDatas(ztreeDatas);
-			}
-			ztreeDatas = null;
 		}
 		return smartResp;
 	}

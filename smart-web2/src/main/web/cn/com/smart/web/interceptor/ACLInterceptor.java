@@ -117,9 +117,33 @@ public class ACLInterceptor implements HandlerInterceptor {
 
 		if(isLogin(request)) {
 			is = true;
-		} else if(isRes(currentUri)){
-			is = true;
+		} else {
+			if(!isRes(currentUri)) {
+				if(!isExclude(currentUri)) {
+					String loginUri = "/login";
+					loginUri = handleRedirectUri(request, loginUri);
+					response.sendRedirect(loginUri);
+				} else {
+					is = true;
+				}
+			} else {
+				is = true;
+			}
+
 		}
+		return is;
+	}
+
+
+	/**
+	 * 是否排除
+	 * @param currentUri
+	 * @return
+	 */
+	private boolean isExclude(String currentUri) {
+		boolean is = false;
+		is = currentUri.startsWith("#");
+		is = is ? is : isUriContains(excludeMaps, currentUri);
 		return is;
 	}
 
@@ -182,6 +206,20 @@ public class ACLInterceptor implements HandlerInterceptor {
 			is = (null != session.getAttribute(IActionConstant.SESSION_USER_KEY))?true:false;
 		}
 		return is;
+	}
+
+	/**
+	 *  处理调整URI
+	 * @param request
+	 * @param uri
+	 * @return
+	 */
+	private String handleRedirectUri(HttpServletRequest request, String uri) {
+		String contextPath = request.getContextPath();
+		if(StringUtils.isNotEmpty(contextPath) && !"/".equals(contextPath)) {
+			uri = contextPath+uri;
+		}
+		return uri;
 	}
 
 	/********getter and setter*******/

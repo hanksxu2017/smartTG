@@ -19,16 +19,12 @@ import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TNMenu;
 import cn.com.smart.web.bean.entity.TNResource;
 import cn.com.smart.web.bean.entity.TNRole;
-import cn.com.smart.web.bean.entity.TNRoleOrg;
-import cn.com.smart.web.bean.entity.TNRolePosition;
 import cn.com.smart.web.bean.entity.TNRoleUser;
 import cn.com.smart.web.cache.impl.RoleMenuMemoryCache;
 import cn.com.smart.web.cache.impl.RoleResourceMemoryCache;
 import cn.com.smart.web.dao.impl.MenuDao;
 import cn.com.smart.web.dao.impl.RoleDao;
 import cn.com.smart.web.dao.impl.RoleMenuDao;
-import cn.com.smart.web.dao.impl.RoleOrgDao;
-import cn.com.smart.web.dao.impl.RolePositionDao;
 import cn.com.smart.web.dao.impl.RoleResourceDao;
 import cn.com.smart.web.dao.impl.RoleUserDao;
 
@@ -52,11 +48,7 @@ public class RoleService extends MgrServiceImpl<TNRole> {
 	private RoleResourceDao roleResDao;
 	@Autowired
 	private RoleUserDao roleUserDao;
-	@Autowired
-	private RoleOrgDao roleOrgDao;
-	@Autowired
-	private RolePositionDao rolePosDao;
-	
+
 	@Autowired
 	private RoleMenuMemoryCache roleMenuCache;
 	@Autowired
@@ -231,93 +223,7 @@ public class RoleService extends MgrServiceImpl<TNRole> {
 		}
 		return smartResp;
 	}
-	
-	
-	/**
-	 * 角色中添加组织机构
-	 * @param roleId
-	 * @param orgIds
-	 * @return
-	 * @throws ServiceException
-	 */
-	public SmartResponse<String> addOrg2Role(String roleId,String[] orgIds) throws ServiceException {
-		SmartResponse<String> smartResp = new SmartResponse<String>();
-		try {
-			if(StringUtils.isNotEmpty(roleId) && null != orgIds && orgIds.length>0) {
-				if(!roleOrgDao.isOrgInRoleExist(roleId, orgIds)) {
-					List<TNRoleOrg> roleOrgs = new ArrayList<TNRoleOrg>();
-					TNRoleOrg roleOrg = null;
-					for (int i = 0; i < orgIds.length; i++) {
-						roleOrg = new TNRoleOrg();
-						roleOrg.setRoleId(roleId);
-						roleOrg.setOrgId(orgIds[i]);
-						roleOrg.setFlag(TNRoleOrg.ROLE_FLAG);
-						roleOrgs.add(roleOrg);
-					}
-					List<Serializable> ids = roleOrgDao.save(roleOrgs);
-					if(null != ids && ids.size()>0) {
-						smartResp.setResult(OP_SUCCESS);
-						smartResp.setMsg(OP_SUCCESS_MSG);
-					}
-					ids = null;
-					roleOrg= null;
-					roleOrgs = null;
-				} else {
-					smartResp.setMsg("用户已添加到角色里面，不能重复添加！");
-				}
-				orgIds = null;
-			}
-		} catch (DaoException e) {
-			throw new ServiceException(e.getMessage(),e.getCause());
-		} catch (Exception e) {
-			throw new ServiceException(e.getCause());
-		}
-		return smartResp;
-	}
-	
-	
-	/**
-	 * 角色中添加岗位
-	 * @param roleId
-	 * @param positionIds
-	 * @return
-	 * @throws ServiceException
-	 */
-	public SmartResponse<String> addPosition2Role(String roleId,String[] positionIds) throws ServiceException {
-		SmartResponse<String> smartResp = new SmartResponse<String>();
-		try {
-			if(StringUtils.isNotEmpty(roleId) && null != positionIds && positionIds.length>0) {
-				if(!rolePosDao.isPositionInRoleExist(roleId, positionIds)) {
-					List<TNRolePosition> rolePositions = new ArrayList<TNRolePosition>();
-					TNRolePosition rolePosition = null;
-					for (int i = 0; i < positionIds.length; i++) {
-						rolePosition = new TNRolePosition();
-						rolePosition.setRoleId(roleId);
-						rolePosition.setPositionId(positionIds[i]);
-						rolePositions.add(rolePosition);
-					}
-					List<Serializable> ids = rolePosDao.save(rolePositions);
-					if(null != ids && ids.size()>0) {
-						smartResp.setResult(OP_SUCCESS);
-						smartResp.setMsg(OP_SUCCESS_MSG);
-					}
-					ids = null;
-					rolePosition= null;
-					rolePositions = null;
-				} else {
-					smartResp.setMsg("用户已添加到角色里面，不能重复添加！");
-				}
-				positionIds = null;
-			}
-		} catch (DaoException e) {
-			throw new ServiceException(e.getMessage(),e.getCause());
-		} catch (Exception e) {
-			throw new ServiceException(e.getCause());
-		}
-		return smartResp;
-	}
-	
-	
+
 	/**
 	 * 判断是否为超级管理员
 	 * @param roleIds
@@ -379,10 +285,6 @@ public class RoleService extends MgrServiceImpl<TNRole> {
 	    Map<String, Object> param = new HashMap<String, Object>(2);
 	    param.put("roleId", roleId);
 	    param.put("id", orgId);
-	    if(roleOrgDao.delete(param)) {
-	        smartResp.setResult(OP_SUCCESS);
-	        smartResp.setMsg("删除成功");
-	    }
 	    return smartResp;
 	}
 	
@@ -401,10 +303,6 @@ public class RoleService extends MgrServiceImpl<TNRole> {
         Map<String, Object> param = new HashMap<String, Object>(2);
         param.put("roleId", roleId);
         param.put("id", positionId);
-        if(rolePosDao.delete(param)) {
-            smartResp.setResult(OP_SUCCESS);
-            smartResp.setMsg("删除成功");
-        }
         return smartResp;
     }
 	

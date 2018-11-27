@@ -2,13 +2,8 @@ package cn.com.smart.web.service;
 
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TGStudySchool;
-import cn.com.smart.web.bean.entity.TNVersion;
-import cn.com.smart.web.constant.enums.VersionType;
 import cn.com.smart.web.dao.impl.StudySchoolDao;
-import cn.com.smart.web.dao.impl.VersionDao;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 /**
  * 版本服务类

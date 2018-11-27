@@ -3,7 +3,6 @@ package cn.com.smart.web.controller.impl;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.web.bean.UserInfo;
 import cn.com.smart.web.controller.base.BaseController;
-import cn.com.smart.web.service.LoginLogService;
 import cn.com.smart.web.service.UserService;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,9 +27,7 @@ public class LoginController extends BaseController {
 
 	@Autowired
 	private UserService userServ;
-	@Autowired
-	private LoginLogService loginLogServ;
-	
+
 	@RequestMapping(method=RequestMethod.GET)
 	public String index() throws Exception {
 		return LOGIN;
@@ -38,16 +35,14 @@ public class LoginController extends BaseController {
 	
 	@RequestMapping(method=RequestMethod.POST)
 	public ModelAndView checkLogin(HttpServletRequest request,ModelAndView model, 
-			String userName,String password,String code) throws Exception {
+			String userName,String password) throws Exception {
 		boolean is = false;
 		String msg = null;
 		HttpSession session = request.getSession();
 		if(StringUtils.isNotEmpty(userName)
-				&& StringUtils.isNotEmpty(password) 
-				&& StringUtils.isNotEmpty(code)) {
+				&& StringUtils.isNotEmpty(password)) {
 
 			UserInfo userInfo = null;
-			if(isCorrectVerifyCode(code, session)) {
 				SmartResponse<UserInfo> smartResp = userServ.login(userName, password);
 				if(OP_SUCCESS.equals(smartResp.getResult())) {
 					userInfo = smartResp.getData();
@@ -58,9 +53,6 @@ public class LoginController extends BaseController {
 					msg = "用户名或密码输入错误";
 				}
 				smartResp = null;
-			} else {
-				msg = "验证码输入错误";
-			}
 		}
 		if(is) {
 			RedirectView view =  new RedirectView("/index", true, true, false);
@@ -69,22 +61,9 @@ public class LoginController extends BaseController {
 			ModelMap modelMap = model.getModelMap();
 			modelMap.put("userName", userName);
 			modelMap.put("password", password);
-			modelMap.put("code", code);
 			modelMap.put("msg", msg);
 		}
 		return model;
 	}
 
-    /**
-     *
-     * @param code
-     * @param session
-     * @return
-     */
-	private boolean isCorrectVerifyCode(String code, HttpSession session) {
-        Object codeStr = session.getAttribute(SESSION_CAPTCHA_LOGIN);
-        return null != codeStr && StringUtils.isNotEmpty(codeStr.toString())
-                && codeStr.toString().equalsIgnoreCase(code);
-    }
-	
 }

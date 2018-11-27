@@ -287,10 +287,4 @@ public class UserController extends BaseController {
 		}
 		return smartResp;
 	}
-	
-	
-	@RequestMapping("/orgTree")
-	public @ResponseBody SmartResponse<OrgUserZTreeData> orgTree(HttpSession session) throws Exception {
-		return userServ.getOrgUserZTree(getUserInfoFromSession(session).getOrgIds());
-	}
 }

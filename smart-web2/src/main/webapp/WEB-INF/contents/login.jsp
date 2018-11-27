@@ -31,13 +31,11 @@ $(document).ready(function(){
     $("#resolution").val(screenW+"x"+screenH);
     $("#screen-width").val(screenW);
     $("#screen-height").val(screenH);
-   clickImgCode();
    listenerFocus();
 
 	$("#login-form").submit(function(){
 		var userName = $("#user-name").val();
 		var password = $("#pass-word").val();
-		var code = $("#code").val();
 		if(utils.trim(userName)=='') {
 			utils.showMsg("请输入用户名！");
 			$("#user-name").focus();
@@ -45,10 +43,6 @@ $(document).ready(function(){
 		} else if(utils.trim(password) == '') {
 			utils.showMsg("请输入密码！");
 			$("#pass-word").focus();
-			return false;
-		} else if(utils.trim(code) == '') {
-			utils.showMsg("请输入验证码！");
-			$("#code").focus();
 			return false;
 		}
         if($("#remember-me").prop("checked")) {
@@ -64,13 +58,6 @@ $(document).ready(function(){
 		return true;
 	});
 });
-
-function clickImgCode() {
-	  $("#imgCode").click(function(){
-		  var num = parseInt(Math.random()*10000);
-		  $(this).attr("src","captcha?num="+num);
-	  });
-}
 
 function listenerFocus() {
 	$("input[type=text],input[type=password]").focus(function(){
@@ -143,12 +130,6 @@ function initCookieValue() {
 							     <label>密&nbsp;&nbsp;&nbsp;&nbsp;码：</label>
 								 <input type="password" id="pass-word" placeholder="请输入密码" name="password" class="input-text" value="${password }">
 							 </div>
-							 <div class="login-input">
-								<label>验证码：</label>
-								<input type="text" id="code" placeholder="请输入验证码" name="code" class="input-text-code" value="${code}">
-								<img alt="验证码" title="看不清，请点击刷新" id="imgCode" src="captcha" />
-							 </div>
-
                             <div class="login-input" style="padding-bottom: 5px;padding-left: 50px;">
                                 <div class="checkbox m-t-5 m-b-5" style="font-size: 12px;">
                                     <label>
