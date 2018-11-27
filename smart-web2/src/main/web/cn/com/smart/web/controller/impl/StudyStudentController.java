@@ -62,12 +62,17 @@ public class StudyStudentController extends BaseController {
      */
     @RequestMapping("/list")
     public ModelAndView list(StudentSearch searchParam, RequestPage page) {
-        if (StringUtils.isBlank(searchParam.getStatus())) {
+        String queryStatus = searchParam.getStatus();
+        if (StringUtils.isBlank(queryStatus)) {
             searchParam.setStatus(IConstant.STATUS_NORMAL);
-        } else if (StringUtils.equals(searchParam.getStatus(), "ALL")) {
+            queryStatus = IConstant.STATUS_NORMAL;
+        } else if (StringUtils.equals(queryStatus, "ALL")) {
             searchParam.setStatus("");
         }
         SmartResponse<Object> smartResp = opService.getDatas("student_list", searchParam, page.getStartNum(), page.getPageSize());
+        // 恢复查询条件
+        searchParam.setStatus(queryStatus);
+
         ModelAndView modelView = new ModelAndView();
         Map<String, Object> modelMap = modelView.getModelMap();
         addBtn = new EditBtn("add", this.getUriPath() + "add", null, "新增", "800");
@@ -172,6 +177,8 @@ public class StudyStudentController extends BaseController {
         TGStudyStudent studyStudentDb = this.studentService.find(id).getData();
         studyStudentDb.setStatus(IConstant.STATUS_DROP_OUT);
         studyStudentDb.setUpdateTime(new Date());
+        // 退学操作时清零剩余课时
+        studyStudentDb.setRemainCourse(0);
         SmartResponse<String> smartResponse = studentService.update(studyStudentDb);
         if (!smartResponse.isSuccess()) {
             return smartResponse;
@@ -463,6 +470,7 @@ public class StudyStudentController extends BaseController {
         if (!StringUtils.equals(status, studyStudentDb.getStatus())) {
             if (StringUtils.equals(status, IConstant.STATUS_TEMP_LEAVE)) {
                 // 休学
+                // 休学操作不对课时进行清零操作
                 studyStudentDb.setStatus(IConstant.STATUS_TEMP_LEAVE);
                 studyStudentDb.setUpdateTime(new Date());
                 studentService.update(studyStudentDb);
@@ -474,9 +482,12 @@ public class StudyStudentController extends BaseController {
                 // 删除所有未结课的课时信息
                 this.courseStudentRecordService.deleteByField(params);
             } else if (StringUtils.equals(status, IConstant.STATUS_BACK_STUDY)) {
-                studyStudentDb.setStatus(IConstant.STATUS_NORMAL);
-                studyStudentDb.setUpdateTime(new Date());
-                studentService.update(studyStudentDb);
+                if(StringUtils.equals(studyStudentDb.getStatus(), IConstant.STATUS_TEMP_LEAVE)) {
+                    // 仅允许休学状态的可以进行返校操作
+                    studyStudentDb.setStatus(IConstant.STATUS_NORMAL);
+                    studyStudentDb.setUpdateTime(new Date());
+                    studentService.update(studyStudentDb);
+                }
             }
         }
 
