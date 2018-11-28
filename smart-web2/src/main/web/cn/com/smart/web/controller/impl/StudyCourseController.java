@@ -53,9 +53,9 @@ public class StudyCourseController extends BaseController {
      */
     @RequestMapping("/list")
     public ModelAndView list(CourseSearch searchParam, RequestPage page) {
-        SmartResponse<Object> smartResp = opService.getDatas("select_course_list", searchParam, page.getStartNum(), page.getPageSize());
+	    ModelAndView modelView = new ModelAndView();
+/*        SmartResponse<Object> smartResp = opService.getDatas("select_course_list", searchParam, page.getStartNum(), page.getPageSize());
 
-        ModelAndView modelView = new ModelAndView();
         Map<String, Object> modelMap = modelView.getModelMap();
         refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
         pageParam = new PageParam(this.getUriPath() + "list", null, page.getPage(), page.getPageSize());
@@ -70,13 +70,23 @@ public class StudyCourseController extends BaseController {
         CustomBtn customBtnReport = new CustomBtn("generateDailyCourse", "生成周课时表",
 		        "生成周课时表", this.getUriPath() + "record/generateDailyCourse","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
         customBtnReport.setWidth("600");
+
         customBtns = new ArrayList<>(1);
         customBtns.add(customBtnReport);
-        modelMap.put("customBtns", customBtns);
 
-        modelView.setViewName(this.getPageDir() + "list");
+        modelMap.put("customBtns", customBtns);*/
+
+        modelView.setViewName(this.getPageDir() + "table");
         return modelView;
     }
+
+	@RequestMapping("/table")
+	public ModelAndView table() {
+		ModelAndView modelView = new ModelAndView();
+		modelView.setViewName(this.getPageDir() + "table");
+		return modelView;
+	}
+
 
 	@RequestMapping(value = "/generateCourseTable", method = RequestMethod.GET)
 	@ResponseBody
