@@ -142,6 +142,7 @@ public class StudyCourseController extends BaseController {
 		Collections.sort(courseTh.getClassroomList());
 
 		courseTable.setTh(courseTh);
+
 		courseTable.setTrs(courseTrList);
         return courseTable;
     }
@@ -182,28 +183,60 @@ public class StudyCourseController extends BaseController {
 	 * @param courseTd      单元格对象
 	 */
 	private void choosePosForTd(List<CourseTr> courseTrList, CourseTd courseTd) {
-		boolean isFoundTr = false;
+		boolean isFoundCurCourseTime = false;
+		boolean isFoundCurWeekInfo = false;
+		boolean isExistEarlier = false;
 		for (CourseTr courseTr : courseTrList) {
 			if (courseTr.getWeekInfoEntity().getWeekInfo() == courseTd.getWeekInfo()) {
+                isFoundCurWeekInfo = true;
 				if (courseTr.getCourseTimeEntity().getCourseTimeIndex() == courseTd.getCourseTimeIndex()) {
 					// 当前(星期+时间)行已存在
-					isFoundTr = true;
+                    isFoundCurCourseTime = true;
 					courseTr.getTds().add(courseTd);
 					Collections.sort(courseTr.getTds());
 					break;
-				}
+				} else {
+				    // 当前时间没找到
+                    if(courseTr.getCourseTimeEntity().getCourseTimeIndex() < courseTd.getCourseTimeIndex()) {
+                        isExistEarlier = true;
+                    } else if(courseTr.getCourseTimeEntity().getCourseTimeIndex() > courseTd.getCourseTimeIndex()) {
+                        courseTr.getCourseTimeEntity().setFirst("NO");
+                    }
+                }
 			}
 		}
 
-		if(!isFoundTr) {
-			// 当前行未生成
-			CourseTr courseTr = new CourseTr();
-			courseTr.setWeekInfoEntity(new WeekInfoEntity(courseTd.getWeekInfo(), parseWeekInfo(courseTd.getWeekInfo())));
-			courseTr.setCourseTimeEntity(new CourseTimeEntity(courseTd.getCourseTimeIndex(), this.parseCourseTime(courseTd.getCourseTimeIndex())));
-			courseTr.getTds().add(courseTd);
-			courseTrList.add(courseTr);
-			Collections.sort(courseTrList);
-		}
+		if(!isFoundCurWeekInfo) {
+            addCourseTdToNewTr(courseTrList, courseTd, isExistEarlier);
+		} else if(!isFoundCurCourseTime) {
+            addCourseTdToNewTr(courseTrList, courseTd, isExistEarlier);
+            this.updateCourseCount(courseTrList, courseTd.getWeekInfo());
+        }
+    }
+
+    private void addCourseTdToNewTr(List<CourseTr> courseTrList, CourseTd courseTd, boolean isExistEarlier) {
+        CourseTr courseTr = new CourseTr();
+        courseTr.setWeekInfoEntity(new WeekInfoEntity(courseTd.getWeekInfo(), parseWeekInfo(courseTd.getWeekInfo()), 1));
+        courseTr.setCourseTimeEntity(new CourseTimeEntity(courseTd.getCourseTimeIndex(), this.parseCourseTime(courseTd.getCourseTimeIndex())));
+        if(isExistEarlier) {
+            courseTr.getCourseTimeEntity().setFirst("NO");
+        }
+        courseTr.getTds().add(courseTd);
+        courseTrList.add(courseTr);
+        Collections.sort(courseTrList);
+    }
+
+    /**
+     * 制定星期的行数记录数+1
+     * @param courseTrList      行对象
+     * @param weekInfo         星期
+     */
+    private void updateCourseCount(List<CourseTr> courseTrList, int weekInfo) {
+        for(CourseTr courseTr : courseTrList) {
+            if(courseTr.getWeekInfoEntity().getWeekInfo() == weekInfo) {
+                courseTr.getWeekInfoEntity().setCourseCount(courseTr.getWeekInfoEntity().getCourseCount() + 1);
+            }
+        }
     }
 
     private String parseCourseTime(int courseTimeIndex) {

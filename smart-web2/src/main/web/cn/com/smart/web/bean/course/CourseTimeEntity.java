@@ -11,6 +11,8 @@ public class CourseTimeEntity implements Comparable<CourseTimeEntity>{
 
 	private String courseTime;
 
+    private String first = "YES";
+
 	public CourseTimeEntity() {}
 
 	public CourseTimeEntity(int courseTimeIndex, String courseTime) {

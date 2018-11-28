@@ -1,28 +1,56 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%
-	String path = request.getContextPath();
-	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
+    String path = request.getContextPath();
+    String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
 <c:set var="ctx" value="${basePath}"/>
-<div id="tableDiv">
 
+<div class="panel">
+    <div class="panel-body panel-body-noheader panel-body-noborder">
+        <div class="loading-content" style="visibility: visible;">
 
+            <div class="wrap-content">
+                <div class="panel panel-info no-border">
+
+                    <div class="table-body-scroll table-wrap-limit">
+                        <table id="courseTable" class="table table-striped table-bordered table-condensed"
+                               style="width: 80%">
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 
-<script src="${pageContext.request.contextPath}/js/jquery-1.11.3.min.js" type="text/javascript"></script>
+<div class="panel-footer panel-footer-page" data-height="34">
+    <div class="btn-list">
+        <div class="btn-group cnoj-op-btn-list">
+            <button type="button" id="refreshCourseTable" class="btn btn-default"
+                    data-uri="/studyCourse/list"><i class="glyphicon glyphicon-refresh"></i>
+                刷新
+            </button>
+        </div>
+    </div>
+</div>
+
 <script type="text/javascript">
 
-	$(function () {
+    $(function () {
         var url = "${ctx}/studyCourse/generateCourseTable";
         $.ajax({
             type: "GET",
             url: url,
-            success: function(data){
-                if(data.result === '1') {
+            success: function (data) {
+                if (data.result === '1') {
                     initCourseTable(data.data);
                 }
             }
+        });
+
+        $("#refreshCourseTable").click(function () {
+            reloadTab($(this).data("uri"));
         });
     });
 
@@ -31,55 +59,70 @@
      * @param data
      */
     function initCourseTable(data) {
-        var table = $("<table border=\"1\">");
-        table.appendTo($("#tableDiv"));
-				var th = createTh(data.th);
-				th.appendTo(table);
+        // var table = $("<table border='1' class='table table-striped table-bordered table-condensed'>");
+        var table = $("#courseTable");
 
-			   for(var index = 0; index < data.trs.length; index++) {
-					var tr = createTr(data.trs[index], data.th.classroomList);
-					tr.appendTo(table);
-				}
+        // table.appendTo($("#tableDiv"));
+        var th = createTh(data.th);
+        th.appendTo(table);
 
-        $("#tableDiv").append("</table>");
-    }
-    
-    function createTh(thData) {
-        var th = $("<tr></tr>");
-        var blankTd = $("<td colspan='" + thData.blankCount + "'></td>");
-        blankTd.appendTo(th);
-        for (var index = 0; index < thData.classroomList.length; index++) {
-            var td = $("<td>" + thData.classroomList[index].name + "</td>");
-            td.appendTo(th);
+        for (var index = 0; index < data.trs.length; index++) {
+            var tr = createTr(data.trs[index], data.th.classroomList);
+            tr.appendTo(table);
         }
-        return th;
+
+        // $("#tableDiv").append("</table>");
     }
-    
+
+    function createTh(thData) {
+        var thead = $("<thead></thead>");
+        var tr = $("<tr class='ui-state-default'></tr>");
+        tr.appendTo(thead);
+
+        var blankTh = $("<th width='10%'></th>");
+        blankTh.appendTo(tr);
+
+        blankTh = $("<th width='10%'></th>");
+        blankTh.appendTo(tr);
+
+        for (var index = 0; index < thData.classroomList.length; index++) {
+            var th = $("<th>" + thData.classroomList[index].name + "</th>");
+            th.appendTo(tr);
+        }
+
+        return thead;
+    }
+
     function createTr(trData, classroomList) {
         var tr = $("<tr></tr>");
 
         // trs.weekInfoEntity 增加当天的课时数量，以便进行行合并
-	    // trs.courseTimeEntity 增加当天第一节标记，以便确定行合并的起始位置
+        // trs.courseTimeEntity 增加当天第一节标记，以便确定行合并的起始位置
 
         // var weekInfo = $("<td>" + trData.weekInfoEntity.weekInfoStr + "</td>");
-        if(trData.weekInfoEntity.weekInfoStr === '星期六' && trData.courseTimeEntity.courseTimeIndex === 1) {
-            var weekInfo = $("<td rowspan='5'>" + trData.weekInfoEntity.weekInfoStr + "</td>");
+        var count = parseInt(trData.weekInfoEntity.courseCount);
+        if (count > 1) {
+            if (trData.courseTimeEntity.first === 'YES') {
+                var weekInfo = $("<td rowspan='" + count + "'>" + trData.weekInfoEntity.weekInfoStr + "</td>");
+                weekInfo.appendTo(tr);
+            }
+        } else {
+            var weekInfo = $("<td>" + trData.weekInfoEntity.weekInfoStr + "</td>");
             weekInfo.appendTo(tr);
         }
 
-
-		var courseTime = $("<td>" + trData.courseTimeEntity.courseTime + "</td>");
+        var courseTime = $("<td>" + trData.courseTimeEntity.courseTime + "</td>");
         courseTime.appendTo(tr);
 
-		for(var colIndex = 0; colIndex < classroomList.length; colIndex++) {
+        for (var colIndex = 0; colIndex < classroomList.length; colIndex++) {
             var td = $("<td></td>");
-		    for(var tdIndex = 0; tdIndex < trData.tds.length; tdIndex++) {
-				if(trData.tds[tdIndex].classroomId === classroomList[colIndex].id) {
-                    td = $("<td>" + trData.tds[tdIndex].course.name + "</td>");
-				}
-		    }
+            for (var tdIndex = 0; tdIndex < trData.tds.length; tdIndex++) {
+                if (trData.tds[tdIndex].classroomId === classroomList[colIndex].id) {
+                    td = $("<td>" + trData.tds[tdIndex].course.teacherName + "</td>");
+                }
+            }
             td.appendTo(tr);
-		}
+        }
         return tr;
     }
 

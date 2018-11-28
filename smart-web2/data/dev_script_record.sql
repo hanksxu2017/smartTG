@@ -3,12 +3,11 @@ DELETE FROM tg_study_classroom;
 DELETE FROM tg_study_school;
 DELETE FROM tg_study_student;
 DELETE FROM tg_study_teacher;
-
 DELETE FROM tg_study_course;
+
 DELETE FROM tg_study_course_record;
 DELETE FROM tg_study_course_student_record;
 DELETE FROM tg_study_student_course_rel;
-
 
 
 
@@ -66,21 +65,21 @@ SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
             FROM tg_study_course_record t
             ORDER BY t.create_time ASC;
 
-  SELECT t.id, t.name, t.level, t.remain_course, t.create_time, record.status
-            FROM tg_study_student t, tg_study_course_student_record record 
-            WHERE t.id = record.student_id
+  select t.id, t.name, t.level, t.remain_course, t.create_time, record.status
+            from tg_study_student t, tg_study_course_student_record record 
+            where t.id = record.student_id
             #and record.course_rec_id = :courseRecordId
             #[and t.name like '%:studentName%']
-            ORDER BY t.remain_course
+            order by t.remain_course
 
 
-            SELECT t.id, t.message_type, t.message_content, t.level, t.is_process,
+            select t.id, t.message_type, t.message_content, t.level, t.is_process,
             t.create_time, t.process_time, t.process_desc
-            FROM tg_study_system_message t
-            ORDER BY t.level DESC, t.create_time DESC
+            from tg_study_system_message t
+            order by t.level desc, t.create_time desc
 
 
-            SELECT t.id,
+            select t.id,
             CASE t.message_type WHEN 'STUDENT_ABSENT_NOTE' THEN '连续缺课提醒'
             WHEN 'STUDENT_REMAIN_COURSE_NOTE' THEN '续费提醒'
             WHEN 'COURSE_UN_SIGNED_NOTE' THEN '课时未结课提醒'
@@ -90,14 +89,29 @@ SELECT t.id, t.course_date, t.course_time, t.class_name, t.classroom_name,
             WHEN 'YES' THEN '已处理'
             ELSE '未定义' END,
             t.create_time, t.process_time, t.process_desc
-            FROM tg_study_system_message t
-            ORDER BY t.level DESC, t.create_time DESC;
+            from tg_study_system_message t
+            order by t.level desc, t.create_time desc;
 
-SELECT * FROM t_user WHERE YEARWEEK(DATE_FORMAT(addedTime,'%Y-%m-%d')) = YEARWEEK(NOW());    
+SELECT * FROM tg_study_course_record WHERE YEARWEEK(date_format(course_date,'%Y-%m-%d')) = YEARWEEK(now());    
 
+select temp.* from 
+(
+select t.id, str_to_date(concat(t.course_date, ' ', left(t.course_time), 5), '%Y-%m-%d %H:%i') as course_date, t.course_name,
+            CASE t.status WHEN 'NORMAL' THEN '正常'
+            WHEN 'NORMAL_END' THEN '已结课'
+            ELSE '未定义' END
+            from tg_study_course_record t
+            where 1=1
+            and YEARWEEK(DATE_FORMAT(t.course_date,'%Y-%m-%d')) = YEARWEEK(NOW())
+            ) temp
+            
+            
+            [and t.teacher_id =:teacherId]
+            order by t.course_date
 
-SELECT * FROM t_n_dict;
+select * from tg_study_student where name like '%刘%辰%';
 
+update tg_study_student set name = '刘辰' where id = 'U154297612751130378';
 
 
 
