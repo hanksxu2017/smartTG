@@ -15,7 +15,7 @@
 
                     <div class="table-body-scroll table-wrap-limit">
                         <table id="courseTable" class="table table-striped table-bordered table-condensed"
-                               style="width: 80%">
+                               style="width: 80%;text-align:center">
                         </table>
                     </div>
                 </div>
@@ -86,7 +86,7 @@
         blankTh.appendTo(tr);
 
         for (var index = 0; index < thData.classroomList.length; index++) {
-            var th = $("<th>" + thData.classroomList[index].name + "</th>");
+            var th = $("<th style='text-align:center'>" + thData.classroomList[index].name + "</th>");
             th.appendTo(tr);
         }
 
