@@ -60,6 +60,7 @@
 			<mvc:exclude-mapping path="/js/**"/>
 			<mvc:exclude-mapping path="/plugins/**"/>
 		   <mvc:exclude-mapping path="/h5/**"/>
+
 			<!-- 登录拦截(判断是否登录) -->
 			<bean class="cn.com.smart.web.interceptor.ACLInterceptor">
 				<property name="excludeMaps">
@@ -70,6 +71,7 @@
 						<value>user/logout</value>
 						<value>captcha</value>
 						<value>user/islogin.json</value>
+                        <value>studyCourse/generateCourseTable</value>
 					</list>
 				</property>
 				<property name="resSuffix">

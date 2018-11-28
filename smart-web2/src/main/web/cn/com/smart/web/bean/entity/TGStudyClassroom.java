@@ -19,7 +19,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="tg_study_classroom")
-public class TGStudyClassroom extends BaseBeanImpl implements DateBean {
+public class TGStudyClassroom extends BaseBeanImpl implements DateBean, Comparable<TGStudyClassroom> {
 
 	/**
 	 * 
@@ -41,6 +41,8 @@ public class TGStudyClassroom extends BaseBeanImpl implements DateBean {
 	private Date createTime;
 
 	private Date updateTime;
+
+	private int sortOrder;
 
 	@Id
 	@Column(name="id", length=64)
@@ -114,4 +116,23 @@ public class TGStudyClassroom extends BaseBeanImpl implements DateBean {
     public void setUpdateTime(Date updateTime) {
         this.updateTime = updateTime;
     }
+
+	@Column(name="sort_order", length=4)
+	public int getSortOrder() {
+		return sortOrder;
+	}
+
+	public void setSortOrder(int sortOrder) {
+		this.sortOrder = sortOrder;
+	}
+
+	@Override
+	public int compareTo(TGStudyClassroom o) {
+		if(this.sortOrder > o.getSortOrder()) {
+			return 1;
+		} else if(this.sortOrder < o.getSortOrder()) {
+			return -1;
+		}
+		return 0;
+	}
 }

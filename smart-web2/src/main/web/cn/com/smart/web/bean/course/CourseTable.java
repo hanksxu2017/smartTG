@@ -12,7 +12,7 @@ public class CourseTable {
 	/**
 	 * 表格头
 	 */
-	private List<String> th;
+	private CourseTh th;
 
 	/**
 	 * 表行

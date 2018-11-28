@@ -120,7 +120,7 @@ public class DictService extends MgrServiceImpl<TNDict> {
 			//如果缓存中没有获取到数据，则从数据库中获取
 			if(lists == null) {
 				log.debug("缓存中未获取到[数据字典]数据");
-			    lists = dictDao.getItemById(id,name);
+			    lists = dictDao.getItemById(id, name);
 			}
 			if(CollectionUtils.isNotEmpty(lists)) {
 				smartResp.setResult(OP_SUCCESS);

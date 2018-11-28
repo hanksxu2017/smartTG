@@ -1,23 +1,21 @@
 package cn.com.smart.web.controller.impl;
 
+import cn.com.smart.Smart;
 import cn.com.smart.bean.SmartResponse;
+import cn.com.smart.constant.IConstant;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
-import cn.com.smart.web.bean.entity.TGStudyStudent;
-import cn.com.smart.web.bean.entity.TGStudyTeacher;
+import cn.com.smart.web.bean.course.*;
+import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.CourseSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.controller.base.BaseController;
-import cn.com.smart.web.service.OPService;
-import cn.com.smart.web.service.StudyCourseRecordService;
-import cn.com.smart.web.service.StudyCourseService;
-import cn.com.smart.web.service.StudyTeacherService;
+import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.CustomBtn;
 import cn.com.smart.web.tag.bean.PageParam;
 import cn.com.smart.web.tag.bean.RefreshBtn;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -27,10 +25,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Slf4j
 @Controller
@@ -81,6 +76,140 @@ public class StudyCourseController extends BaseController {
 
         modelView.setViewName(this.getPageDir() + "list");
         return modelView;
+    }
+
+	@RequestMapping(value = "/generateCourseTable", method = RequestMethod.GET)
+	@ResponseBody
+	public SmartResponse<CourseTable> generateCourseTable() {
+		SmartResponse<CourseTable> smartResponse = new SmartResponse<>();
+
+		smartResponse.setData(this.packageCourseTable());
+		smartResponse.setResult(IConstant.OP_SUCCESS);
+		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
+		return smartResponse;
+	}
+
+	@Autowired
+	private StudyClassroomService classroomService;
+
+    @Autowired
+    private DictService dictService;
+
+
+
+	/**
+	 * 封装课时表对象
+	 * @return
+	 */
+	private CourseTable packageCourseTable() {
+        CourseTable courseTable = new CourseTable();
+
+		// 获取所有课时对象
+		List<TGStudyCourse> courseList = this.courseService.findNormal().getDatas();
+		if(CollectionUtils.isEmpty(courseList)) {
+			return courseTable;
+		}
+		// 表格头
+		CourseTh courseTh = new CourseTh();
+		// 表格行
+		List<CourseTr> courseTrList = new ArrayList<>();
+
+		// 存在课时的教师信息
+		Map<String, TGStudyClassroom> classroomMap = new HashMap<>();
+
+		CourseTd courseTd;
+
+		// 将课时数据写入表格对象
+		for(TGStudyCourse course : courseList){
+			courseTd = this.packageCourseTd(course, classroomMap);
+			this.choosePosForTd(courseTrList, courseTd);
+		}
+
+		Iterator<TGStudyClassroom> iterator = classroomMap.values().iterator();
+		while(iterator.hasNext()) {
+			courseTh.getClassroomList().add(iterator.next());
+		}
+		Collections.sort(courseTh.getClassroomList());
+
+		courseTable.setTh(courseTh);
+		courseTable.setTrs(courseTrList);
+        return courseTable;
+    }
+
+	/**
+	 * 一个课时生成一个单元格
+	 * @param course    课时对象
+	 * @return          单元格对象
+	 */
+	private CourseTd packageCourseTd(TGStudyCourse course, Map<String, TGStudyClassroom> classroomMap) {
+
+	    // 1. 获取教室信息
+		TGStudyClassroom classroom = classroomMap.get(course.getClassroomId());
+		if(null == classroom) {
+			classroom = this.classroomService.find(course.getClassroomId()).getData();
+			if(null != classroom) {
+				classroomMap.put(course.getClassroomId(), classroom);
+			}
+		}
+		// 无教室信息
+		if(null == classroom) {
+			return null;
+		}
+		CourseTd courseTd = new CourseTd();
+		courseTd.setClassroomId(classroom.getId());
+		courseTd.setClassroomSortOrder(classroom.getSortOrder());
+
+		courseTd.setWeekInfo(course.getWeekInfo());
+
+		courseTd.setCourseTimeIndex(course.getCourseTimeIndex());
+		courseTd.setCourse(course);
+	    return courseTd;
+    }
+
+	/**
+	 * 为单元格选择正确的行位置进行放置
+	 * @param courseTrList  行对象列表
+	 * @param courseTd      单元格对象
+	 */
+	private void choosePosForTd(List<CourseTr> courseTrList, CourseTd courseTd) {
+		boolean isFoundTr = false;
+		for (CourseTr courseTr : courseTrList) {
+			if (courseTr.getWeekInfoEntity().getWeekInfo() == courseTd.getWeekInfo()) {
+				if (courseTr.getCourseTimeEntity().getCourseTimeIndex() == courseTd.getCourseTimeIndex()) {
+					// 当前(星期+时间)行已存在
+					isFoundTr = true;
+					courseTr.getTds().add(courseTd);
+					Collections.sort(courseTr.getTds());
+					break;
+				}
+			}
+		}
+
+		if(!isFoundTr) {
+			// 当前行未生成
+			CourseTr courseTr = new CourseTr();
+			courseTr.setWeekInfoEntity(new WeekInfoEntity(courseTd.getWeekInfo(), parseWeekInfo(courseTd.getWeekInfo())));
+			courseTr.setCourseTimeEntity(new CourseTimeEntity(courseTd.getCourseTimeIndex(), this.parseCourseTime(courseTd.getCourseTimeIndex())));
+			courseTr.getTds().add(courseTd);
+			courseTrList.add(courseTr);
+			Collections.sort(courseTrList);
+		}
+    }
+
+    private String parseCourseTime(int courseTimeIndex) {
+	    TNDict dict = this.dictService.getDict("COURSE_TIMES", String.valueOf(courseTimeIndex));
+	    if(null != dict) {
+	    	return dict.getBusiName();
+	    }
+	    return "";
+    }
+
+    private String parseWeekInfo(int weekInfo) {
+	    TNDict dict = this.dictService.getDict("WEEK_INFO_LIST", String.valueOf(weekInfo));
+	    if(null != dict) {
+		    return dict.getBusiName();
+	    }
+	    return "";
     }
 
 
