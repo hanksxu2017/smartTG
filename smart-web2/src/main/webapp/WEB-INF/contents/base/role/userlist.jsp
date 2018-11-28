@@ -17,7 +17,7 @@
 				  </div>
               </form>
           </div>
-		<cnoj:table smartResp="${smartResp }" headers="用户名,姓名,联系电话,所属部门" isCheckbox="1" isRowSelected="1" page="${pageParam }" currentUri="${currentUri }" 
+		<cnoj:table smartResp="${smartResp }" headers="用户名,姓名,联系电话" isCheckbox="1" isRowSelected="1" page="${pageParam }" currentUri="${currentUri }"
 		 addBtn="${addBtn }" delBtn="${delBtn }" refreshBtn="${refreshBtn }" 
 		 />
 	</div>

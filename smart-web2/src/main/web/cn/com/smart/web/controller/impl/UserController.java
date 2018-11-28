@@ -65,7 +65,6 @@ public class UserController extends BaseController {
 		if("0".equals(searchParam.getOrgId())) {
 			searchParam.setOrgId(null);
 		}
-		searchParam.setOrgIds(DataUtil.list2Array(getUserInfoFromSession(session).getOrgIds()));
 		pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
 		
 		SmartResponse<Object> smartResp = userServ.findAllObj(searchParam, page.getStartNum(), page.getPageSize());

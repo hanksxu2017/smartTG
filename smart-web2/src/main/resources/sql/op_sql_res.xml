@@ -38,8 +38,8 @@
     </sqlUnit>
     <!-- 拥有该角色的用户列表 -->
     <sqlUnit name="role_user_list">
-        <sql>select t.id,t.username,t.full_name,t.mobile_no,o.seq_names 
-        from t_n_user t,t_n_org o,t_n_role_user ru where t.state = '1' and t.org_id=o.id and ru.role_id=:id and ru.user_id=t.id 
+        <sql>select t.id,t.username,t.full_name,t.mobile_no
+        from t_n_user t,t_n_role_user ru where t.state = '1' and ru.role_id=:id and ru.user_id=t.id
         [and (t.full_name like '%:name%' or t.username like '%:name%' or t.mobile_no='%:name%')] order by t.create_time asc </sql>
     </sqlUnit>
     <sqlUnit name="role_adduser_list">
@@ -96,8 +96,10 @@
     
     <!-- 用户权限列表 -->
     <sqlUnit name="user_simp_list">
-        <sql>select t.id,t.username,t.full_name,o.seq_names from t_n_user t,t_n_org o 
-        where t.state = '1' and t.org_id=o.id [and t.org_id in(:orgIds)] [and (t.full_name like '%:name%' or t.username like '%:name%')] order by t.create_time asc </sql>
+        <sql>select t.id,t.username,t.full_name from t_n_user t
+        where t.state = '1'
+            [and (t.full_name like '%:name%' or t.username like '%:name%')]
+            order by t.create_time asc </sql>
     </sqlUnit>
     <!-- 该用户拥有的角色列表 -->
     <sqlUnit name="user_role_list">

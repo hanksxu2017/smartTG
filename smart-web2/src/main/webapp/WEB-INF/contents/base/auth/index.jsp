@@ -10,8 +10,6 @@
 								<ul class="nav nav-tabs" role="tablist">
 									<li class="active"><a href="#role-tab" role="presentation" data-toggle="tab">角色</a></li>
 									<li><a href="#user-tab" role="presentation" data-toggle="tab">用户</a></li>
-									<li><a href="#org-tab" role="presentation" data-toggle="tab">组织机构</a></li>
-									<li><a href="#position-tab" role="presentation" data-toggle="tab">职位</a></li>
 								</ul>
 							</div>
 						</div>

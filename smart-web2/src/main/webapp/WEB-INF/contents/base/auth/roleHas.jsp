@@ -7,19 +7,11 @@
 			<div class="panel-tabs-tab">
 				<ul class="nav nav-tabs" role="tablist">
 				   <li class="active"><a href="#role-user-tab" role="presentation" data-toggle="tab"> 用户列表</a></li>
-				   <li><a href="#role-org-tab" role="presentation" data-toggle="tab"> 组织机构</a></li>
-				   <li><a href="#role-position-tab" role="presentation" data-toggle="tab"> 职位列表</a></li>
 				</ul>
 		  	</div>
 		  	<div class="tab-content panel-tab-content bg-color-white p-0 cnoj-auto-limit-height">
 				<div role="tabpanel" class="tab-pane active" id="role-user-tab">
 				    <div class="cnoj-load-url" data-uri="role/userlist?id=${id }" ></div>
-				</div>
-				<div role="tabpanel" class="tab-pane" id="role-org-tab">
-				     <div class="cnoj-load-url" data-uri="role/orglist?id=${id }" ></div>
-				</div>
-				<div role="tabpanel" class="tab-pane" id="role-position-tab">
-				    <div class="cnoj-load-url" data-uri="role/positionlist?id=${id }" ></div>
 				</div>
 			</div>
 		</div>

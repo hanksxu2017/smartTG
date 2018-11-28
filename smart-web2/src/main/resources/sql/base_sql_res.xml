@@ -80,13 +80,12 @@
     <!-- 用户管理列表 -->
     <sqlUnit name="user_mgr_list">
        <sql>
-           select u.id,u.username,u.full_name,o.seq_names,u.mobile_no,u.qq,u.email,
-           (select t.name from t_n_position t where t.id=u.position_id) as position,
-           (select tmp.busi_name from t_n_dict tmp where 
-		    tmp.busi_value=u.state and tmp.parent_id=(select id from t_n_dict where busi_value='DATA_STATE')) as state
-           ,u.create_time from t_n_user u,t_n_org o where u.org_id=o.id 
+           select u.id,u.username,u.full_name,
+           (select tmp.busi_name from t_n_dict tmp where tmp.busi_value=u.state and tmp.parent_id=(select id from t_n_dict where busi_value='DATA_STATE')) as state
+           ,u.create_time from t_n_user u where 1=1
            [and (u.username like '%:name%' or u.full_name like '%:name%') ] 
-           [and u.org_id in(:orgIds) ] [and u.org_id=:orgId] [and u.state=:state ] [and (u.mobile_no like ':info%' or u.email like ':info%') ] 
+           [and u.state=:state ]
+           [and (u.mobile_no like ':info%' or u.email like ':info%') ]
            order by u.create_time asc
        </sql>
     </sqlUnit>
