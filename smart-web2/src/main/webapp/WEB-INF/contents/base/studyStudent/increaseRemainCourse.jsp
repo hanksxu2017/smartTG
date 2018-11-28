@@ -21,7 +21,7 @@
 	   <div class="form-group m-b-10">
 		   <label for="amount" class="col-sm-2 control-label">补缴金额(单位元)</label>
 		   <div class="col-sm-9 p-l-0">
-			   <input type="text" class="form-control require" name="amount" data-label-name="补缴额度" id="amount" value="20"/>
+			   <input type="text" class="form-control require" name="amount" data-label-name="补缴额度" id="amount" value="1000"/>
 		   </div>
 	   </div>
 

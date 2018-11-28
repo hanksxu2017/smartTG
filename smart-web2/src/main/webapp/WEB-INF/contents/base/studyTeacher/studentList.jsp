@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="wrap-content">
     <div class="panel no-border">
-        <div class="panel-search">
+<%--        <div class="panel-search">
             <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form"
                   action="studyTeacher/studentList" target="#course-student-list-dialog">
                 <input type="hidden" name="id" value="${searchParam.id}"/>
@@ -29,7 +29,7 @@
 					  </span>
                 </div>
             </form>
-        </div>
+        </div>--%>
 
         <cnoj:table smartResp="${smartResp}" headers="姓名,等级,剩余课时,入学时间,状态"
                     headerWidths="20%,10%,20%,30%,20%"

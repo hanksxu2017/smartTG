@@ -3,10 +3,7 @@ package cn.com.smart.web.controller.impl;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyCourse;
-import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
-import cn.com.smart.web.bean.entity.TGStudyStudentCourseRel;
-import cn.com.smart.web.bean.entity.TGStudyTeacher;
+import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.bean.search.TeacherCourseSearch;
 import cn.com.smart.web.bean.search.TeacherSearch;
@@ -273,10 +270,20 @@ public class StudyTeacherController extends BaseController {
     @Autowired
     private StudyCourseRecordService courseRecordService;
 
+    @Autowired
+    private StudyCourseStudentRecordService courseStudentRecordService;
+
 	@RequestMapping(value = "/deleteCourse", method = RequestMethod.POST)
 	@ResponseBody
 	public SmartResponse<String> deleteCourse(String id) {
 		SmartResponse<String> smartResp = new SmartResponse<>();
+
+		TGStudyCourse course = this.courseService.find(id).getData();
+		if(null == course || StringUtils.equals(IConstant.STATUS_DELETE, course.getStatus())){
+			smartResp.setResult(IConstant.OP_SUCCESS);
+			smartResp.setMsg(IConstant.OP_SUCCESS_MSG);
+			return smartResp;
+		}
 
 		// 查看报班学生是否都已退出
 		Map<String, Object> params = new HashMap<>();
@@ -288,14 +295,25 @@ public class StudyTeacherController extends BaseController {
 			return smartResp;
 		}
 
-		// 清除未结课的课时记录信息
+		// 查看未结课的课时记录信息
 		List<TGStudyCourseRecord> courseRecordList = courseRecordService.findByParam(params).getDatas();
 		if(CollectionUtils.isNotEmpty(courseRecordList)) {
 			//
-
+			smartResp.setMsg("班级仍有 " + courseRecordList.size() + "个课时,不可删除");
+			return smartResp;
 		}
 
-		this.courseService.delete(id);
+		List<TGStudyCourseStudentRecord> courseStudentRecordList = courseStudentRecordService.findByParam(params).getDatas();
+		if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
+			//
+			smartResp.setMsg("班级仍有 " + courseStudentRecordList.size() + "个学生课时,不可删除");
+			return smartResp;
+		}
+
+		course.setStatus(IConstant.STATUS_DELETE);
+		course.setUpdateTime(new Date());
+		smartResp = this.courseService.update(course);
+
 		return smartResp;
 	}
 }
