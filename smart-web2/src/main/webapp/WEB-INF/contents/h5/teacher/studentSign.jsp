@@ -50,15 +50,15 @@
 		</select>
 	</div>
 
-	<div style="margin-top: 6px;">
+	<div id="courseInfoDiv" style="margin-top: 6px;display: none;">
 		<div class="panel panel-info">
 			<div class="panel-heading">
 				<h3 class="panel-title">课时信息</h3>
 			</div>
 			<div class="panel-body">
-				<label>日期:<span>2018-11-29 18:30-20:00</span></label><br/>
-				<label>教室:<span>灵秀一</span></label><br/>
-				<label>应到:<span>12</span>&nbsp;实到:<span>8</span>&nbsp;缺席:<span>1</span>&nbsp;未签:<span>3</span></label><br/>
+				<label>时间:<span id="courseTime">2018-11-29 18:30-20:00</span></label><br/>
+				<label>教室:<span id="classroomName">灵秀一</span></label><br/>
+				<label>应到:<span id="planCount">12</span>&nbsp;实到:<span id="actualCount">8</span>&nbsp;缺席:<span id="absentCount">1</span>&nbsp;未签:<span id="unSignCount">3</span></label><br/>
 			</div>
 		</div>
 
@@ -75,7 +75,7 @@
 				<th style="width: 40%">操作</th>
 			</tr>
 			</thead>
-			<tbody>
+			<%--<tbody>
 			<tr>
 				<td>学生小白</td>
 				<td><span class="glyphicon glyphicon-ok text-success"></span></td>
@@ -106,7 +106,7 @@
 					<button class="btn btn-danger" data-toggle="modal" data-target="#myModal">缺席</button>
 				</td>
 			</tr>
-			</tbody>
+			</tbody>--%>
 		</table>
 	</div>
 </div>
@@ -197,10 +197,29 @@
         $("#chooseCourseRecForSign").change(function () {
 			var courseRecId = $(this).val();
 			if(null != courseRecId && '' !== courseRecId) {
-                var url = "${ctx}/studyTeacherH5/queryStudent?courseRecordId=" + courseRecId;
                 $.ajax({
                     type: "GET",
-                    url: url,
+                    url: "${ctx}/studyTeacherH5/queryCourseRecord?courseRecordId=" + courseRecId,
+                    success: function(data){
+                        if(null != data.result && '1' === data.result) {
+                            $("#courseTime").text(data.data.courseDate + ' ' + data.data.courseTime);
+                            $("#classroomName").text(data.data.classroomName);
+                            $("#planCount").text(data.data.studentQuantityPlan);
+                            $("#actualCount").text(data.data.studentQuantityActual);
+                            var absent = data.data.studentPersonalLeave * 1 +
+                                data.data.studentPlayTruant * 1 + data.data.studentOtherAbsent * 1;
+                            $("#absentCount").text(absent);
+
+                            var unSign = data.data.studentQuantityPlan * 1 - data.data.studentQuantityActual * 1 - absent;
+                            $("#unSignCount").text(unSign);
+                            $("#courseInfoDiv").show();
+                        }
+                    }
+                });
+
+                $.ajax({
+                    type: "GET",
+                    url: "${ctx}/studyTeacherH5/queryStudent?courseRecordId=" + courseRecId,
                     success: function(data){
                         initStudentTable(data);
                     }

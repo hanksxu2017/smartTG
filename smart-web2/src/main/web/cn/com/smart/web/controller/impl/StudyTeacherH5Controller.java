@@ -97,6 +97,12 @@ public class StudyTeacherH5Controller {
         return courseStudentRecordService.findByParam(params);
     }
 
+    @RequestMapping(value = "/queryCourseRecord")
+    @ResponseBody
+    public SmartResponse<TGStudyCourseRecord> queryCourseRecord(String courseRecordId) {
+        return courseRecordService.find(courseRecordId);
+    }
+
     @Autowired
     private StudyStudentService studentService;
 
