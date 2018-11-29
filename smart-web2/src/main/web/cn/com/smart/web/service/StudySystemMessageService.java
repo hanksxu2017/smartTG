@@ -1,11 +1,14 @@
 package cn.com.smart.web.service;
 
+import cn.com.smart.constant.enumEntity.SystemMessageEnum;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TGStudyClassroom;
 import cn.com.smart.web.bean.entity.TGStudySystemMessage;
 import cn.com.smart.web.dao.impl.StudyClassroomDao;
 import cn.com.smart.web.dao.impl.StudySystemMessageDao;
 import org.springframework.stereotype.Service;
+
+import java.util.Date;
 
 /**
  * 版本服务类
@@ -22,5 +25,13 @@ public class StudySystemMessageService extends MgrServiceImpl<TGStudySystemMessa
 		return (StudySystemMessageDao)super.getDao();
 	}
 
+	public void broadSystemMessage(SystemMessageEnum systemMessageEnum, String content) {
+		TGStudySystemMessage systemMessage = new TGStudySystemMessage();
+		systemMessage.setMessageType(systemMessageEnum.name());
+		systemMessage.setMessageContent(content);
+		systemMessage.setLevel(systemMessageEnum.getLevel());
+		systemMessage.setCreateTime(new Date());
+		this.save(systemMessage);
+	}
 
 }

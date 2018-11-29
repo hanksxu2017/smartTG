@@ -7,12 +7,12 @@
     <!-- 上述3个meta标签*必须*放在最前面，任何其他内容都*必须*跟随其后！ -->
     <meta name="description" content="">
     <meta name="author" content="">
-    <link rel="icon" href="../images/logo.png">
+    <link rel="icon" href="../../../../images/logo.png">
 
     <title>在线点名</title>
 
     <!-- 引入 Bootstrap -->
-    <link href="../plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <link href="../../../../plugins/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 </head>
 
 <body>

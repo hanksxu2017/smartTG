@@ -3,6 +3,8 @@ package cn.com.smart.web.bean.entity;
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
 import cn.com.smart.constant.IConstant;
+import cn.com.smart.utils.DateUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -20,7 +22,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="tg_study_course_record")
-public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean {
+public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean, Comparable<TGStudyCourseRecord> {
 
 	/**
 	 * 
@@ -226,4 +228,34 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean {
     public void setDescription(String description) {
         this.description = description;
     }
+
+    @Override
+    public int compareTo(TGStudyCourseRecord o) {
+        String courseEndTime = this.getCourseTime().substring(this.getCourseTime().indexOf('-') + 1);
+        Date curDate = DateUtil.parseDate(this.getCourseDate() + " " + courseEndTime, "yyyy-MM-dd HH:mm");
+
+        String oCourseEndTime = o.getCourseTime().substring(o.getCourseTime().indexOf('-') + 1);
+        Date oDate = DateUtil.parseDate(o.getCourseDate() + " " + oCourseEndTime, "yyyy-MM-dd HH:mm");
+
+        if(null != curDate && null != oDate) {
+            if(curDate.before(oDate)) {
+                return -1;
+            }else if(curDate.after(oDate)) {
+                return 1;
+            }
+        }
+        return 0;
+    }
+
+	public boolean canSign() {
+		if(StringUtils.isBlank(this.getCourseDate()) || StringUtils.isBlank(this.getCourseTime())) {
+			return false;
+		}
+		Date courseDate = DateUtil.parseDate(this.getCourseDate() + " " + this.getCourseTime(),
+						"yyyy-MM-dd HH:mm");
+		if (StringUtils.equals(IConstant.STATUS_NORMAL, this.getStatus()) && null != courseDate) {
+			return courseDate.before(new Date());
+		}
+		return false;
+	}
 }

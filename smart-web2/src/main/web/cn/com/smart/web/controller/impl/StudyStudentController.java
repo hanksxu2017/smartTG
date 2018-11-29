@@ -605,7 +605,7 @@ public class StudyStudentController extends BaseController {
         TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseRecordId).getData();
         modelView.getModelMap().put("courseRecord", courseRecord);
 
-        if (!this.checkCourseCanSign(courseRecord)) {
+        if (!courseRecord.canSign()) {
             modelView.getModelMap().put("disableSign", "yes");
         }
 
@@ -631,7 +631,7 @@ public class StudyStudentController extends BaseController {
         }
         TGStudyCourseRecord courseRecord = smartResponse.getData();
 
-        if (!this.checkCourseCanSign(courseRecord)) {
+        if (!courseRecord.canSign()) {
             response.setMsg("课时目前无法进行签到操作,请稍后再试!");
             return response;
         }
@@ -664,7 +664,7 @@ public class StudyStudentController extends BaseController {
                 if (student.getRemainCourse() < 3) {
                     // 课时不足
                     String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
-                    this.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
+                    this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
                 }
             }
         }
@@ -673,16 +673,6 @@ public class StudyStudentController extends BaseController {
         courseRecord.setStatus(IConstant.STATUS_COURSE_END);
         response = courseRecordService.update(courseRecord);
         return response;
-    }
-
-    private boolean checkCourseCanSign(TGStudyCourseRecord courseRecord) {
-        Date courseDate =
-                DateUtil.parseDate(courseRecord.getCourseDate() + " " + courseRecord.getCourseTime(),
-                        "yyyy-MM-dd HH:mm");
-        if (StringUtils.equals(IConstant.STATUS_NORMAL, courseRecord.getStatus()) && null != courseDate) {
-            return courseDate.before(new Date());
-        }
-        return false;
     }
 
     /**
@@ -695,7 +685,7 @@ public class StudyStudentController extends BaseController {
         TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseRecordId).getData();
         modelView.getModelMap().put("courseRecord", courseRecord);
 
-        if (!this.checkCourseCanSign(courseRecord)) {
+        if (!courseRecord.canSign()) {
             modelView.getModelMap().put("disableSign", "yes");
         }
 
@@ -789,17 +779,20 @@ public class StudyStudentController extends BaseController {
             if (student.getCourseSeriesUnSigned() >= 3) {
                 // 连续未签到,系统提示
                 String content = "学生[" + student.getName() + "]已连续 " + student.getCourseSeriesUnSigned() + "次缺席!";
-                this.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content);
+                this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content);
             }
             if (student.getRemainCourse() < 3) {
                 // 课时不足
                 String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
-                this.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
+                this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
             }
         }
 
-        // 检查课时的学生列表是否已经全部签到
-        this.updateCourseRecordToEndIfAllSigned(courseStudentRecord.getCourseRecordId());
+        // 检查指定课时的所有学生是否已经全部签到
+	    params = new HashMap<>();
+	    params.put("courseRecordId", courseRecordId);
+	    params.put("status", this.courseStudentRecordService.getQueryStatus().toArray());
+	    this.courseRecordService.updateCourseRecordToEndIfAllSigned(courseRecordId, this.courseStudentRecordService.findByParam(params).getDatas());
 
         smartResponse.setResult(IConstant.OP_SUCCESS);
         return smartResponse;
@@ -813,76 +806,17 @@ public class StudyStudentController extends BaseController {
      */
     private boolean checkCourseStudentRecordCanSign(TGStudyCourseStudentRecord courseStudentRecord) {
         TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseStudentRecord.getCourseRecordId()).getData();
-        return this.checkCourseCanSign(courseRecord);
-    }
-
-    /**
-     * 检查课时的学生是否已经全部进行了签到操作
-     *
-     * @param courseRecordId 课时记录序号
-     */
-    private void updateCourseRecordToEndIfAllSigned(String courseRecordId) {
-        Map<String, Object> params = new HashMap<>();
-        params.put("courseRecordId", courseRecordId);
-        params.put("status!", CourseStudentStatusEnum.CANCEL_AS_EXIT.name());
-        List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByParam(params).getDatas();
-        if (!CollectionUtils.isEmpty(courseStudentRecordList)) {
-            // 所有学生课时记录已处理
-            boolean isAllSigned = true;
-
-            int actual = 0;
-            int personalLeave = 0;
-            int playTruant = 0;
-            int otherAbsent = 0;
-
-            for (TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
-                if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.NORMAL.name())) {
-                    isAllSigned = false;
-                    break;
-                }
-                if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.SIGNED.name())) {
-                    actual++;
-                } else if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.PERSONAL_LEAVE.name())) {
-                    personalLeave++;
-                } else if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.PLAY_TRUANT.name())) {
-                    playTruant++;
-                } else if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.OTHER_ABSENT.name())) {
-                    otherAbsent++;
-                }
-            }
-
-            if (isAllSigned) {
-                TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseRecordId).getData();
-                courseRecord.setStudentQuantityPlan(courseStudentRecordList.size());
-                courseRecord.setStudentQuantityActual(actual);
-                courseRecord.setStudentPersonalLeave(personalLeave);
-                courseRecord.setStudentPlayTruant(playTruant);
-                courseRecord.setStudentOtherAbsent(otherAbsent);
-
-                courseRecord.setUpdateTime(new Date());
-                courseRecord.setStatus(IConstant.STATUS_COURSE_END);
-            }
-        }
+        return null != courseRecord && courseRecord.canSign();
     }
 
     @Autowired
     private StudySystemMessageService systemMessageService;
 
-    private void broadSystemMessage(SystemMessageEnum systemMessageEnum, String content) {
-        TGStudySystemMessage systemMessage = new TGStudySystemMessage();
-        systemMessage.setMessageType(systemMessageEnum.name());
-        systemMessage.setMessageContent(content);
-        systemMessage.setLevel(systemMessageEnum.getLevel());
-        systemMessage.setCreateTime(new Date());
-        this.systemMessageService.save(systemMessage);
-    }
-
-
     @RequestMapping(value = "/exportStudent")
     public void exportStudent(HttpServletResponse response) {
         List<TGStudyStudent> studentList = this.studentService.findNormal().getDatas();
         if(CollectionUtils.isNotEmpty(studentList)) {
-            this.backExcelFile(this.getExcelTitle(), response, "学生信息", studentList);
+            this.backExcelFile(this.getExcelTitle(), response, studentList);
         }
     }
 
@@ -904,13 +838,15 @@ public class StudyStudentController extends BaseController {
         return titleList;
     }
 
-    /**
+	/**
      * 学生信息写入EXCEL文件并返回给请求客户端
      * @param titleList     标题列表
      * @param response      HTTP响应对象
-     * @param title         文件名称
+	 * @param studentList   学生列表
      */
-    public void backExcelFile(List<String> titleList, HttpServletResponse response, String title, List<TGStudyStudent> studentList) {
+    private void backExcelFile(List<String> titleList, HttpServletResponse response, List<TGStudyStudent> studentList) {
+
+    	String title = "学生信息";
 
         HSSFWorkbook wb = new HSSFWorkbook();
 
@@ -925,7 +861,7 @@ public class StudyStudentController extends BaseController {
         // 第四步，创建单元格，并设置值表头 设置表头居中
         HSSFCellStyle style = wb.createCellStyle();
         style.setAlignment(HorizontalAlignment.CENTER);
-        HSSFCell cell = null;
+        HSSFCell cell;
         int size = titleList.size();
         for (int i = 0; i < size; i++) {
             sheet.setDefaultColumnStyle(i, style);
@@ -945,8 +881,6 @@ public class StudyStudentController extends BaseController {
             response.setHeader("Content-Type", "application/vnd.ms-excel");
 
             wb.write(response.getOutputStream());
-        } catch (UnsupportedEncodingException e) {
-            e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -955,9 +889,9 @@ public class StudyStudentController extends BaseController {
 
     private void fillDataToExcel(HSSFSheet sheet, HSSFCellStyle style, List<TGStudyStudent> studentList) {
 
-        TGStudyStudent student = null;
-        HSSFRow row = null;
-        HSSFCell cell = null;
+        TGStudyStudent student;
+        HSSFRow row;
+        HSSFCell cell;
         // 记录行索引
         for(int index = 0; index < studentList.size(); index++) {
             student = studentList.get(index);

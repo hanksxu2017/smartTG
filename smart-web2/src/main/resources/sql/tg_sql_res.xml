@@ -286,6 +286,15 @@
             [and t.name like '%:name%']
         </sql>
     </sqlUnit>
+    <sqlUnit name="course_record_student_list">
+        <sql>
+            select t.student_id, t.student_name
+            from tg_study_course_student_record t
+            where t.create_time &lt; NOW()
+            and t.status != 'CANCEL_AS_EXIT'
+            and t.course_record_id=:courseRecordId
+        </sql>
+    </sqlUnit>
 
 
 </sqlMap>

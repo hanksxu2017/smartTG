@@ -11,7 +11,7 @@ public class CourseStudentRecordSearch extends FilterParam {
 
     private String teacherId;
 
-    private String classId;
+    private String courseRecordId;
 
     @Override
     public String getParamToString() {
@@ -20,8 +20,8 @@ public class CourseStudentRecordSearch extends FilterParam {
         if(StringUtils.isNotBlank(param)) {
             strBuilder.append(param);
         }
-        if(StringUtils.isNotBlank(classId)) {
-            strBuilder.append("&classId=:"+classId);
+        if(StringUtils.isNotBlank(courseRecordId)) {
+            strBuilder.append("&courseRecordId=:"+courseRecordId);
         }
         if(StringUtils.isNotBlank(teacherId)) {
             strBuilder.append("&teacherId=:"+teacherId);
@@ -41,14 +41,6 @@ public class CourseStudentRecordSearch extends FilterParam {
         this.teacherId = teacherId;
     }
 
-    public String getClassId() {
-        return classId;
-    }
-
-    public void setClassId(String classId) {
-        this.classId = classId;
-    }
-
     public String getWeekInfo() {
         return weekInfo;
     }
@@ -63,5 +55,13 @@ public class CourseStudentRecordSearch extends FilterParam {
 
     public void setStudentName(String studentName) {
         this.studentName = studentName;
+    }
+
+    public String getCourseRecordId() {
+        return courseRecordId;
+    }
+
+    public void setCourseRecordId(String courseRecordId) {
+        this.courseRecordId = courseRecordId;
     }
 }

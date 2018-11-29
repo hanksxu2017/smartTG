@@ -227,7 +227,7 @@ public class StudyCourseController extends BaseController {
     }
 
     /**
-     * 制定星期的行数记录数+1
+     * 指定星期的行数记录数+1
      * @param courseTrList      行对象
      * @param weekInfo         星期
      */
