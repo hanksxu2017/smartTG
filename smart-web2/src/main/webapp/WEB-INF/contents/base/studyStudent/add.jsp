@@ -35,7 +35,7 @@
         <div class="form-group m-b-10">
             <label for="tIdSelForAddStudent" class="col-sm-2 control-label">围棋等级</label>
             <div class="col-sm-9 p-l-0">
-                <select class="form-control require" name="level" id="tIdSelForAddStudent">
+                <select class="form-control" name="level" id="tIdSelForAddStudent">
                     <option value="">--请选择--</option>
                     <c:forEach items="${levels}" var="level">
                         <option value="${level}" >${level}</option>
