@@ -271,7 +271,7 @@
             ELSE '未定义' END,
             t.create_time, t.process_time, t.process_desc
             from tg_study_system_message t
-            order by t.level desc, t.create_time desc
+            order by t.is_process, t.level desc, t.create_time desc
         </sql>
     </sqlUnit>
     <sqlUnit name="student_has_absent_course_list">
