@@ -27,7 +27,7 @@
 <div class="panel-footer panel-footer-page" data-height="34">
     <div class="btn-list">
         <div class="btn-group cnoj-op-btn-list">
-            <button type="button" id="refreshCourseTable" class="btn btn-default"
+            <button type="button" id="refreshCourseTable" class="btn btn-default" disabled="disabled"
                     data-uri="/studyCourse/list"><i class="glyphicon glyphicon-refresh"></i>
                 刷新
             </button>
@@ -71,6 +71,7 @@
             tr.appendTo(table);
         }
 
+        $("#refreshCourseTable").attr('disabled',false);
         // $("#tableDiv").append("</table>");
     }
 

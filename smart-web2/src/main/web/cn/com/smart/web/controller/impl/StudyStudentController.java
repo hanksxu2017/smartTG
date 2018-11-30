@@ -730,6 +730,7 @@ public class StudyStudentController extends BaseController {
         }
 
         smartResponse.setResult(IConstant.OP_SUCCESS);
+        smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
         return smartResponse;
     }
 
