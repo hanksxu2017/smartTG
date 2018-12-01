@@ -162,12 +162,12 @@ public class StudyTeacherH5Controller {
         if (student.getCourseSeriesUnSigned() >= 3) {
             // 连续未签到,系统提示
             String content = "学生[" + student.getName() + "]已连续 " + student.getCourseSeriesUnSigned() + "次缺席!";
-            this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content);
+            this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content, studentId);
         }
         if (student.getRemainCourse() < 3) {
             // 课时不足
             String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
-            this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
+            this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content, studentId);
         }
 
         // 检查课时的学生列表是否已经全部签到

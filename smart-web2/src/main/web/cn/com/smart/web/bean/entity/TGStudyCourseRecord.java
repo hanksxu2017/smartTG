@@ -253,9 +253,10 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean, Compa
 		}
 		Date courseDate = DateUtil.parseDate(this.getCourseDate() + " " + this.getCourseTime(),
 						"yyyy-MM-dd HH:mm");
+/*		// 已结课的课程补课签到
 		if (StringUtils.equals(IConstant.STATUS_NORMAL, this.getStatus()) && null != courseDate) {
 			return courseDate.before(new Date());
-		}
-		return false;
+		}*/
+        return courseDate.before(new Date());
 	}
 }

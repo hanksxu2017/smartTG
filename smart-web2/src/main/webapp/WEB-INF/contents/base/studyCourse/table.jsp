@@ -5,7 +5,6 @@
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
 <c:set var="ctx" value="${basePath}"/>
-
 <div class="panel">
     <div class="panel-body panel-body-noheader panel-body-noborder">
         <div class="loading-content" style="visibility: visible;">
@@ -27,9 +26,11 @@
 <div class="panel-footer panel-footer-page" data-height="34">
     <div class="btn-list">
         <div class="btn-group cnoj-op-btn-list">
-            <button type="button" id="refreshCourseTable" class="btn btn-default" disabled="disabled"
-                    data-uri="/studyCourse/list"><i class="glyphicon glyphicon-refresh"></i>
-                刷新
+            <button type="button" id="refreshCourseTable" class="btn btn-default" disabled="disabled">
+                <i class="glyphicon glyphicon-refresh"></i>刷新
+            </button>
+            <button type="button" id="generateWeekCourse" class="btn btn-default"  disabled="disabled">
+                <i class="glyphicon glyphicon-calendar"></i>生成周课时
             </button>
         </div>
     </div>
@@ -52,6 +53,13 @@
         $("#refreshCourseTable").click(function () {
             reloadTab($(this).data("uri"));
         });
+        
+        $("#generateWeekCourse").on("click", function () {
+            var uri = '/studyCourse/record/generateDailyCourse';
+            BootstrapDialogUtil.loadUriDialog('生成周课时',uri, 600,"#fff",false,function(dialog){
+                initEvent(dialog.getModal());
+            });
+        });
     });
 
     /**
@@ -72,6 +80,7 @@
         }
 
         $("#refreshCourseTable").attr('disabled',false);
+        $("#generateWeekCourse").attr('disabled',false);
         // $("#tableDiv").append("</table>");
     }
 

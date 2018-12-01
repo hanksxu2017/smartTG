@@ -35,7 +35,6 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -597,6 +596,7 @@ public class StudyStudentController extends BaseController {
 	 */
 	private List<CustomTableCell> generateOperationBtn() {
 	    Map<String, Object> cellParam = new HashMap<>();
+	    cellParam.put("id", 0);
 	    List<CustomTableCell> customCells = new ArrayList<>();
 	    CustomTableCell cell = new CustomTableCell(this.concatBtnDiv(),5,cellParam);
 	    customCells.add(cell);
@@ -616,13 +616,44 @@ public class StudyStudentController extends BaseController {
 		builder.append("<span class='caret'></span>");
 		builder.append("</button>");
 		builder.append("<ul class='dropdown-menu' role='menu'>");
-		builder.append("<li><a class='student-single-sign' data-type='signed' href='javascript:void(0);'><span style='color:darkslategrey;'>签到</span></a></li>");
+		builder.append("<li><a class='student-single-sign' data-type='signed' href='javascript:void(0);' data-id='${id}'><span style='color:darkslategrey;'>签到</span></a></li>");
 //		builder.append("<li class='divider'></li>");
-		builder.append("<li><a class='student-single-sign' data-type='personal_leave' href='javascript:void(0);'><span style='color:darkred;'>请假</span></a></li>");
-		builder.append("<li><a class='student-single-sign' data-type='play_truant' href='javascript:void(0);'><span style='color:red;'>缺课</span></a></li>");
+		builder.append("<li><a class='student-single-sign' data-type='personal_leave' href='javascript:void(0);' data-id='${id}'><span style='color:darkred;'>请假</span></a></li>");
+		builder.append("<li><a class='student-single-sign' data-type='play_truant' href='javascript:void(0);' data-id='${id}'><span style='color:red;'>缺课</span></a></li>");
 		builder.append("</ul>");
 		builder.append("</div>");
 		return builder.toString();
+    }
+
+
+    /**
+     *
+     * 提交单个学生的点名结果
+     * @param courseRecordId    课时编号
+     * @param studentId         学生编号
+     * @param signType          点名结果
+     * @return
+     */
+    @RequestMapping(value = "/subStudentSingleSign", method = RequestMethod.POST)
+    @ResponseBody
+    public SmartResponse<TGStudyStudent> subStudentSingleSign(String courseRecordId, String studentId, String signType) {
+
+        SmartResponse<TGStudyStudent> res = new SmartResponse<>();
+
+        SmartResponse<String> smartResponse = this.processSingleStudentSign(courseRecordId, studentId, null, this.parseCourseStudentStatus(signType));
+        if(smartResponse.isSuccess()){
+            res.setData(this.studentService.find(studentId).getData());
+            res.setResult(IConstant.OP_SUCCESS);
+            res.setMsg(IConstant.OP_SUCCESS_MSG);
+        } else {
+            res.setMsg(smartResponse.getMsg());
+        }
+
+        return res;
+    }
+
+    private CourseStudentStatusEnum parseCourseStudentStatus(String signType) {
+        return CourseStudentStatusEnum.valueOf(signType.toUpperCase());
     }
 
     @Autowired
@@ -700,10 +731,12 @@ public class StudyStudentController extends BaseController {
                 student.setUpdateTime(updateDate);
                 student.setCourseSeriesUnSigned(0);
                 this.studentService.update(student);
+                // 取消连续签退的广播消息
+                this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
                 if (student.getRemainCourse() < 3) {
                     // 课时不足
                     String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
-                    this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
+                    this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content, student.getId());
                 }
             }
         }
@@ -789,7 +822,7 @@ public class StudyStudentController extends BaseController {
             smartResponse.setMsg("学生课时数据不存在!");
             return smartResponse;
         }
-        if (StringUtils.equals(courseStudentRecord.getStatus(), IConstant.STATUS_NORMAL)) {
+//        if (StringUtils.equals(courseStudentRecord.getStatus(), IConstant.STATUS_NORMAL)) {
             // 进行签到操作
             if (!this.checkCourseStudentRecordCanSign(courseStudentRecord)) {
                 smartResponse.setMsg("课时目前无法进行签到操作,请稍后再试!");
@@ -811,6 +844,7 @@ public class StudyStudentController extends BaseController {
             student.setUpdateTime(new Date());
             if (CourseStudentStatusEnum.SIGNED.equals(statusEnum)) {
                 student.setCourseSeriesUnSigned(0);
+                this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
             } else {
                 // 非正常签到,生成异常签到记录
                 student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
@@ -819,14 +853,14 @@ public class StudyStudentController extends BaseController {
             if (student.getCourseSeriesUnSigned() >= IConstant.NOTIFY_COURSE_SERIES_UNSIGNED) {
                 // 连续未签到,系统提示
                 String content = "学生[" + student.getName() + "]已连续 " + student.getCourseSeriesUnSigned() + "次缺席!";
-                this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content);
+                this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content, student.getId());
             }
             if (student.getRemainCourse() <= IConstant.NOTIFY_COURSE_RENEW) {
                 // 课时不足
                 String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
-                this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
+                this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content, student.getId());
             }
-        }
+//        }
 
         // 检查指定课时的所有学生是否已经全部签到
 	    params = new HashMap<>();

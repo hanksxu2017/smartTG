@@ -3,11 +3,13 @@ package cn.com.smart.web.service;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.constant.enumEntity.CourseStudentStatusEnum;
+import cn.com.smart.constant.enumEntity.SystemMessageEnum;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
 import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
+import cn.com.smart.web.bean.entity.TGStudyStudent;
 import cn.com.smart.web.dao.impl.StudyCourseDao;
 import cn.com.smart.web.dao.impl.StudyCourseRecordDao;
 import org.apache.commons.collections.CollectionUtils;
@@ -34,6 +36,7 @@ public class StudyCourseRecordService extends MgrServiceImpl<TGStudyCourseRecord
 	public StudyCourseRecordDao getDao() {
 		return (StudyCourseRecordDao)super.getDao();
 	}
+
 
 	/**
 	 * 检查课时的学生是否已经全部进行了签到操作
