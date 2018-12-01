@@ -236,7 +236,7 @@
             where 1=1
             and YEARWEEK(DATE_FORMAT(t.course_date,'%Y-%m-%d')) = YEARWEEK(NOW())
             [and t.teacher_id =:teacherId]
-            order by t.course_date
+            order by t.status, t.course_date
         </sql>
     </sqlUnit>
     <!-- 每周课时关联的学生列表 -->
@@ -249,12 +249,12 @@
             WHEN 'PLAY_TRUANT' THEN '旷课'
             WHEN 'OTHER_ABSENT' THEN '缺席'
             WHEN 'CANCEL_AS_EXIT' THEN '退班'
-            ELSE '未定义' END, t.create_time
+            ELSE '未定义' END
             from tg_study_student t, tg_study_course_student_record record
             where t.id = record.student_id
             and record.course_record_id = :courseRecordId
             [and t.name like '%:studentName%']
-            order by t.remain_course
+            order by record.status, t.remain_course
         </sql>
     </sqlUnit>
     <!-- 系统通知 -->

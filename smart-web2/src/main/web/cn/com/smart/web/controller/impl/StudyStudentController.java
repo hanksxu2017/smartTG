@@ -635,6 +635,12 @@ public class StudyStudentController extends BaseController {
             response.setMsg("课时目前无法进行签到操作,请稍后再试!");
             return response;
         }
+        if(0 != courseRecord.getStudentPersonalLeave() ||
+		        0 != courseRecord.getStudentPlayTruant() ||
+		        0 != courseRecord.getStudentOtherAbsent()) {
+	        response.setMsg("存在学生缺席记录,无法全部签到!");
+	        return response;
+        }
 
         Date updateDate = new Date();
         Map<String, Object> params = new HashMap<>();
