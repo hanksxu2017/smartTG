@@ -544,9 +544,8 @@ public class StudyStudentController extends BaseController {
     private String concatSignStatistics(TGStudyCourseRecord courseRecord) {
         return "应到" + courseRecord.getStudentQuantityPlan() +
                 "/实到" + courseRecord.getStudentQuantityActual() +
-                "/事假" + courseRecord.getStudentPersonalLeave() +
-                "/旷课" + courseRecord.getStudentPlayTruant() +
-                "/其他缺席" + courseRecord.getStudentOtherAbsent();
+                "/请假" + courseRecord.getStudentPersonalLeave() +
+                "/缺课" + courseRecord.getStudentPlayTruant();
     }
 
     /**
@@ -566,10 +565,10 @@ public class StudyStudentController extends BaseController {
         modelMap.put("smartResp", smartResp);
         modelMap.put("pageParam", pageParam);
         modelMap.put("searchParam", searchParam);
-
+/*
         CustomBtn customBtnAllSign = new CustomBtn("allSign", "全部签到",
                 "全部签到", this.getUriPath() + "allSign?courseRecordId=" + searchParam.getCourseRecordId(), "glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
-        customBtnAllSign.setWidth("600");
+        customBtnAllSign.setWidth("600");*/
 
         CustomBtn customBtnSign = new CustomBtn("studentSign", "上课点名",
                 "上课点名", this.getUriPath() + "studentSign?courseRecordId=" + searchParam.getCourseRecordId(), "glyphicon-list-alt", BtnPropType.SelectType.MULTI.getValue());
@@ -579,17 +578,51 @@ public class StudyStudentController extends BaseController {
                 "学员补课", this.getUriPath() + "makeUpStudent?courseRecordId=" + searchParam.getCourseRecordId(), "glyphicon-paperclip", BtnPropType.SelectType.NONE.getValue());
         customBtnSign.setWidth("600");
 
-
-        customBtns = new ArrayList<>(3);
-        customBtns.add(customBtnAllSign);
+        customBtns = new ArrayList<>(2);
         customBtns.add(customBtnSign);
         customBtns.add(customBtnMakeUp);
+
+        modelMap.put("customCells", generateOperationBtn());
 
         modelMap.put("customBtns", customBtns);
 
 
         modelView.setViewName(this.getPageDir() + "studentList");
         return modelView;
+    }
+
+	/**
+	 * 构建操作栏
+	 * @return
+	 */
+	private List<CustomTableCell> generateOperationBtn() {
+	    Map<String, Object> cellParam = new HashMap<>();
+	    List<CustomTableCell> customCells = new ArrayList<>();
+	    CustomTableCell cell = new CustomTableCell(this.concatBtnDiv(),5,cellParam);
+	    customCells.add(cell);
+
+	    return customCells;
+    }
+
+	/**
+	 *
+	 * @return
+	 */
+	private String concatBtnDiv() {
+		StringBuilder builder = new StringBuilder();
+		builder.append("<div class='btn-group'>");
+		builder.append("<button type='button' class='btn btn-default opr-btn'><span class='opr-span'>点名<span></button>");
+		builder.append("<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown'>");
+		builder.append("<span class='caret'></span>");
+		builder.append("</button>");
+		builder.append("<ul class='dropdown-menu' role='menu'>");
+		builder.append("<li><a class='student-single-sign' data-type='signed' href='javascript:void(0);'><span style='color:darkslategrey;'>签到</span></a></li>");
+//		builder.append("<li class='divider'></li>");
+		builder.append("<li><a class='student-single-sign' data-type='personal_leave' href='javascript:void(0);'><span style='color:darkred;'>请假</span></a></li>");
+		builder.append("<li><a class='student-single-sign' data-type='play_truant' href='javascript:void(0);'><span style='color:red;'>缺课</span></a></li>");
+		builder.append("</ul>");
+		builder.append("</div>");
+		return builder.toString();
     }
 
     @Autowired

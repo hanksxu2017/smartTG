@@ -245,9 +245,8 @@
             select t.id, t.name, t.level, t.remain_course,
             CASE record.status WHEN 'NORMAL' THEN '正常'
             WHEN 'SIGNED' THEN '已签到'
-            WHEN 'PERSONAL_LEAVE' THEN '事假'
-            WHEN 'PLAY_TRUANT' THEN '旷课'
-            WHEN 'OTHER_ABSENT' THEN '缺席'
+            WHEN 'PERSONAL_LEAVE' THEN '请假'
+            WHEN 'PLAY_TRUANT' THEN '缺课'
             WHEN 'CANCEL_AS_EXIT' THEN '退班'
             ELSE '未定义' END
             from tg_study_student t, tg_study_course_student_record record
