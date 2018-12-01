@@ -53,6 +53,6 @@ public interface IActionConstant extends IWebConstant {
 	/**
 	 * 分页常量值
 	 */
-	public final static int PRE_PAGE_SIZE = 15;
+	public final static int PRE_PAGE_SIZE = 20;
 	
 }

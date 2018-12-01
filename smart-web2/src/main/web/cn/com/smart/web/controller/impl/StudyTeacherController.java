@@ -217,8 +217,9 @@ public class StudyTeacherController extends BaseController {
 			nextStatus = "ALL";
 		}
 		SmartResponse<Object> smartResp = this.opService.getDatas("course_student_list", searchParam, page.getStartNum(), page.getPageSize());
-		pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
+
 		uri = uri + "?id=" + searchParam.getId();
+		pageParam = new PageParam(uri, "#course-student-list-dialog", page.getPage(), page.getPageSize());
 		refreshBtn = new RefreshBtn(uri, null,"#course-student-list-dialog");
 
 		ModelMap modelMap = modelView.getModelMap();
