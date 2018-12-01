@@ -340,6 +340,7 @@ public class StudyCourseController extends BaseController {
 			return smartResp;
 		}
 
+		this.packTeacherInfo(course);
 		course.setUpdateTime(new Date());
 		course.setName(this.concatCourseName(course));
 
@@ -366,7 +367,7 @@ public class StudyCourseController extends BaseController {
         }
 
         course.setCreateTime(new Date());
-//        this.packTeacherInfo(course);
+        this.packTeacherInfo(course);
 
         course.setName(this.concatCourseName(course));
 
@@ -383,37 +384,41 @@ public class StudyCourseController extends BaseController {
      * @return              课程存在冲突时返回提示信息,否则返回null
      */
     private String checkCourseConflict(TGStudyCourse course) {
-        String checkRes = this.checkTeacherCourse(course.getCourseTimeIndex(), course.getWeekInfo(), course.getTeacherId());
+        String checkRes = this.checkTeacherCourse(course.getCourseTimeIndex(), course.getWeekInfo(), course.getTeacherId(), course.getId());
         if(StringUtils.isNotBlank(checkRes)) {
             return checkRes;
         }
-        checkRes = this.checkClassroom(course.getCourseTimeIndex(), course.getWeekInfo(), course.getClassroomId());
+        checkRes = this.checkClassroom(course.getCourseTimeIndex(), course.getWeekInfo(), course.getClassroomId(), course.getId());
         if(StringUtils.isNotBlank(checkRes)) {
             return checkRes;
         }
         return "";
     }
 
-    private String checkTeacherCourse(short courseTimeIndex, short weekInfo, String teacherId) {
+    private String checkTeacherCourse(short courseTimeIndex, short weekInfo, String teacherId, String courseId) {
         Map<String, Object> params = new HashMap<>();
         params.put("courseTimeIndex", courseTimeIndex);
         params.put("weekInfo", weekInfo);
         params.put("teacherId", teacherId);
         SmartResponse<TGStudyCourse> courseSmartResponse = this.courseService.findByParam(params);
         if(courseSmartResponse.isSuccess() && courseSmartResponse.getTotalNum() > 0) {
-            return "课程冲突:同时间点,教师存在其他课程";
+        	if(StringUtils.isBlank(courseId) || !StringUtils.equals(courseId, courseSmartResponse.getDatas().get(0).getId())) {
+		        return "课程冲突:同时间点,教师存在其他课程";
+	        }
         }
         return "";
     }
 
-    private String checkClassroom(short courseTimeIndex, short weekInfo, String classroomId) {
+    private String checkClassroom(short courseTimeIndex, short weekInfo, String classroomId, String courseId) {
         Map<String, Object> params = new HashMap<>();
         params.put("courseTimeIndex", courseTimeIndex);
         params.put("weekInfo", weekInfo);
         params.put("classroomId", classroomId);
         SmartResponse<TGStudyCourse> courseSmartResponse = this.courseService.findByParam(params);
         if(courseSmartResponse.isSuccess() && courseSmartResponse.getTotalNum() > 0) {
-            return "课程冲突:同时间点,教室已被其他课程占用.";
+        	if(StringUtils.isBlank(courseId) || !StringUtils.equals(courseId, courseSmartResponse.getDatas().get(0).getId())) {
+		        return "课程冲突:同时间点,教室已被其他课程占用.";
+	        }
         }
         return "";
     }

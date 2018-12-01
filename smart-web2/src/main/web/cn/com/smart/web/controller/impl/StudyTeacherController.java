@@ -135,16 +135,15 @@ public class StudyTeacherController extends BaseController {
      */
     @RequestMapping("/courseList")
     public ModelAndView classList(TeacherCourseSearch searchParam, ModelAndView modelView, RequestPage page) throws Exception {
-        String uri = this.getUriPath() + "courseList";
+        String uri = this.getUriPath() + "courseList" + "?id=" + searchParam.getId();;
         SmartResponse<Object> smartResp = this.opService.getDatas("teacher_course_list", searchParam, page.getStartNum(), page.getPageSize());
         pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
-        uri = uri + "?id=" + searchParam.getId();
         addBtn = new EditBtn("add",this.getUriPath() + "addCourse?teacherId=" + searchParam.getId(), "教师增设课时", "800");
 	    editBtn = new EditBtn("edit",this.getUriPath() + "editCourse", "班级修改", "800");
 		editBtn.setSelectedType(BtnPropType.SelectType.ONE.getValue());
         refreshBtn = new RefreshBtn(uri, null,"#teacher-course-tab");
 
-	    delBtn = new DelBtn(this.getUriPath() + "deleteCourse", "确定删除班级吗？", this.getUriPath() + "courseList", "#teacher-course-tab", null);
+	    delBtn = new DelBtn(this.getUriPath() + "deleteCourse", "确定删除班级吗？", uri, "#teacher-course-tab", null);
 
         ModelMap modelMap = modelView.getModelMap();
         modelMap.put("smartResp", smartResp);
