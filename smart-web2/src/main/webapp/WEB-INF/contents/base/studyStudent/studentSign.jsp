@@ -56,12 +56,10 @@
             <div class="col-sm-9 p-l-0">
                 <input type="radio" class="require" data-label-name="签到"
                        id="status" name="status" value="SIGNED" checked="checked">签到</input>
-	            <input type="radio" data-label-name="事假"
-	                   name="status" value="PERSONAL_LEAVE">事假</input>
-	            <input type="radio" data-label-name="旷课"
-	                   name="status" value="PLAY_TRUANT">旷课</input>
-	            <input type="radio" data-label-name="缺席"
-	                   name="status" value="OTHER_ABSENT">缺席</input>
+	            <input type="radio" data-label-name="请假"
+	                   name="status" value="PERSONAL_LEAVE">请假</input>
+	            <input type="radio" data-label-name="缺课"
+	                   name="status" value="PLAY_TRUANT">缺课</input>
             </div>
         </div>
 

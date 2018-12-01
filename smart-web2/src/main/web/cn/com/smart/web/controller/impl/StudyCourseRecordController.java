@@ -11,6 +11,7 @@ import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.*;
+import cn.com.smart.web.utils.DataUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -62,7 +63,7 @@ public class StudyCourseRecordController extends BaseController {
 		SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_simp_list",searchParam, page.getStartNum(), page.getPageSize());
 		pageParam = new PageParam(uri, "#courseRecord-tab", page.getPage(), page.getPageSize());
 		selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyStudent/courseRecHas?courseRecHas=" + searchParam.getId(),"#has-student-list","id");
-		refreshBtn = new RefreshBtn(uri + "?teacherId=" + searchParam.getTeacherId(), null,"#courseRecord-tab");
+		refreshBtn = new RefreshBtn(uri + "?teacherId=" + DataUtil.handleNull(searchParam.getTeacherId()), null,"#courseRecord-tab");
 
 		ModelMap modelMap = modelView.getModelMap();
 		modelMap.put("smartResp", smartResp);

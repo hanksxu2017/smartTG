@@ -113,4 +113,12 @@ public interface IConstant {
 	String IS_REGISTER_YES = "YES";
 	String IS_REGISTER_NO = "NO";
 
+
+	/**
+	 *
+	 */
+	int NOTIFY_COURSE_SERIES_UNSIGNED = 2;
+	int NOTIFY_COURSE_RENEW = 3;
+
+
 }

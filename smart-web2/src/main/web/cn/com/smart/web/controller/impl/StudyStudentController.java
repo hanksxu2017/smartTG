@@ -783,12 +783,12 @@ public class StudyStudentController extends BaseController {
                 student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
             }
             this.studentService.update(student);
-            if (student.getCourseSeriesUnSigned() >= 3) {
+            if (student.getCourseSeriesUnSigned() >= IConstant.NOTIFY_COURSE_SERIES_UNSIGNED) {
                 // 连续未签到,系统提示
                 String content = "学生[" + student.getName() + "]已连续 " + student.getCourseSeriesUnSigned() + "次缺席!";
                 this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content);
             }
-            if (student.getRemainCourse() < 3) {
+            if (student.getRemainCourse() <= IConstant.NOTIFY_COURSE_RENEW) {
                 // 课时不足
                 String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
                 this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content);
