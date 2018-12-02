@@ -182,28 +182,13 @@ public class StudyStudentController extends BaseController {
             return smartResponse;
         }
 
-        // 取消课时关联
         Map<String, Object> params = new HashMap<>();
         params.put("studentId", id);
         params.put("status", IConstant.STATUS_NORMAL);
-        List<TGStudyStudentCourseRel> courseRelList = this.studentCourseRelService.findByParam(params).getDatas();
-        if (CollectionUtils.isNotEmpty(courseRelList)) {
-            for (TGStudyStudentCourseRel courseRel : courseRelList) {
-                courseRel.setStatus(IConstant.STATUS_DROP_OUT);
-                courseRel.setUpdateTime(new Date());
-            }
-            this.studentCourseRelService.update(courseRelList);
-        }
-
-        // 取消课时记录
-        List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByParam(params).getDatas();
-        if (CollectionUtils.isNotEmpty(courseStudentRecordList)) {
-            for (TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
-                courseStudentRecord.setStatus(IConstant.STATUS_COURSE_CANCEL_AS_EXIT);
-                courseStudentRecord.setUpdateTime(new Date());
-            }
-            this.studentCourseRelService.update(courseRelList);
-        }
+        // 删除学生课时信息
+        this.studentCourseRelService.deleteByField(params);
+        // 删除课时记录
+        this.courseStudentRecordService.deleteByField(params);
 
         return smartResponse;
     }
