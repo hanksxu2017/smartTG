@@ -135,10 +135,10 @@
     </sqlUnit>
     <sqlUnit name="teacher_course_weeks">
         <sql>
+            SELECT * FROM (
             select DISTINCT t.week_info
             from tg_study_course t
-            where t.teacher_id =:teacherId
-            order by t.create_time asc
+            where t.teacher_id =:teacherId) temp ORDER BY temp.week_info
         </sql>
     </sqlUnit>
     <!-- 课时的学生列表 -->
