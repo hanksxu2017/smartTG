@@ -12,7 +12,7 @@
 		<div class="panel-search">
 			<form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form"
 			      action="studyStudent/studentList" target="#courseRecord-student-tab">
-				<input type="hidden" id="courseRecordIdForSingleSign"
+				<input type="hidden" id="courseRecordIdForCourseStudent"
                        name="courseRecordId" value="${searchParam.courseRecordId}"/>
 
 				<div class="form-group p-r-10">
@@ -49,24 +49,6 @@
             var trList = table.find('tr');
             for (var i = 1; i < trList.length; i++) {
                 updateTrSignInfo(trList.eq(i));
-
-/*                var tdArr = trList.eq(i).find('td');
-                studentId = tdArr.eq(0).find('input').val();//收入类别
-	            status = tdArr.eq(4).html().trim();
-                curBtn = tdArr.eq(5).find('.opr-btn');
-                curOpr = tdArr.eq(5).find('.opr-span');
-
-                if(status === '缺课') {
-                    curBtn.addClass('btn-danger');
-                    curOpr.text('缺课');
-	            } else if(status === '请假') {
-                    $(curBtn).addClass('btn-warning');
-                    $(curOpr).text('请假');
-	            } else if(status === '已签到') {
-                    $(curBtn).addClass('btn-success');
-                    $(curOpr).text('已签到');
-	            }*/
-
             }
         }
 
@@ -92,7 +74,29 @@
                     }
                 }
             });
+        });
 
+        $(".remove-make-up").on("click", function () {
+            var value = $(this).parents('tr').find('td').eq(0).find('input').val();
+            var uri = "/studyStudent/removeMakeUpStudent?courseRecordId=" + $("#courseRecordIdForCourseStudent").val() + "&studentId=" + value;
+            var refreshUri = '/studyStudent/studentList?courseRecordId=' + $("#courseRecordIdForCourseStudent").val();
+            var target = '#has-student-list';
+            // 提交补课信息
+            $.post(uri,function(data){
+                var output = data;
+                utils.showMsg(output.msg+"！");
+                if(output.result !='1') {
+                    return;
+                }
+                BootstrapDialogUtil.close();
+                if(utils.isNotEmpty(refreshUri)) {
+                    if(utils.isNotEmpty(target)) {
+                        loadUri(target, refreshUri, true);
+                    } else {
+                        loadActivePanel(refreshUri);
+                    }
+                }
+            });
         });
     });
     
@@ -132,6 +136,10 @@
             curBtn.removeClass('btn-danger btn-warning');
             curBtn.addClass('btn-success');
             curOpr.text('已签到');
+        } else if(status === '补课') {
+            tdArr.eq(5).empty();
+            var btn = "<div class='btn-group'><button type='button' class='btn btn-sm btn-info remove-make-up'><span class='opr-span'>补课移除</span></button></div>";
+            tdArr.eq(5).html(btn);
         }
     }
 

@@ -2,17 +2,17 @@ package cn.com.smart.constant.enumEntity;
 
 import cn.com.smart.constant.IEnum;
 
-public enum CourseStudentStatusEnum implements IEnum {
+public enum CourseStudentRecordStatusEnum implements IEnum {
 	NORMAL("正常"),
 	SIGNED("已签到"),
 	PERSONAL_LEAVE("事假"),
-	PLAY_TRUANT("旷课"),
-	OTHER_ABSENT("缺席"),
-	CANCEL_AS_EXIT("退班");
+	PLAY_TRUANT("缺课"),
+	CANCEL_AS_EXIT("退班"),
+	X_MAKE_UP("补课");
 
 	private String message;
 
-	CourseStudentStatusEnum(String message) {
+	CourseStudentRecordStatusEnum(String message) {
 		this.message = message;
 	}
 

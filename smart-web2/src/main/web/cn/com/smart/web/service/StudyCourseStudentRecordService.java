@@ -1,10 +1,8 @@
 package cn.com.smart.web.service;
 
-import cn.com.smart.constant.enumEntity.CourseStudentStatusEnum;
+import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
 import cn.com.smart.service.impl.MgrServiceImpl;
-import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
 import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
-import cn.com.smart.web.dao.impl.StudyCourseRecordDao;
 import cn.com.smart.web.dao.impl.StudyCourseStudentRecordDao;
 import org.springframework.stereotype.Service;
 
@@ -32,8 +30,8 @@ public class StudyCourseStudentRecordService extends MgrServiceImpl<TGStudyCours
 	 */
 	public List<String> getQueryStatus() {
 		List<String> statusList = new ArrayList<>();
-		for(CourseStudentStatusEnum statusEnum : CourseStudentStatusEnum.values()) {
-			if(!statusEnum.equals(CourseStudentStatusEnum.CANCEL_AS_EXIT)) {
+		for(CourseStudentRecordStatusEnum statusEnum : CourseStudentRecordStatusEnum.values()) {
+			if(!statusEnum.equals(CourseStudentRecordStatusEnum.CANCEL_AS_EXIT)) {
 				statusList.add(statusEnum.name());
 			}
 		}

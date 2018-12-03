@@ -251,6 +251,7 @@
             WHEN 'PERSONAL_LEAVE' THEN '请假'
             WHEN 'PLAY_TRUANT' THEN '缺课'
             WHEN 'CANCEL_AS_EXIT' THEN '退班'
+            WHEN 'X_MAKE_UP' THEN '补课'
             ELSE '未定义' END
             from tg_study_student t, tg_study_course_student_record record
             where t.id = record.student_id
@@ -280,12 +281,23 @@
         <sql>
             select student.id, student.name, student.level, count(t.id)
             from tg_study_course_student_record t, tg_study_student student
-            where t.create_time &lt; NOW()
-            and (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT' OR t.status = 'OTHER_ABSENT')
-            and t.student_id = student.id
+            where t.student_id = student.id
+            and t.course_id !=:courseId
+            and (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT')
             and student.status = 'NORMAL'
             [and student.name like '%:name%']
             group by t.id
+        </sql>
+    </sqlUnit>
+    <sqlUnit name="student_absent_course_record_list">
+        <sql>
+            select rec.id, rec.course_name, t.status, rec.course_date, rec.course_time
+            from tg_study_course_student_record t, tg_study_course_record rec
+            where
+            t.course_record_id = rec.id
+            and (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT')
+            and t.student_id =:studentId
+            order by rec.course_date desc
         </sql>
     </sqlUnit>
     <sqlUnit name="course_record_student_list">
