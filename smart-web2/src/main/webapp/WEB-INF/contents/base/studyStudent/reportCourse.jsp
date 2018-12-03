@@ -57,7 +57,16 @@
             </div>
         </div>
 
-
+	    <div class="form-group m-b-10">
+		    <label for="signTypeForStuReportCourse" class="col-sm-2 control-label">点名类型</label>
+		    <div class="col-sm-9 p-l-0">
+			    <select name="signType" class="form-control require" id="signTypeForStuReportCourse">
+				    <option value="">--请选择--</option>
+				    <option value="NORMAL">正常签到</option>
+				    <option value="SIGN_AS_HAS">到班签到(带*号类)</option>
+			    </select>
+		    </div>
+	    </div>
 
 
         <div class="text-center">

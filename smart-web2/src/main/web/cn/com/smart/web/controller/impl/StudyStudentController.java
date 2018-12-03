@@ -3,6 +3,7 @@ package cn.com.smart.web.controller.impl;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.constant.enumEntity.CourseStudentStatusEnum;
+import cn.com.smart.constant.enumEntity.StudentCourseSignTypeEnum;
 import cn.com.smart.constant.enumEntity.SystemMessageEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
@@ -495,7 +496,6 @@ public class StudyStudentController extends BaseController {
         Map<String, Object> params = new HashMap<>();
         params.put("status", IConstant.STATUS_NORMAL);
         modelView.getModelMap().put("teachers", this.teacherService.findByParam(params).getDatas());
-
         return modelView;
     }
 
@@ -826,16 +826,23 @@ public class StudyStudentController extends BaseController {
                 return smartResponse;
             }
 
-            // 学生课时-1
+
+
             TGStudyStudent student = this.studentService.find(courseStudentRecord.getStudentId()).getData();
-            student.setRemainCourse(student.getRemainCourse() - 1);
             student.setUpdateTime(new Date());
             if (CourseStudentStatusEnum.SIGNED.equals(statusEnum)) {
+	            // 学生课时-1
+	            student.setRemainCourse(student.getRemainCourse() - 1);
                 student.setCourseSeriesUnSigned(0);
                 this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
             } else {
-                // 非正常签到,生成异常签到记录
-                student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
+            	if(!isSignAsHasCome(studentId, courseStudentRecord.getCourseId())) {
+            		// 签到类型非到班签到时计算缺课逻辑
+		            // 学生课时-1
+		            student.setRemainCourse(student.getRemainCourse() - 1);
+		            // 非正常签到,生成异常签到记录
+		            student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
+	            }
             }
             this.studentService.update(student);
             if (student.getCourseSeriesUnSigned() >= IConstant.NOTIFY_COURSE_SERIES_UNSIGNED) {
@@ -869,6 +876,25 @@ public class StudyStudentController extends BaseController {
     private boolean checkCourseStudentRecordCanSign(TGStudyCourseStudentRecord courseStudentRecord) {
         TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseStudentRecord.getCourseRecordId()).getData();
         return null != courseRecord && courseRecord.canSign();
+    }
+
+	/**
+	 * 判断学生课时的签到类型是否为到班签到
+	 * @param studentId     学生编号
+	 * @param courseId      课时编号
+	 * @return              到班签到时返回true,否则返回false
+	 */
+	private boolean isSignAsHasCome(String studentId, String courseId) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("studentId", studentId);
+		params.put("courseId", courseId);
+		params.put("status", IConstant.STATUS_NORMAL);
+		List<TGStudyStudentCourseRel> studentCourseRelList = this.studentCourseRelService.findByParam(params).getDatas();
+		if(CollectionUtils.isNotEmpty(studentCourseRelList)) {
+			return StringUtils.equals(StudentCourseSignTypeEnum.SIGN_AS_HAS.name(), studentCourseRelList.get(0).getSignType());
+		}
+
+    	return false;
     }
 
     @Autowired

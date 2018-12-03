@@ -171,6 +171,9 @@
             t.course_time, t.classroom_name, t.teacher_name,
             CASE rel.status WHEN "NORMAL" THEN '正常'
             WHEN 'EXIT_COURSE' THEN '已退班'
+            ELSE '未定义' END,
+            CASE rel.sign_type WHEN "NORMAL" THEN '正常签到'
+            WHEN 'SIGN_AS_HAS' THEN '到班签到'
             ELSE '未定义' END
             from tg_study_course t, tg_study_student_course_rel rel
             where rel.student_id =:id and rel.course_id = t.id

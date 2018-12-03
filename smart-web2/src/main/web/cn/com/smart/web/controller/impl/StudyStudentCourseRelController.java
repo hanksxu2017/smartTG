@@ -78,14 +78,14 @@ public class StudyStudentCourseRelController extends BaseController {
      * @throws Exception
      */
     @RequestMapping(value="/subReportCourse",method=RequestMethod.POST)
-    public @ResponseBody SmartResponse<String> saveClass(String courseId, String studentId) throws Exception {
+    public @ResponseBody SmartResponse<String> saveClass(String courseId, String studentId, String signType) throws Exception {
         SmartResponse<String> smartResp = new SmartResponse<String>();
         String checkRes = this.checkStudentCourseConflict(courseId, studentId);
         if(StringUtils.isNotBlank(checkRes)) {
             smartResp.setResult(IConstant.OP_FAIL);
             smartResp.setMsg(checkRes);
         } else {
-            TGStudyStudentCourseRel studentCourseRel = this.initStudentCourseRel(courseId, studentId);
+            TGStudyStudentCourseRel studentCourseRel = this.initStudentCourseRel(courseId, studentId, signType);
             smartResp = this.studentCourseRelService.save(studentCourseRel);
             // 学生报课成功后续进行本周类的课时安排
             generateCurWeekCourseRecIfNecessary(studentCourseRel);
@@ -175,7 +175,7 @@ public class StudyStudentCourseRelController extends BaseController {
         return "";
     }
 
-    private TGStudyStudentCourseRel initStudentCourseRel(String courseId, String studentId) {
+    private TGStudyStudentCourseRel initStudentCourseRel(String courseId, String studentId, String signType) {
 
         TGStudyStudentCourseRel rel = new TGStudyStudentCourseRel();
 
@@ -193,6 +193,8 @@ public class StudyStudentCourseRelController extends BaseController {
 
         rel.setStudentId(studentId);
         rel.setStudentName(student.getName());
+
+        rel.setSignType(signType);
 
         rel.setCreateTime(new Date());
 
