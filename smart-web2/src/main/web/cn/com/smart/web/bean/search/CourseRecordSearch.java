@@ -15,6 +15,8 @@ public class CourseRecordSearch extends FilterParam {
 
     private String teacherId;
 
+    private String selectCourseDate;
+
     @Override
     public String getParamToString() {
         StringBuilder strBuilder = new StringBuilder();
@@ -23,8 +25,12 @@ public class CourseRecordSearch extends FilterParam {
             strBuilder.append(param);
         }
         if(StringUtils.isNotBlank(teacherId)) {
-            strBuilder.append("&teacherId="+teacherId);
+            strBuilder.append("&teacherId=" + teacherId);
         }
+	    if(StringUtils.isNotBlank(selectCourseDate)) {
+		    strBuilder.append("&selectCourseDate=" + selectCourseDate);
+	    }
+
         param = strBuilder.toString();
         if(StringUtils.isNotBlank(param) && param.startsWith("&")) {
             param = param.substring(1);
@@ -71,4 +77,12 @@ public class CourseRecordSearch extends FilterParam {
     public void setCourseEndDate(String courseEndDate) {
         this.courseEndDate = courseEndDate;
     }
+
+	public String getSelectCourseDate() {
+		return selectCourseDate;
+	}
+
+	public void setSelectCourseDate(String selectCourseDate) {
+		this.selectCourseDate = selectCourseDate;
+	}
 }

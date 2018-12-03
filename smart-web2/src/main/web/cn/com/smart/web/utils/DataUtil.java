@@ -212,4 +212,12 @@ public class DataUtil {
 			return value;
 		}
 	}
+
+	public static String numToCN(int num) {
+    	String[] cnArr = new String[]{"", "一", "二", "三", "四", "五", "六", "七", "八", "九", "十"};
+    	if(num >= 1 && num <= 10) {
+			return cnArr[num];
+	    }
+	    return "";
+	}
 }

@@ -233,8 +233,8 @@
             WHEN 'NORMAL_END' THEN '已结课'
             ELSE '未定义' END
             from tg_study_course_record t
-            where 1=1
-            and YEARWEEK(DATE_FORMAT(t.course_date,'%Y-%m-%d')) = YEARWEEK(NOW())
+            where DATE_FORMAT(t.course_date,'%Y-%m-%d') =:selectCourseDate
+            <!--and YEARWEEK(DATE_FORMAT(t.course_date,'%Y-%m-%d')) = YEARWEEK(NOW())-->
             [and t.teacher_id =:teacherId]
             order by t.status, t.course_date
         </sql>

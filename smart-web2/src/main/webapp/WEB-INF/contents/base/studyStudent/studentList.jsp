@@ -98,7 +98,7 @@
     
     function afterSingleSign(tr, signType, remainCourse) {
         var status = '';
-        if('normal_sign' === signType) {
+        if('signed' === signType) {
             status = '已签到';
         } else if('personal_leave' === signType) {
             status = '请假';
@@ -115,7 +115,7 @@
     function updateTrSignInfo(tr, status) {
         var tdArr = tr.find('td');
         if(null == status || '' === status) {
-            status = tdArr.eq(4).html().trim();
+            status = tdArr.eq(4).html();
         }
         var curBtn = tdArr.eq(5).find('.opr-btn');
         var curOpr = tdArr.eq(5).find('.opr-span');

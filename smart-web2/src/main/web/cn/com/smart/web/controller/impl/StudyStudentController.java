@@ -596,8 +596,8 @@ public class StudyStudentController extends BaseController {
 	private String concatBtnDiv() {
 		StringBuilder builder = new StringBuilder();
 		builder.append("<div class='btn-group'>");
-		builder.append("<button type='button' class='btn btn-default opr-btn'><span class='opr-span'>点名<span></button>");
-		builder.append("<button type='button' class='btn btn-default dropdown-toggle' data-toggle='dropdown'>");
+		builder.append("<button type='button' class='btn btn-default btn-sm opr-btn'><span class='opr-span'>点名<span></button>");
+		builder.append("<button type='button' class='btn btn-default btn-sm dropdown-toggle' data-toggle='dropdown'>");
 		builder.append("<span class='caret'></span>");
 		builder.append("</button>");
 		builder.append("<ul class='dropdown-menu' role='menu'>");
@@ -634,6 +634,9 @@ public class StudyStudentController extends BaseController {
             res.setMsg(smartResponse.getMsg());
         }
 
+        res.setData(this.studentService.find(studentId).getData());
+        res.setResult(IConstant.OP_SUCCESS);
+        res.setMsg(IConstant.OP_SUCCESS_MSG);
         return res;
     }
 
