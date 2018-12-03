@@ -56,7 +56,7 @@
 
             var studentId = $(this).data('id');
             var signType = $(this).data('type');
-            var courseRecordId = $("#courseRecordIdForSingleSign").val();
+            var courseRecordId = $("#courseRecordIdForCourseStudent").val();
 
             var curTr = $(this).parents('tr');
 

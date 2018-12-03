@@ -575,6 +575,25 @@ public class StudyStudentController extends BaseController {
 		return modelView;
 	}
 
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO 增加课时是否可以签到操作的判断
+	// TODO
+	// TODO
+	// TODO
+	// TODO
+	// TODO
+
 	/**
 	 * 构建操作栏
 	 *
