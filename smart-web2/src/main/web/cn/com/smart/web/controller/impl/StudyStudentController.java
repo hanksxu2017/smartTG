@@ -561,6 +561,7 @@ public class StudyStudentController extends BaseController {
         CustomBtn customBtnMakeUp = new CustomBtn("makeUpStudent", "学员补课",
                 "学员补课", this.getUriPath() + "makeUpStudent?courseRecordId=" + searchParam.getCourseRecordId(), "glyphicon-paperclip", BtnPropType.SelectType.NONE.getValue());
         customBtnSign.setWidth("600");
+	    customBtnSign.setModalBodyId("student-absent-course-list-dialog");
 
         customBtns = new ArrayList<>(2);
         customBtns.add(customBtnSign);
@@ -1197,9 +1198,9 @@ public class StudyStudentController extends BaseController {
         SmartResponse<Object> smartResp = opService.getDatas("student_has_absent_course_list", searchParam, page.getStartNum(), page.getPageSize());
         ModelAndView modelView = new ModelAndView();
         Map<String, Object> modelMap = modelView.getModelMap();
-        refreshBtn = new RefreshBtn(this.getUriPath() + "makeUpStudent", null, null);
+        refreshBtn = new RefreshBtn(this.getUriPath() + "makeUpStudent", null, "#student-absent-course-list-dialog");
 
-        pageParam = new PageParam(this.getUriPath() + "makeUpStudent", null, page.getPage(), page.getPageSize());
+        pageParam = new PageParam(this.getUriPath() + "makeUpStudent", "#student-absent-course-list-dialog", page.getPage(), page.getPageSize());
 
         modelMap.put("pageParam", pageParam);
         modelMap.put("refreshBtn", refreshBtn);
@@ -1213,7 +1214,7 @@ public class StudyStudentController extends BaseController {
 
     @RequestMapping(value = "/subMakeUpStudent", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> subMakeUpStudent() {
+    public SmartResponse<String> subMakeUpStudent(String id, String courseRecordId) {
         SmartResponse<String> smartResponse = new SmartResponse<>();
 
 

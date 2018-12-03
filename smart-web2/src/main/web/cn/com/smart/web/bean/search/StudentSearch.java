@@ -11,6 +11,8 @@ public class StudentSearch extends FilterParam {
 
 	private String status;
 
+	private String courseRecordId;
+
 	@Override
 	public String getParamToString() {
 		StringBuilder strBuilder = new StringBuilder();

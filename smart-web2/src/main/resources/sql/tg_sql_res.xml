@@ -278,14 +278,14 @@
     </sqlUnit>
     <sqlUnit name="student_has_absent_course_list">
         <sql>
-            select t.student_id, t.student_name
-            from tg_study_course_student_record t
+            select student.id, student.name, student.level, count(t.id)
+            from tg_study_course_student_record t, tg_study_student student
             where t.create_time &lt; NOW()
-            and (status = 'PERSONAL_LEAVE'
-            OR status = 'PLAY_TRUANT'
-            OR status = 'OTHER_ABSENT'
-            OR status = 'CANCEL_AS_EXIT')
-            [and t.name like '%:name%']
+            and (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT' OR t.status = 'OTHER_ABSENT')
+            and t.student_id = student.id
+            and student.status = 'NORMAL'
+            [and student.name like '%:name%']
+            group by t.id
         </sql>
     </sqlUnit>
     <sqlUnit name="course_record_student_list">
