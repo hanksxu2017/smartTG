@@ -319,4 +319,26 @@
         </sql>
     </sqlUnit>
 
+    <!-- 教室租赁信息 -->
+    <sqlUnit name="classroom_rental_list">
+        <sql>
+            select
+            t.id, t.name, t.tenant_name, t.tenant_phone,
+            CASE t.week_info WHEN '7' THEN '星期天'
+            WHEN '1' THEN '星期一'
+            WHEN '2' THEN '星期二'
+            WHEN '3' THEN '星期三'
+            WHEN '4' THEN '星期四'
+            WHEN '5' THEN '星期五'
+            WHEN '6' THEN '星期六'
+            ELSE '未定义' END, t.course_time, t.classroom_name,
+            CASE t.status WHEN 'NORMAL' THEN '正常'
+            WHEN 'CANCEL' THEN '取消'
+            WHEN 'EXPIRE' THEN '到期'
+            ELSE '未定义' END, t.end_date, DATE_FORMAT(t.create_time,'%Y-%m-%d'), t.description
+            from tg_study_classroom_rental t
+            order by t.create_time desc
+        </sql>
+    </sqlUnit>
+
 </sqlMap>
