@@ -53,9 +53,6 @@
 			<div class="col-sm-9 p-l-0">
 				<select name="courseTimeIndex" class="form-control require" id="courseTimeForAddRental">
 					<option value="">--请选择--</option>
-					<c:forEach items="${courseTimes}" var="courseTime">
-						<option value="${courseTime.busiValue}" >${courseTime.busiName}</option>
-					</c:forEach>
 				</select>
 			</div>
 		</div>
@@ -91,9 +88,7 @@
             var text = $(this).find("option:selected").text();
             $("#classroomName").val(text);
 
-
-
-
+			getIdleCourseTime($(this).val(), $("#weekInfoForAddRental").val())
         });
 
         $("#courseTimeForAddRental").change(function () {
@@ -101,30 +96,27 @@
         });
 
         $("#weekInfoForAddRental").change(function () {
-	        // TODO 查找教室在当前星期的空闲时段
-
+            getIdleCourseTime($("#classroomSelForAddRental").val(), $(this).val())
         });
 
     });
     
     function getIdleCourseTime(classroomId, weekInfo) {
-        $("#courseTimeForAddRental").empty();
-        $("#courseTimeForAddRental").append("<option value=''>--请选择--</option>");
-        // TODO 查找教室在当前星期的空闲时段
-        var url = "${ctx}/studyClassroom/rental/getIdleCourseTime?weekInfo=" + weekInfo + "&classroomId=" + teacherId;
-        $.ajax({
-            type: "GET",
-            url: url,
-            success: function(data){
-				if(data.result === '1') {
-                    $.each(data.datas, function(index, value){
-						// TODO
-                    });
+        if(null != weekInfo && null != classroomId) {
+            $("#courseTimeForAddRental").empty();
+            $("#courseTimeForAddRental").append("<option value=''>--请选择--</option>");
+            var url = "${ctx}/studyClassroom/rental/getIdleCourseTime?weekInfo=" + weekInfo + "&classroomId=" + classroomId;
+            $.ajax({
+                type: "GET",
+                url: url,
+                success: function(data){
+                    if(data.result === '1') {
+                        $.each(data.datas, function(index, value){
+                            $("#courseTimeForAddRental").append("<option value='" + value.busiValue +"'>" + value.busiName + "</option>");
+                        });
+                    }
                 }
-            }
-        });
-
-
-
+            });
+        }
     }
 </script>

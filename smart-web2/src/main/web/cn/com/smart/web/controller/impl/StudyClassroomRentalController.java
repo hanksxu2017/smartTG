@@ -63,7 +63,7 @@ public class StudyClassroomRentalController extends BaseController {
 
         modelView.getModelMap().put("classrooms", classroomService.findNormal().getDatas());
 
-	    modelView.getModelMap().put("courseTimes", dictService.getItems("COURSE_TIMES").getDatas());
+
 
 	    modelView.getModelMap().put("weekInfoList", dictService.getItems("WEEK_INFO_LIST").getDatas());
 
@@ -71,12 +71,12 @@ public class StudyClassroomRentalController extends BaseController {
         return modelView;
     }
 
-    @RequestMapping(value = "/getIdleCourseTime", method = RequestMethod.POST)
+    @RequestMapping(value = "/getIdleCourseTime", method = RequestMethod.GET)
     @ResponseBody
     public SmartResponse<TNDict> getIdleCourseTime(String classroomId, int weekInfo) {
-		// TODO
-
-	    return null;
+    	// TODO 查找空闲时段
+	    // TODO 加入到课程表
+	    return dictService.getItems("COURSE_TIMES");
     }
 
 	/**
