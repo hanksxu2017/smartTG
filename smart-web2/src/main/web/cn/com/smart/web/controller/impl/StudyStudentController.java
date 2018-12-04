@@ -575,25 +575,6 @@ public class StudyStudentController extends BaseController {
 		return modelView;
 	}
 
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO 增加课时是否可以签到操作的判断
-	// TODO
-	// TODO
-	// TODO
-	// TODO
-	// TODO
-
 	/**
 	 * 构建操作栏
 	 *
@@ -1254,7 +1235,10 @@ public class StudyStudentController extends BaseController {
 			return smartResponse;
 		}
 		TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseRecordId).getData();
-
+		if(null == courseRecord || !courseRecord.canSign()) {
+			smartResponse.setMsg("课时无法进行补课操作");
+			return smartResponse;
+		}
 		String[] sId = studentIds.split(",");
 		for(int index = 0; index < sId.length; index++) {
 			doSubMakeUp(sId[index], courseRecord);
