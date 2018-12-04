@@ -37,6 +37,8 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean, Compa
 
     // 日期,格式: yyyy-MM-dd
     private String courseDate;
+    //
+    private int courseTimeIndex;
     // 课时时间,格式:HH:mm-HH:mm
     private String courseTime;
 
@@ -227,6 +229,15 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean, Compa
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    @Column(name="course_time_index", length=4)
+    public int getCourseTimeIndex() {
+        return courseTimeIndex;
+    }
+
+    public void setCourseTimeIndex(int courseTimeIndex) {
+        this.courseTimeIndex = courseTimeIndex;
     }
 
     @Override

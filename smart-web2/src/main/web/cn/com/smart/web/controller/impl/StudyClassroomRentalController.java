@@ -3,13 +3,11 @@ package cn.com.smart.web.controller.impl;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.entity.TGStudyClassroom;
-import cn.com.smart.web.bean.entity.TGStudyClassroomRental;
-import cn.com.smart.web.bean.entity.TGStudySchool;
-import cn.com.smart.web.bean.entity.TNDict;
+import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.ClassroomSearch;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -18,9 +16,7 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 @Controller
 @RequestMapping("/studyClassroom/rental")
@@ -71,12 +67,38 @@ public class StudyClassroomRentalController extends BaseController {
         return modelView;
     }
 
+    @Autowired
+    private StudyCourseRecordService courseRecordService;
+
     @RequestMapping(value = "/getIdleCourseTime", method = RequestMethod.GET)
     @ResponseBody
     public SmartResponse<TNDict> getIdleCourseTime(String classroomId, int weekInfo) {
-    	// TODO 查找空闲时段
+
+        List<TNDict> dictList = dictService.getItems("COURSE_TIMES").getDatas();
+        List<TNDict> idleList = new ArrayList<>();
+
+        Map<String, Object> params;
+        List<TGStudyCourseRecord> courseRecordList;
+
+        if(CollectionUtils.isNotEmpty(dictList)) {
+            for(TNDict tnDict : dictList) {
+                params = new HashMap<>();
+                params.put("classroomId", classroomId);
+                params.put("weekInfo", weekInfo);
+                params.put("courseTimeIndex", tnDict.getBusiValue());
+                courseRecordList = this.courseRecordService.findByParam(params).getDatas();
+                if(CollectionUtils.isEmpty(courseRecordList)) {
+                    idleList.add(tnDict);
+                }
+            }
+        }
+
 	    // TODO 加入到课程表
-	    return dictService.getItems("COURSE_TIMES");
+        SmartResponse<TNDict> smartResponse = new SmartResponse<>();
+        smartResponse.setResult(IConstant.OP_SUCCESS);
+        smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
+        smartResponse.setDatas(idleList);
+	    return smartResponse;
     }
 
 	/**

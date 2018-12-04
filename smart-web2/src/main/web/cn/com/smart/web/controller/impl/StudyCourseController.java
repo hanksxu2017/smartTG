@@ -14,6 +14,7 @@ import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.CustomBtn;
 import cn.com.smart.web.tag.bean.PageParam;
 import cn.com.smart.web.tag.bean.RefreshBtn;
+import com.sun.org.apache.bcel.internal.generic.ICONST;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -105,7 +106,8 @@ public class StudyCourseController extends BaseController {
     @Autowired
     private DictService dictService;
 
-
+    @Autowired
+    private StudyClassroomRentalService classroomRentalService;
 
 	/**
 	 * 封装课时表对象
@@ -116,9 +118,16 @@ public class StudyCourseController extends BaseController {
 
 		// 获取所有课时对象
 		List<TGStudyCourse> courseList = this.courseService.findNormal().getDatas();
+		// TODO 将租赁信息放入课程表
+        List<TGStudyCourse> rentalCourseList = this.packageClassroomRentalToCourse();
+        if(CollectionUtils.isNotEmpty(rentalCourseList)){
+            courseList.addAll(rentalCourseList);
+        }
+
 		if(CollectionUtils.isEmpty(courseList)) {
 			return courseTable;
 		}
+
 		// 表格头
 		CourseTh courseTh = new CourseTh();
 		// 表格行
@@ -145,6 +154,23 @@ public class StudyCourseController extends BaseController {
 
 		courseTable.setTrs(courseTrList);
         return courseTable;
+    }
+
+    private List<TGStudyCourse> packageClassroomRentalToCourse() {
+        List<TGStudyCourse> studyCourseList = new ArrayList<>();
+
+        List<TGStudyClassroomRental> classroomRentalList = this.classroomRentalService.findNormal().getDatas();
+        if(CollectionUtils.isNotEmpty(classroomRentalList)) {
+            TGStudyCourse course;
+            for(TGStudyClassroomRental classroomRental : classroomRentalList) {
+                course = new TGStudyCourse();
+                course.setCourseTimeIndex(classroomRental.getCourseTimeIndex());
+                course.setWeekInfo(classroomRental.getWeekInfo());
+                course.setName(classroomRental.getTenantName());
+                studyCourseList.add(course);
+            }
+        }
+        return studyCourseList;
     }
 
 	/**
