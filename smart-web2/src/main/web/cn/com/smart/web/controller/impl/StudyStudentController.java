@@ -341,36 +341,19 @@ public class StudyStudentController extends BaseController {
 		params.put("courseId", id);
 		params.put("studentId", studentId);
 		params.put("status", IConstant.STATUS_NORMAL);
-		List<TGStudyStudentCourseRel> relList = this.studentCourseRelService.findByParam(params).getDatas();
-		if (CollectionUtils.isNotEmpty(relList)) {
-			TGStudyStudentCourseRel rel = relList.get(0);
-			if (null != rel && !StringUtils.equals(rel.getStatus(), IConstant.STATUS_EXIT_COURSE)) {
-				rel.setStatus(IConstant.STATUS_EXIT_COURSE);
-				rel.setUpdateTime(new Date());
-				this.studentCourseRelService.update(rel);
-			}
-		}
+		this.studentCourseRelService.deleteByField(params);
 
 		// 本周内未结束的课时需要结束掉
 		params = new HashMap<>();
 		params.put("courseId", id);
 		params.put("studentId", studentId);
 		params.put("status", IConstant.STATUS_NORMAL);
-		List<TGStudyCourseStudentRecord> courseStudentRecordList =
-				this.courseStudentRecordService.findByParam(params).getDatas();
-		if (CollectionUtils.isNotEmpty(courseStudentRecordList)) {
-			for (TGStudyCourseStudentRecord record : courseStudentRecordList) {
-				record.setStatus(IConstant.STATUS_COURSE_CANCEL_AS_EXIT);
-				record.setUpdateTime(new Date());
-			}
-			this.courseStudentRecordService.update(courseStudentRecordList);
-		}
+		this.courseStudentRecordService.deleteByField(params);
 
 		smartResp.setResult(IConstant.OP_SUCCESS);
 		smartResp.setMsg("已完成退班!");
 		return smartResp;
 	}
-
 
 	/**
 	 * @return JSP页面对象
@@ -410,13 +393,15 @@ public class StudyStudentController extends BaseController {
 			if (null != studyStudentDb) {
 				renewRecord.setStudentName(studyStudentDb.getName());
 
-				studyStudentDb.setCreateTime(studyStudentDb.getCreateTime());
 				studyStudentDb.setUpdateTime(new Date());
 				studyStudentDb.setRemainCourse(studyStudentDb.getRemainCourse() + renewRecord.getCourseCount());
 				studyStudentDb.setTotalCourse(studyStudentDb.getTotalCourse() + renewRecord.getCourseCount());
 				smartResponse = studentService.update(studyStudentDb);
 				if (smartResponse.isSuccess()) {
-					smartResponse = renewRecordService.save(renewRecord);
+					// 增加续费记录
+					renewRecordService.save(renewRecord);
+					// 取消系统提醒
+					this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, studyStudentDb.getId());
 				}
 			}
 		}
@@ -458,10 +443,11 @@ public class StudyStudentController extends BaseController {
 				studyStudentDb.setStatus(IConstant.STATUS_TEMP_LEAVE);
 				studyStudentDb.setUpdateTime(new Date());
 				studentService.update(studyStudentDb);
-				// 删除所有班级信息
+
 				Map<String, Object> params = new HashMap<>();
 				params.put("status", IConstant.STATUS_NORMAL);
 				params.put("studentId", studentId);
+				// 删除所有班级信息
 				this.studentCourseRelService.deleteByField(params);
 				// 删除所有未结课的课时信息
 				this.courseStudentRecordService.deleteByField(params);
@@ -630,14 +616,11 @@ public class StudyStudentController extends BaseController {
 			res.setData(this.studentService.find(studentId).getData());
 			res.setResult(IConstant.OP_SUCCESS);
 			res.setMsg(IConstant.OP_SUCCESS_MSG);
+			return res;
 		} else {
 			res.setMsg(smartResponse.getMsg());
+			return res;
 		}
-
-		res.setData(this.studentService.find(studentId).getData());
-		res.setResult(IConstant.OP_SUCCESS);
-		res.setMsg(IConstant.OP_SUCCESS_MSG);
-		return res;
 	}
 
 	private CourseStudentRecordStatusEnum parseCourseStudentStatus(String signType) {

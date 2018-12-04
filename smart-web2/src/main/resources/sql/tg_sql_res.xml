@@ -16,11 +16,9 @@
     <sqlUnit name="select_study_teacher_list">
         <sql>
             select t.id, t.name, t.phone, date_format(t.create_time, '%Y-%c-%d'),
-            (select count(id) from tg_study_course where teacher_id = t.id),
-            (SELECT COUNT(DISTINCT student_id) FROM tg_study_student_course_rel WHERE course_id IN (
-            SELECT id FROM tg_study_course WHERE teacher_id = t.id)),
-            (SELECT COUNT(id) FROM tg_study_student_course_rel WHERE course_id IN (
-            SELECT id FROM tg_study_course WHERE teacher_id = t.id))
+            (SELECT COUNT(c1.id) FROM tg_study_course c1 WHERE c1.teacher_id = t.id AND c1.status = 'NORMAL'),
+            (SELECT COUNT(DISTINCT rel1.student_id) FROM tg_study_student_course_rel rel1 WHERE rel1.status = 'NORMAL' and rel1.course_id IN (SELECT c2.id FROM tg_study_course c2 WHERE c2.teacher_id = t.id)),
+            (SELECT COUNT(rel2.id) FROM tg_study_student_course_rel rel2 WHERE rel2.status = 'NORMAL' and rel2.course_id IN (SELECT c3.id FROM tg_study_course c3 WHERE c3.teacher_id = t.id))
             from tg_study_teacher t
             order by t.create_time asc
         </sql>
@@ -232,7 +230,7 @@
     <sqlUnit name="courseRecord_simp_list">
         <sql>
             select t.id, concat(t.course_date, ' ', t.course_time), t.course_name,
-            CASE t.status WHEN 'NORMAL' THEN '正常'
+            CASE t.status WHEN 'NORMAL' THEN '未结课'
             WHEN 'NORMAL_END' THEN '已结课'
             ELSE '未定义' END
             from tg_study_course_record t
