@@ -308,5 +308,15 @@
         </sql>
     </sqlUnit>
 
+    <!-- 续费记录 -->
+    <sqlUnit name="renew_record_list">
+        <sql>
+            select t.id, t.student_name, t.amount, t.course_count, t.operator_full_name, t.create_time, t.description
+            from tg_study_renew_record t
+            where 1=1
+            [and t.student_name like '%:studentName%']
+            order by t.create_time desc
+        </sql>
+    </sqlUnit>
 
 </sqlMap>
