@@ -1,6 +1,5 @@
 package cn.com.smart.web.controller.impl;
 
-import cn.com.smart.Smart;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.utils.DateUtil;
@@ -8,13 +7,8 @@ import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.course.*;
 import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.CourseSearch;
-import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
-import cn.com.smart.web.tag.bean.CustomBtn;
-import cn.com.smart.web.tag.bean.PageParam;
-import cn.com.smart.web.tag.bean.RefreshBtn;
-import com.sun.org.apache.bcel.internal.generic.ICONST;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -55,28 +49,6 @@ public class StudyCourseController extends BaseController {
     @RequestMapping("/list")
     public ModelAndView list(CourseSearch searchParam, RequestPage page) {
 	    ModelAndView modelView = new ModelAndView();
-/*        SmartResponse<Object> smartResp = opService.getDatas("select_course_list", searchParam, page.getStartNum(), page.getPageSize());
-
-        Map<String, Object> modelMap = modelView.getModelMap();
-        refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
-        pageParam = new PageParam(this.getUriPath() + "list", null, page.getPage(), page.getPageSize());
-
-        modelMap.put("pageParam", pageParam);
-        modelMap.put("refreshBtn", refreshBtn);
-        modelMap.put("smartResp", smartResp);
-        modelMap.put("searchParam", searchParam);
-
-        modelMap.put("teachers", this.teacherService.findNormal().getDatas());
-
-        CustomBtn customBtnReport = new CustomBtn("generateDailyCourse", "生成周课时表",
-		        "生成周课时表", this.getUriPath() + "record/generateDailyCourse","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
-        customBtnReport.setWidth("600");
-
-        customBtns = new ArrayList<>(1);
-        customBtns.add(customBtnReport);
-
-        modelMap.put("customBtns", customBtns);*/
-
         modelView.setViewName(this.getPageDir() + "table");
         return modelView;
     }
@@ -166,7 +138,8 @@ public class StudyCourseController extends BaseController {
                 course = new TGStudyCourse();
                 course.setCourseTimeIndex(classroomRental.getCourseTimeIndex());
                 course.setWeekInfo(classroomRental.getWeekInfo());
-                course.setName(classroomRental.getTenantName());
+                course.setTeacherName(classroomRental.getName());
+                course.setClassroomId(classroomRental.getClassroomId());
                 studyCourseList.add(course);
             }
         }

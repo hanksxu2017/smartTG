@@ -85,7 +85,7 @@
 <script>
     $(function () {
         $("#classroomSelForAddRental").change(function () {
-            var text = $(this).find("option:selected").text();
+            var text = $(this).find('option:selected').text();
             $("#classroomName").val(text);
 
 			getIdleCourseTime($(this).val(), $("#weekInfoForAddRental").val())
@@ -102,7 +102,7 @@
     });
     
     function getIdleCourseTime(classroomId, weekInfo) {
-        if(null != weekInfo && null != classroomId) {
+        if(null != weekInfo && '' !== weekInfo && null != classroomId && '' !== classroomId) {
             $("#courseTimeForAddRental").empty();
             $("#courseTimeForAddRental").append("<option value=''>--请选择--</option>");
             var url = "${ctx}/studyClassroom/rental/getIdleCourseTime?weekInfo=" + weekInfo + "&classroomId=" + classroomId;

@@ -59,8 +59,6 @@ public class StudyClassroomRentalController extends BaseController {
 
         modelView.getModelMap().put("classrooms", classroomService.findNormal().getDatas());
 
-
-
 	    modelView.getModelMap().put("weekInfoList", dictService.getItems("WEEK_INFO_LIST").getDatas());
 
         modelView.setViewName(getPageDir() + "add");
@@ -68,32 +66,31 @@ public class StudyClassroomRentalController extends BaseController {
     }
 
     @Autowired
-    private StudyCourseRecordService courseRecordService;
+    private StudyCourseService courseService;
 
     @RequestMapping(value = "/getIdleCourseTime", method = RequestMethod.GET)
     @ResponseBody
-    public SmartResponse<TNDict> getIdleCourseTime(String classroomId, int weekInfo) {
+    public SmartResponse<TNDict> getIdleCourseTime(String classroomId, String weekInfo) {
 
         List<TNDict> dictList = dictService.getItems("COURSE_TIMES").getDatas();
         List<TNDict> idleList = new ArrayList<>();
 
         Map<String, Object> params;
-        List<TGStudyCourseRecord> courseRecordList;
+        List<TGStudyCourse> courseList;
 
         if(CollectionUtils.isNotEmpty(dictList)) {
             for(TNDict tnDict : dictList) {
                 params = new HashMap<>();
                 params.put("classroomId", classroomId);
-                params.put("weekInfo", weekInfo);
-                params.put("courseTimeIndex", tnDict.getBusiValue());
-                courseRecordList = this.courseRecordService.findByParam(params).getDatas();
-                if(CollectionUtils.isEmpty(courseRecordList)) {
+                params.put("weekInfo", Short.valueOf(weekInfo));
+                params.put("courseTimeIndex", Short.valueOf(tnDict.getBusiValue()));
+	            courseList = this.courseService.findByParam(params).getDatas();
+                if(CollectionUtils.isEmpty(courseList)) {
                     idleList.add(tnDict);
                 }
             }
         }
 
-	    // TODO 加入到课程表
         SmartResponse<TNDict> smartResponse = new SmartResponse<>();
         smartResponse.setResult(IConstant.OP_SUCCESS);
         smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
@@ -110,6 +107,7 @@ public class StudyClassroomRentalController extends BaseController {
 	@ResponseBody
 	public SmartResponse<String> save(TGStudyClassroomRental classroomRental) {
 		classroomRental.setCreateTime(new Date());
+		classroomRental.setName("[租]" + classroomRental.getTenantName());
 		return classroomRentalService.save(classroomRental);
 	}
 

@@ -55,7 +55,6 @@ public class TGStudyClassroomRental extends BaseBeanImpl implements DateBean {
 
 	private String courseTime;
 
-
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
