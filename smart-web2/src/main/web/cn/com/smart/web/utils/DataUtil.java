@@ -4,6 +4,7 @@ import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
+import java.text.DecimalFormat;
 import java.util.Collection;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -219,5 +220,10 @@ public class DataUtil {
 			return cnArr[num];
 	    }
 	    return "";
+	}
+
+	public static String getRate(int count, int total) {
+		DecimalFormat df = new DecimalFormat("0.00");//格式化小数
+		return df.format((float)(count * 100) /total);//返回的是String类型
 	}
 }

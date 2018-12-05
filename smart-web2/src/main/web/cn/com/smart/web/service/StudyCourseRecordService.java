@@ -5,6 +5,7 @@ import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
 import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
+import cn.com.smart.web.bean.entity.TGStudyTeacher;
 import cn.com.smart.web.dao.impl.StudyCourseRecordDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;

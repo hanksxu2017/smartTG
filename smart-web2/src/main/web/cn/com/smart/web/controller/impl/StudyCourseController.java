@@ -90,7 +90,7 @@ public class StudyCourseController extends BaseController {
 
 		// 获取所有课时对象
 		List<TGStudyCourse> courseList = this.courseService.findNormal().getDatas();
-		// TODO 将租赁信息放入课程表
+		// 将租赁信息放入课程表
         List<TGStudyCourse> rentalCourseList = this.packageClassroomRentalToCourse();
         if(CollectionUtils.isNotEmpty(rentalCourseList)){
             courseList.addAll(rentalCourseList);

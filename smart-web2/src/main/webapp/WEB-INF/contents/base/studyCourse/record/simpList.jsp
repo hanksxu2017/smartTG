@@ -51,17 +51,6 @@
 <script>
     $(function () {
         var trs = $("#courseRecordSimpleList").find('table').find('tbody');
-        $.each(trs, function (index, tr) {
-            var status = $(tr).find('td').eq(2).html();
-            if('已结课' === status) {
-                $(tr).css('background', '#F0FFF0');
-            }else if('未结课' === status) {
-                $(tr).css('background', '#F2E6E6');
-            } else if('正常' === status){
-                $(tr).css('background', '#E0E0E0');
-            }
-        });
-
     });
 
 </script>

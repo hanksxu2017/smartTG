@@ -1,9 +1,14 @@
 package cn.com.smart.web.service;
 
+import cn.com.smart.constant.IConstant;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.dao.impl.StudyCourseDao;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  * 版本服务类
@@ -18,6 +23,14 @@ public class StudyCourseService extends MgrServiceImpl<TGStudyCourse> {
 	@Override
 	public StudyCourseDao getDao() {
 		return (StudyCourseDao)super.getDao();
+	}
+
+
+	public List<TGStudyCourse> findNormalCourseByTeacherId(String teacherId) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("teacherId", teacherId);
+		params.put("status", IConstant.STATUS_NORMAL);
+		return this.findByParam(params).getDatas();
 	}
 
 }

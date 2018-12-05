@@ -341,4 +341,117 @@
         </sql>
     </sqlUnit>
 
+    <!-- ######################################教师统计###################################### -->
+    <sqlUnit name="statistics_teacher_list">
+        <sql>
+            select t.id, t.month, t.teacher_name,
+            t.course_count, t.student_count, t.course_record_count, t.course_record_student_count,
+            t.exit_course_count, t.drop_out_count,
+            t.new_student_count, t.new_student_exit_course_count, t.new_student_drop_out_count,
+            concat(t.exit_course_rate, '%'),
+            concat(t.drop_out_rate, '%'),
+            concat(t. new_student_exit_course_rate, '%'),
+            concat(t.new_student_drop_out_rate, '%'),
+            DATE_FORMAT(t.create_time,'%Y-%m-%d')
+            from tg_study_statistics_teacher t
+            where month =:month
+            order by t.course_count
+        </sql>
+    </sqlUnit>
+
+
+    <!-- 带班数 -->
+    <sqlUnit name="st_course_count">
+        <sql>
+            select count(t.id) from tg_study_course t
+            where t.teacher_id =:teacherId
+            and t.status = 'NORMAL'
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生在班数 -->
+    <sqlUnit name="st_student_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+            and t.status = 'NORMAL'
+        </sql>
+    </sqlUnit>
+
+    <!-- 课时数 -->
+    <sqlUnit name="st_course_record_count">
+        <sql>
+            select count(t.id) from tg_study_course_record t
+            where t.teacher_id =:teacherId and t.status = 'NORMAL_END'
+            and LEFT(t.course_date, 7) = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+        </sql>
+    </sqlUnit>
+
+    <!-- 课时学生人次数 -->
+    <sqlUnit name="st_course_record_student_count">
+        <sql>
+            select count(t.id) from tg_study_course_student_record t
+            where (t.status = 'SIGNED' or t.status = 'X_MAKE_UP')
+            and t.course_record_id in (
+                select rec.id from tg_study_course_record rec
+                where rec.teacher_id =:teacherId and rec.status = 'NORMAL_END'
+                and LEFT(rec.course_date, 7) = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+            )
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生退班数 -->
+    <sqlUnit name="st_exit_course_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'EXIT_COURSE'
+            and LEFT(t.update_time, 7) = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生退学数 -->
+    <sqlUnit name="st_drop_out_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'EXIT_COURSE'
+            and LEFT(t.update_time, 7) = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+            and t.student_id in (select stu.id from tg_study_student stu where stu.status = 'DROP_OUT')
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生在班新入学数 -->
+    <sqlUnit name="st_new_student_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'NORMAL'
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+            and t.student_id in (select stu.id from tg_study_student stu
+                where date_format(stu.create_time, '%Y %m') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y %m'))
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生退班新入学数 -->
+    <sqlUnit name="st_new_student_exit_course_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'EXIT_COURSE'
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+            and t.student_id in (select stu.id from tg_study_student stu
+                where date_format(stu.create_time, '%Y %m') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y %m'))
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生退学新入学数 -->
+    <sqlUnit name="st_new_student_drop_out_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'EXIT_COURSE'
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+            and t.student_id in (select stu.id from tg_study_student stu
+                where stu.status = 'DROP_OUT' and date_format(stu.create_time, '%Y %m') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y %m'))
+        </sql>
+    </sqlUnit>
+
 </sqlMap>

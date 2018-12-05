@@ -109,5 +109,5 @@
     <!-- 支持注解事物 -->
     <tx:annotation-driven transaction-manager="transactionManager" proxy-target-class="true" />
 
-
+	<import resource="spring-quartz.xml"/>
 </beans>
