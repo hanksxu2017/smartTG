@@ -117,5 +117,8 @@ public interface IConstant {
 	int NOTIFY_COURSE_SERIES_UNSIGNED = 2;
 	int NOTIFY_COURSE_RENEW = 3;
 
+	String SIGNED_TYPE_NORMAL = "NORMAL";
+	String SIGNED_TYPE_MAKEUP = "MAKE_UP";
+
 
 }

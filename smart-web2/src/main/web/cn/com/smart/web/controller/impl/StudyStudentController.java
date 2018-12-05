@@ -564,7 +564,7 @@ public class StudyStudentController extends BaseController {
 	/**
 	 * 构建操作栏
 	 *
-	 * @return
+	 * @return  操作列
 	 */
 	private List<CustomTableCell> generateOperationBtn() {
 		Map<String, Object> cellParam = new HashMap<>();
@@ -577,33 +577,31 @@ public class StudyStudentController extends BaseController {
 	}
 
 	/**
-	 * @return
+	 * @return  按钮组
 	 */
 	private String concatBtnDiv() {
-		StringBuilder builder = new StringBuilder();
-		builder.append("<div class='btn-group'>");
-		builder.append("<button type='button' class='btn btn-default btn-sm opr-btn'><span class='opr-span'>点名<span></button>");
-		builder.append("<button type='button' class='btn btn-default btn-sm dropdown-toggle' data-toggle='dropdown'>");
-		builder.append("<span class='caret'></span>");
-		builder.append("</button>");
-		builder.append("<ul class='dropdown-menu' role='menu'>");
-		builder.append("<li><a class='student-single-sign' data-type='signed' href='javascript:void(0);' data-id='${id}'><span style='color:darkslategrey;'>签到</span></a></li>");
-//		builder.append("<li class='divider'></li>");
-		builder.append("<li><a class='student-single-sign' data-type='personal_leave' href='javascript:void(0);' data-id='${id}'><span style='color:darkred;'>请假</span></a></li>");
-		builder.append("<li><a class='student-single-sign' data-type='play_truant' href='javascript:void(0);' data-id='${id}'><span style='color:red;'>缺课</span></a></li>");
-		builder.append("</ul>");
-		builder.append("</div>");
-		return builder.toString();
+		//		builder.append("<li class='divider'></li>");
+		return "<div class='btn-group'>" +
+				"<button type='button' class='btn btn-default btn-sm opr-btn'><span class='opr-span'>点名<span></button>" +
+				"<button type='button' class='btn btn-default btn-sm dropdown-toggle' data-toggle='dropdown'>" +
+				"<span class='caret'></span>" +
+				"</button>" +
+				"<ul class='dropdown-menu' role='menu'>" +
+				"<li><a class='student-single-sign' data-type='signed' href='javascript:void(0);' data-id='${id}'><span style='color:darkslategrey;'>签到</span></a></li>" +
+				"<li><a class='student-single-sign' data-type='personal_leave' href='javascript:void(0);' data-id='${id}'><span style='color:darkred;'>请假</span></a></li>" +
+				"<li><a class='student-single-sign' data-type='play_truant' href='javascript:void(0);' data-id='${id}'><span style='color:red;'>缺课</span></a></li>" +
+				"</ul>" +
+				"</div>";
 	}
 
 
 	/**
 	 * 提交单个学生的点名结果
 	 *
-	 * @param courseRecordId 课时编号
-	 * @param studentId      学生编号
-	 * @param signType       点名结果
-	 * @return
+	 * @param courseRecordId    课时编号
+	 * @param studentId         学生编号
+	 * @param signType          点名结果
+	 * @return                  学生签到结果信息
 	 */
 	@RequestMapping(value = "/subStudentSingleSign", method = RequestMethod.POST)
 	@ResponseBody
@@ -671,8 +669,7 @@ public class StudyStudentController extends BaseController {
 			return response;
 		}
 		if (0 != courseRecord.getStudentPersonalLeave() ||
-				0 != courseRecord.getStudentPlayTruant() ||
-				0 != courseRecord.getStudentOtherAbsent()) {
+				0 != courseRecord.getStudentPlayTruant()) {
 			response.setMsg("存在学生缺席记录,无法全部签到!");
 			return response;
 		}
@@ -688,7 +685,6 @@ public class StudyStudentController extends BaseController {
 			courseRecord.setStudentQuantityActual(courseStudentRecordList.size());
 			courseRecord.setStudentPersonalLeave(0);
 			courseRecord.setStudentPlayTruant(0);
-			courseRecord.setStudentOtherAbsent(0);
 
 			TGStudyStudent student;
 			for (TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
@@ -799,6 +795,13 @@ public class StudyStudentController extends BaseController {
 			smartResponse.setMsg("课时目前无法进行签到操作,请稍后再试!");
 			return smartResponse;
 		}
+		if(StringUtils.equals(IConstant.SIGNED_TYPE_MAKEUP, courseStudentRecord.getSignType())) {
+			smartResponse.setMsg("补课签到不支持此项操作!");
+			return smartResponse;
+		}
+
+		boolean isFirstSign = StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.NORMAL.name());
+
 		// 更新学生课时的签到信息
 		courseStudentRecord.setStatus(statusEnum.name());
 		courseStudentRecord.setDescription(description);
@@ -809,19 +812,22 @@ public class StudyStudentController extends BaseController {
 			return smartResponse;
 		}
 
-
 		TGStudyStudent student = this.studentService.find(courseStudentRecord.getStudentId()).getData();
 		student.setUpdateTime(new Date());
 		if (CourseStudentRecordStatusEnum.SIGNED.equals(statusEnum)) {
 			// 学生课时-1
-			student.setRemainCourse(student.getRemainCourse() - 1);
+			if(isFirstSign) {
+				student.setRemainCourse(student.getRemainCourse() - 1);
+			}
 			student.setCourseSeriesUnSigned(0);
 			this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
 		} else {
 			if (!isSignAsHasCome(studentId, courseStudentRecord.getCourseId())) {
 				// 签到类型非到班签到时计算缺课逻辑
 				// 学生课时-1
-				student.setRemainCourse(student.getRemainCourse() - 1);
+				if(isFirstSign){
+					student.setRemainCourse(student.getRemainCourse() - 1);
+				}
 				// 非正常签到,生成异常签到记录
 				student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
 			}
@@ -1207,7 +1213,6 @@ public class StudyStudentController extends BaseController {
 		return modelView;
 	}
 
-
 	@RequestMapping(value = "/subMakeUpStudent", method = RequestMethod.POST)
 	@ResponseBody
 	public SmartResponse<String> subMakeUpStudent(String studentIds, String courseRecordId) {
@@ -1223,8 +1228,8 @@ public class StudyStudentController extends BaseController {
 			return smartResponse;
 		}
 		String[] sId = studentIds.split(",");
-		for(int index = 0; index < sId.length; index++) {
-			doSubMakeUp(sId[index], courseRecord);
+		for (String aSId : sId) {
+			doSubMakeUp(aSId, courseRecord);
 		}
 
 		smartResponse.setResult(IConstant.OP_SUCCESS);
@@ -1233,18 +1238,6 @@ public class StudyStudentController extends BaseController {
 	}
 
 	private void doSubMakeUp(String studentId, TGStudyCourseRecord courseRecord) {
-		// 新增一个补课类型的学生课时
-		TGStudyCourseStudentRecord courseStudentRecord = new TGStudyCourseStudentRecord();
-		//
-		TGStudyStudent student = this.studentService.find(studentId).getData();
-
-		courseStudentRecord.setCourseRecordId(courseRecord.getId());
-		courseStudentRecord.setCourseId(courseRecord.getCourseId());
-		courseStudentRecord.setStudentId(student.getId());
-		courseStudentRecord.setStudentName(student.getName());
-		courseStudentRecord.setStatus(CourseStudentRecordStatusEnum.X_MAKE_UP.name());
-		courseStudentRecord.setCreateTime(new Date());
-		this.courseStudentRecordService.save(courseStudentRecord);
 
 		Map<String,Object> params = new HashMap<>();
 		params.put("studentId", studentId);
@@ -1261,13 +1254,25 @@ public class StudyStudentController extends BaseController {
 			}
 			TGStudyCourseStudentRecord previousAbsentRecord = previousAbsentRecordList.get(0);
 			if (null != previousAbsentRecord && !StringUtils.equals(previousAbsentRecord.getStatus(), CourseStudentRecordStatusEnum.NORMAL.name())) {
-				previousAbsentRecord.setStatus(CourseStudentRecordStatusEnum.NORMAL.name());
+				// 新增一个补课类型的学生课时
+				TGStudyCourseStudentRecord courseStudentRecord = new TGStudyCourseStudentRecord();
+				TGStudyStudent student = this.studentService.find(studentId).getData();
+				courseStudentRecord.setCourseRecordId(courseRecord.getId());
+				courseStudentRecord.setCourseId(courseRecord.getCourseId());
+				courseStudentRecord.setStudentId(student.getId());
+				courseStudentRecord.setStudentName(student.getName());
+				courseStudentRecord.setStatus(CourseStudentRecordStatusEnum.X_MAKE_UP.name());
+				courseStudentRecord.setCreateTime(new Date());
+				courseStudentRecord.setMakeUpTargetId(previousAbsentRecord.getId());
+				this.courseStudentRecordService.save(courseStudentRecord);
+				// 修改补课目标课时为已签到
+				previousAbsentRecord.setStatus(CourseStudentRecordStatusEnum.SIGNED.name());
+				previousAbsentRecord.setSignType(IConstant.SIGNED_TYPE_MAKEUP);
 				previousAbsentRecord.setUpdateTime(new Date());
-				previousAbsentRecord.setDescription(
-						StringUtils.isNotBlank(previousAbsentRecord.getDescription()) ?
-								previousAbsentRecord.getDescription() + " 完成补课,修改为签到状态;" : "完成补课,修改为签到状态;");
 				this.courseStudentRecordService.update(previousAbsentRecord);
-
+				// 更新签到统计信息
+				this.updateSignCount(previousAbsentRecord.getCourseRecordId());
+				// 取消学生连续签退计数器
 				if(student.getCourseSeriesUnSigned() != 0) {
 					student.setCourseSeriesUnSigned(0);
 					student.setUpdateTime(new Date());
@@ -1277,7 +1282,31 @@ public class StudyStudentController extends BaseController {
 				this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
 			}
 		}
+	}
 
+	/**
+	 * 更新课时的签到信息
+	 * @param courseRecordId    课时编号
+	 */
+	private void updateSignCount(String courseRecordId) {
+		// 修改签到统计信息
+		TGStudyCourseRecord previousCourseRecord = this.courseRecordService.find(courseRecordId).getData();
+
+		Map<String, Object> params = new HashMap<>();
+		params.put("courseRecordId", courseRecordId);
+		params.put("status", CourseStudentRecordStatusEnum.SIGNED.name());
+		List<TGStudyCourseStudentRecord> normalList = this.courseStudentRecordService.findByParam(params).getDatas();
+		previousCourseRecord.setStudentQuantityActual(CollectionUtils.isNotEmpty(normalList) ? normalList.size() : 0);
+
+		params.put("status", CourseStudentRecordStatusEnum.PLAY_TRUANT.name());
+		List<TGStudyCourseStudentRecord> playTruantList = this.courseStudentRecordService.findByParam(params).getDatas();
+		previousCourseRecord.setStudentPlayTruant(CollectionUtils.isNotEmpty(playTruantList) ? playTruantList.size() : 0);
+
+		params.put("status", CourseStudentRecordStatusEnum.PERSONAL_LEAVE.name());
+		List<TGStudyCourseStudentRecord> personalLeaveList = this.courseStudentRecordService.findByParam(params).getDatas();
+		previousCourseRecord.setStudentPersonalLeave(CollectionUtils.isNotEmpty(personalLeaveList) ? personalLeaveList.size() : 0);
+
+		this.courseRecordService.update(previousCourseRecord);
 	}
 
 	@RequestMapping(value = "/removeMakeUpStudent", method = RequestMethod.POST)
@@ -1287,7 +1316,19 @@ public class StudyStudentController extends BaseController {
 		Map<String, Object> params = new HashMap<>();
 		params.put("studentId", studentId);
 		params.put("courseRecordId", courseRecordId);
-		this.courseStudentRecordService.deleteByField(params);
+		params.put("status", CourseStudentRecordStatusEnum.X_MAKE_UP.name());
+		List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByParam(params).getDatas();
+		if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
+			TGStudyCourseStudentRecord targetCourseStudentRecord = this.courseStudentRecordService.find(courseStudentRecordList.get(0).getMakeUpTargetId()).getData();
+			if(null != targetCourseStudentRecord) {
+				targetCourseStudentRecord.setStatus(CourseStudentRecordStatusEnum.PLAY_TRUANT.name());
+				this.courseStudentRecordService.update(targetCourseStudentRecord);
+
+				this.updateSignCount(targetCourseStudentRecord.getCourseRecordId());
+			}
+
+			this.courseStudentRecordService.deleteByField(params);
+		}
 
 		smartResponse.setResult(IConstant.OP_SUCCESS);
 		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);

@@ -43,7 +43,6 @@ public class StudyCourseRecordService extends MgrServiceImpl<TGStudyCourseRecord
 			int actual = 0;
 			int personalLeave = 0;
 			int playTruant = 0;
-			int otherAbsent = 0;
 
 			for (TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
 				if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.NORMAL.name())) {
@@ -65,7 +64,6 @@ public class StudyCourseRecordService extends MgrServiceImpl<TGStudyCourseRecord
 				courseRecord.setStudentQuantityActual(actual);
 				courseRecord.setStudentPersonalLeave(personalLeave);
 				courseRecord.setStudentPlayTruant(playTruant);
-				courseRecord.setStudentOtherAbsent(otherAbsent);
 
 				courseRecord.setUpdateTime(new Date());
 				courseRecord.setStatus(IConstant.STATUS_COURSE_END);

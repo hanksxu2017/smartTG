@@ -283,6 +283,7 @@
             and t.course_id !=:courseId
             and (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT')
             and student.status = 'NORMAL'
+            and t.student_id not in(select rec.student_id from tg_study_course_student_record rec where rec.course_record_id =:courseRecordId)
             [and student.name like '%:name%']
             group by t.id
         </sql>

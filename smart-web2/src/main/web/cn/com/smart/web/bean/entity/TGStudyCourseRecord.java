@@ -53,10 +53,8 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean, Compa
     private int studentQuantityActual;
     // 事假
     private int studentPersonalLeave;
-    // 旷课
+    // 缺课
     private int studentPlayTruant;
-    // 其他缺席
-    private int studentOtherAbsent;
 
     private String status = IConstant.STATUS_NORMAL;
 
@@ -209,15 +207,6 @@ public class TGStudyCourseRecord extends BaseBeanImpl implements DateBean, Compa
 
     public void setStudentPlayTruant(int studentPlayTruant) {
         this.studentPlayTruant = studentPlayTruant;
-    }
-
-    @Column(name="student_other_absent", length=11)
-    public int getStudentOtherAbsent() {
-        return studentOtherAbsent;
-    }
-
-    public void setStudentOtherAbsent(int studentOtherAbsent) {
-        this.studentOtherAbsent = studentOtherAbsent;
     }
 
     @Column(name="description", length=128)
