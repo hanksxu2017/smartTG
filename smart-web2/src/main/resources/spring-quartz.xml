@@ -18,8 +18,7 @@
         <!-- jobDetail -->
         <property name="jobDetail" ref="springQtzJobMethod"/>
         <!-- cron表达式，执行时间  每月1号凌晨1点执行一次 -->
-        <property name="cronExpression" value="0 0/1 * * * ?"/>
-        <!--<property name="cronExpression" value="0 0 1 1 * ?"/>-->
+        <property name="cronExpression" value="0 0 1 1 * ?"/>
     </bean>
 
 
