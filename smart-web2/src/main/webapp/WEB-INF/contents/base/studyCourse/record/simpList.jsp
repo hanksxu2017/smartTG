@@ -1,6 +1,7 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
 <%@ taglib prefix="cnoj" uri="/cnoj-tags" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <div class="wrap-content">
 	<div class="panel no-border" id="courseRecordSimpleList">
 		<div class="panel-search borer-bottom">
@@ -24,7 +25,8 @@
 						<option value="">--请选择--</option>
 						<c:forEach items="${courseDates}" var="courseDate">
 							<option value="${courseDate.courseDate}"
-							        <c:if test="${searchParam.selectCourseDate eq courseDate.courseDate}">selected</c:if> >${courseDate.description}</option>
+							        <%--<c:if test="${fn:contains(courseDate.description, '星期一')}">style="background: #C4E1FF" </c:if>--%>
+							        <c:if test="${searchParam.selectCourseDate eq courseDate.courseDate}">selected style="background: #e4e34e"</c:if> >${courseDate.description}</option>
 						</c:forEach>
 					</select>
 				</div>
