@@ -43,8 +43,8 @@
         [and (t.full_name like '%:name%' or t.username like '%:name%' or t.mobile_no='%:name%')] order by t.create_time asc </sql>
     </sqlUnit>
     <sqlUnit name="role_adduser_list">
-        <sql>select t.id,t.username,t.full_name,t.mobile_no,o.seq_names 
-        from t_n_user t,t_n_org o where t.state = '1' and t.org_id=o.id  
+        <sql>select t.id,t.username,t.full_name,t.mobile_no
+        from t_n_user t where t.state = '1'
         and t.id not in (select ru.user_id from t_n_role_user ru where ru.role_id=:id) 
         [and (t.full_name like '%:name%' or t.username like '%:name%' or t.mobile_no='%:name%')] order by t.create_time asc </sql>
     </sqlUnit>

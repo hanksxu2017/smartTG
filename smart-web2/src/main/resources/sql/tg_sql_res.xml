@@ -16,11 +16,9 @@
     <sqlUnit name="select_study_teacher_list">
         <sql>
             select t.id, t.name, t.phone, date_format(t.create_time, '%Y-%c-%d'),
-            (select count(id) from tg_study_course where teacher_id = t.id),
-            (SELECT COUNT(DISTINCT student_id) FROM tg_study_student_course_rel WHERE course_id IN (
-            SELECT id FROM tg_study_course WHERE teacher_id = t.id)),
-            (SELECT COUNT(id) FROM tg_study_student_course_rel WHERE course_id IN (
-            SELECT id FROM tg_study_course WHERE teacher_id = t.id))
+            (SELECT COUNT(c1.id) FROM tg_study_course c1 WHERE c1.teacher_id = t.id AND c1.status = 'NORMAL'),
+            (SELECT COUNT(DISTINCT rel1.student_id) FROM tg_study_student_course_rel rel1 WHERE rel1.status = 'NORMAL' and rel1.course_id IN (SELECT c2.id FROM tg_study_course c2 WHERE c2.teacher_id = t.id)),
+            (SELECT COUNT(rel2.id) FROM tg_study_student_course_rel rel2 WHERE rel2.status = 'NORMAL' and rel2.course_id IN (SELECT c3.id FROM tg_study_course c3 WHERE c3.teacher_id = t.id))
             from tg_study_teacher t
             order by t.create_time asc
         </sql>
@@ -135,10 +133,10 @@
     </sqlUnit>
     <sqlUnit name="teacher_course_weeks">
         <sql>
+            SELECT * FROM (
             select DISTINCT t.week_info
             from tg_study_course t
-            where t.teacher_id =:teacherId
-            order by t.create_time asc
+            where t.teacher_id =:teacherId) temp ORDER BY temp.week_info
         </sql>
     </sqlUnit>
     <!-- 课时的学生列表 -->
@@ -171,6 +169,9 @@
             t.course_time, t.classroom_name, t.teacher_name,
             CASE rel.status WHEN "NORMAL" THEN '正常'
             WHEN 'EXIT_COURSE' THEN '已退班'
+            ELSE '未定义' END,
+            CASE rel.sign_type WHEN "NORMAL" THEN '正常签到'
+            WHEN 'SIGN_AS_HAS' THEN '到班签到'
             ELSE '未定义' END
             from tg_study_course t, tg_study_student_course_rel rel
             where rel.student_id =:id and rel.course_id = t.id
@@ -229,14 +230,14 @@
     <sqlUnit name="courseRecord_simp_list">
         <sql>
             select t.id, concat(t.course_date, ' ', t.course_time), t.course_name,
-            CASE t.status WHEN 'NORMAL' THEN '正常'
+            CASE t.status WHEN 'NORMAL' THEN '未结课'
             WHEN 'NORMAL_END' THEN '已结课'
             ELSE '未定义' END
             from tg_study_course_record t
-            where 1=1
-            and YEARWEEK(DATE_FORMAT(t.course_date,'%Y-%m-%d')) = YEARWEEK(NOW())
+            where DATE_FORMAT(t.course_date,'%Y-%m-%d') =:selectCourseDate
+            <!--and YEARWEEK(DATE_FORMAT(t.course_date,'%Y-%m-%d')) = YEARWEEK(NOW())-->
             [and t.teacher_id =:teacherId]
-            order by t.course_date
+            order by t.status, t.course_date
         </sql>
     </sqlUnit>
     <!-- 每周课时关联的学生列表 -->
@@ -245,16 +246,16 @@
             select t.id, t.name, t.level, t.remain_course,
             CASE record.status WHEN 'NORMAL' THEN '正常'
             WHEN 'SIGNED' THEN '已签到'
-            WHEN 'PERSONAL_LEAVE' THEN '事假'
-            WHEN 'PLAY_TRUANT' THEN '旷课'
-            WHEN 'OTHER_ABSENT' THEN '缺席'
+            WHEN 'PERSONAL_LEAVE' THEN '请假'
+            WHEN 'PLAY_TRUANT' THEN '缺课'
             WHEN 'CANCEL_AS_EXIT' THEN '退班'
-            ELSE '未定义' END, t.create_time
+            WHEN 'X_MAKE_UP' THEN '补课'
+            ELSE '未定义' END
             from tg_study_student t, tg_study_course_student_record record
             where t.id = record.student_id
             and record.course_record_id = :courseRecordId
             [and t.name like '%:studentName%']
-            order by t.remain_course
+            order by record.status, t.remain_course
         </sql>
     </sqlUnit>
     <!-- 系统通知 -->
@@ -271,19 +272,31 @@
             ELSE '未定义' END,
             t.create_time, t.process_time, t.process_desc
             from tg_study_system_message t
-            order by t.level desc, t.create_time desc
+            order by t.is_process, t.level desc, t.create_time desc
         </sql>
     </sqlUnit>
     <sqlUnit name="student_has_absent_course_list">
         <sql>
-            select t.student_id, t.student_name
-            from tg_study_course_student_record t
-            where t.create_time &lt; NOW()
-            and (status = 'PERSONAL_LEAVE'
-            OR status = 'PLAY_TRUANT'
-            OR status = 'OTHER_ABSENT'
-            OR status = 'CANCEL_AS_EXIT')
-            [and t.name like '%:name%']
+            select student.id, student.name, student.level, count(t.id)
+            from tg_study_course_student_record t, tg_study_student student
+            where t.student_id = student.id
+            and t.course_id !=:courseId
+            and (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT')
+            and student.status = 'NORMAL'
+            and t.student_id not in(select rec.student_id from tg_study_course_student_record rec where rec.course_record_id =:courseRecordId)
+            [and student.name like '%:name%']
+            group by t.id
+        </sql>
+    </sqlUnit>
+    <sqlUnit name="student_absent_course_record_list">
+        <sql>
+            select rec.id, rec.course_name, t.status, rec.course_date, rec.course_time
+            from tg_study_course_student_record t, tg_study_course_record rec
+            where
+            t.course_record_id = rec.id
+            and (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT')
+            and t.student_id =:studentId
+            order by rec.course_date desc
         </sql>
     </sqlUnit>
     <sqlUnit name="course_record_student_list">
@@ -296,5 +309,151 @@
         </sql>
     </sqlUnit>
 
+    <!-- 续费记录 -->
+    <sqlUnit name="renew_record_list">
+        <sql>
+            select t.id, t.student_name, t.amount, t.course_count, t.operator_full_name, t.create_time, t.description
+            from tg_study_renew_record t
+            where 1=1
+            [and t.student_name like '%:studentName%']
+            order by t.create_time desc
+        </sql>
+    </sqlUnit>
+
+    <!-- 教室租赁信息 -->
+    <sqlUnit name="classroom_rental_list">
+        <sql>
+            select
+            t.id, t.name, t.tenant_name, t.tenant_phone,
+            CASE t.week_info WHEN '7' THEN '星期天'
+            WHEN '1' THEN '星期一'
+            WHEN '2' THEN '星期二'
+            WHEN '3' THEN '星期三'
+            WHEN '4' THEN '星期四'
+            WHEN '5' THEN '星期五'
+            WHEN '6' THEN '星期六'
+            ELSE '未定义' END, t.course_time, t.classroom_name,
+            CASE t.status WHEN 'NORMAL' THEN '正常'
+            WHEN 'CANCEL' THEN '取消'
+            WHEN 'EXPIRE' THEN '到期'
+            ELSE '未定义' END, t.end_date, DATE_FORMAT(t.create_time,'%Y-%m-%d'), t.description
+            from tg_study_classroom_rental t
+            order by t.create_time desc
+        </sql>
+    </sqlUnit>
+
+    <!-- ######################################教师统计###################################### -->
+    <sqlUnit name="statistics_teacher_list">
+        <sql>
+            select t.id, t.month, t.teacher_name,
+            t.course_count, t.student_count, t.course_record_count, t.course_record_student_count,
+            t.exit_course_count, t.drop_out_count,
+            t.new_student_count, t.new_student_exit_course_count, t.new_student_drop_out_count,
+            concat(t.exit_course_rate, '%'),
+            concat(t.drop_out_rate, '%'),
+            concat(t. new_student_exit_course_rate, '%'),
+            concat(t.new_student_drop_out_rate, '%'),
+            DATE_FORMAT(t.create_time,'%Y-%m-%d')
+            from tg_study_statistics_teacher t
+            where month =:month
+            [and t.teacher_id =:teacherId]
+            order by t.course_count
+        </sql>
+    </sqlUnit>
+
+
+    <!-- 带班数 -->
+    <sqlUnit name="st_course_count">
+        <sql>
+            select count(t.id) from tg_study_course t
+            where t.teacher_id =:teacherId
+            and t.status = 'NORMAL'
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生在班数 -->
+    <sqlUnit name="st_student_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+            and t.status = 'NORMAL'
+        </sql>
+    </sqlUnit>
+
+    <!-- 课时数 -->
+    <sqlUnit name="st_course_record_count">
+        <sql>
+            select count(t.id) from tg_study_course_record t
+            where t.teacher_id =:teacherId and t.status = 'NORMAL_END'
+            and LEFT(t.course_date, 7) = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+        </sql>
+    </sqlUnit>
+
+    <!-- 课时学生人次数 -->
+    <sqlUnit name="st_course_record_student_count">
+        <sql>
+            select count(t.id) from tg_study_course_student_record t
+            where (t.status = 'SIGNED' or t.status = 'X_MAKE_UP')
+            and t.course_record_id in (
+                select rec.id from tg_study_course_record rec
+                where rec.teacher_id =:teacherId and rec.status = 'NORMAL_END'
+                and LEFT(rec.course_date, 7) = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+            )
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生退班数 -->
+    <sqlUnit name="st_exit_course_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'EXIT_COURSE'
+            and LEFT(t.update_time, 7) = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生退学数 -->
+    <sqlUnit name="st_drop_out_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'EXIT_COURSE'
+            and LEFT(t.update_time, 7) = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y-%m')
+            and t.student_id in (select stu.id from tg_study_student stu where stu.status = 'DROP_OUT')
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生在班新入学数 -->
+    <sqlUnit name="st_new_student_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'NORMAL'
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+            and t.student_id in (select stu.id from tg_study_student stu
+                where date_format(stu.create_time, '%Y %m') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y %m'))
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生退班新入学数 -->
+    <sqlUnit name="st_new_student_exit_course_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'EXIT_COURSE'
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+            and t.student_id in (select stu.id from tg_study_student stu
+                where date_format(stu.create_time, '%Y %m') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y %m'))
+        </sql>
+    </sqlUnit>
+
+    <!-- 带班学生退学新入学数 -->
+    <sqlUnit name="st_new_student_drop_out_count">
+        <sql>
+            select count(distinct t.student_id) from tg_study_student_course_rel t
+            where t.status = 'EXIT_COURSE'
+            and t.course_id in (select course.id from tg_study_course course where course.teacher_id =:teacherId)
+            and t.student_id in (select stu.id from tg_study_student stu
+                where stu.status = 'DROP_OUT' and date_format(stu.create_time, '%Y %m') = date_format(DATE_SUB(curdate(), INTERVAL 1 MONTH),'%Y %m'))
+        </sql>
+    </sqlUnit>
 
 </sqlMap>

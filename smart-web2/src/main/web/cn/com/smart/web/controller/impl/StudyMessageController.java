@@ -10,6 +10,7 @@ import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.OPService;
 import cn.com.smart.web.service.StudySystemMessageService;
 import cn.com.smart.web.tag.bean.EditBtn;
+import cn.com.smart.web.tag.bean.PageParam;
 import cn.com.smart.web.tag.bean.RefreshBtn;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -70,6 +71,8 @@ public class StudyMessageController extends BaseController {
 
         modelMap.put("editBtn", editBtn);
 //        modelMap.put("delBtn", delBtn);
+
+	    pageParam = new PageParam(this.getUriPath() + "list", null, page.getPage(), page.getPageSize());
         modelMap.put("pageParam", pageParam);
         modelMap.put("refreshBtn", refreshBtn);
         modelMap.put("smartResp", smartResp);

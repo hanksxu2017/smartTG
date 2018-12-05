@@ -5,12 +5,14 @@ import cn.com.smart.constant.IConstant;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.*;
+import cn.com.smart.web.bean.search.CourseDateSelector;
 import cn.com.smart.web.bean.search.CourseRecordSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.*;
+import cn.com.smart.web.utils.DataUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -59,26 +61,73 @@ public class StudyCourseRecordController extends BaseController {
 	public ModelAndView simpList(HttpSession session, CourseRecordSearch searchParam,
 	                             ModelAndView modelView, RequestPage page) throws Exception {
 		String uri = this.getUriPath() + "simpList";
+		ModelMap modelMap = modelView.getModelMap();
+		modelMap.put("courseDates", getCourseDate(searchParam));
+
 		SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_simp_list",searchParam, page.getStartNum(), page.getPageSize());
 		pageParam = new PageParam(uri, "#courseRecord-tab", page.getPage(), page.getPageSize());
 		selectedEventProp = new SelectedEventProp(SelectedEventType.OPEN_TO_TARGET.getValue(),"studyStudent/courseRecHas?courseRecHas=" + searchParam.getId(),"#has-student-list","id");
-		refreshBtn = new RefreshBtn(uri + "?teacherId=" + searchParam.getTeacherId(), null,"#courseRecord-tab");
+		refreshBtn = new RefreshBtn(uri + "?teacherId=" + DataUtil.handleNull(searchParam.getTeacherId()), null,"#courseRecord-tab");
 
-		ModelMap modelMap = modelView.getModelMap();
 		modelMap.put("smartResp", smartResp);
 		modelMap.put("pageParam", pageParam);
-		modelMap.put("searchParam", searchParam);
 		modelMap.put("selectedEventProp", selectedEventProp);
 		modelMap.put("refreshBtn", refreshBtn);
 		pageParam = null;
 
 		modelMap.put("teachers", this.teacherService.findNormal().getDatas());
+		modelMap.put("searchParam", searchParam);
 
 		modelView.setViewName(this.getPageDir() + "simpList");
 		return modelView;
 	}
 
+	/**
+	 *
+	 * @param searchParam   查询参数
+	 * @return              日期列表
+	 */
+	private List<CourseDateSelector> getCourseDate(CourseRecordSearch searchParam) {
+		Date curDate = new Date();
 
+		String courseDate = DateUtil.dateToStr(curDate, "yyyy-MM-dd");
+		if(StringUtils.isBlank(searchParam.getSelectCourseDate())) {
+			// 默认使用当前日期
+			searchParam.setSelectCourseDate(courseDate);
+		}
+		String description = courseDate + " 星期" + DataUtil.numToCN(DateUtil.getWeek(curDate));
+
+		List<CourseDateSelector> selectorList = new ArrayList<>();
+		selectorList.add(new CourseDateSelector(courseDate, description));
+
+		Date date;
+		for(int index = 1; index <= 7; index++) {
+			// 前第几天
+			addCourseDateSelector(selectorList, curDate, -1 * index);
+			// 后第几天
+			addCourseDateSelector(selectorList, curDate, index);
+		}
+
+		if(selectorList.size() > 1) {
+			Collections.sort(selectorList);
+		}
+
+		return selectorList;
+	}
+
+	private void addCourseDateSelector(List<CourseDateSelector> selectorList, Date baseDate, int index) {
+		Date date = DateUtil.addDay(baseDate, index);
+		String courseDate = DateUtil.dateToStr(date, "yyyy-MM-dd");
+		String description = courseDate + " " + getWeekStr(DateUtil.getWeek(date));
+		selectorList.add(new CourseDateSelector(courseDate, description));
+	}
+
+	private String getWeekStr(int week) {
+		if(0 == week) {
+			return "星期天";
+		}
+		return "星期" + DataUtil.numToCN(week);
+	}
 
     /**
      * @param searchParam

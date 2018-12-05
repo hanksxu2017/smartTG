@@ -2,7 +2,7 @@
 <div class="wrap-content">
   <div class="container-fluid">
 	   <div class="row">
-		   <div class="col-sm-6 p-l-0 p-r-0">
+		   <div class="col-sm-5 p-l-0 p-r-0">
 		      <div class="panel panel-default m-b-0">
 				    <div class="panel-tabs-wrap" id="config-courseRecord-tabs">
 				         <div class="panel-heading p-0 p-t-3">
@@ -24,7 +24,7 @@
 				</div><!-- panel -->
 			</div><!-- col -->
 
-			<div class="col-sm-6 p-l-5 p-r-0">
+			<div class="col-sm-7 p-l-5 p-r-0">
 			    <div id="has-student-list">
 			       <div class="panel panel-default m-b-0">
 			        <div class="panel-heading ui-widget-header">学生列表</div>

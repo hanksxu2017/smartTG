@@ -5,12 +5,8 @@
         <div class="panel-search">
               <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyStudent/courseList" target="#student-course-tab">
                   <input type="hidden" name="id" value="${searchParam.id }" />
-                  <div class="form-group p-r-10">
-				    <label for="search-input02">姓名：</label>
-				    <input type="text" class="form-control input-form-sm-control" id="search-input02" name="name" placeholder="请输入学生姓名" value="${searchParam.name }"/>
-				  </div>
 	              <div class="form-group p-r-10">
-		              <label for="search-input02">状态：</label>
+		              <label for="status">状态：</label>
 		              <select name="status" class="form-control" id="status">
 			              <option value="NORMAL" >正常</option>
 			              <option value="ALL" >全部</option>
@@ -26,7 +22,7 @@
               </form>
           </div>
 
-		<cnoj:table smartResp="${smartResp }" headers="名称,星期,时间,教室,教师,状态" isCheckbox="1" isRowSelected="1" page="${pageParam }" currentUri="${currentUri }"
+		<cnoj:table smartResp="${smartResp }" headers="名称,星期,时间,教室,教师,状态,签到类型" isCheckbox="1" isRowSelected="1" page="${pageParam }" currentUri="${currentUri }"
 		 delBtn="${delBtn }" customBtns="${customBtns}"
 		 />
 	</div>

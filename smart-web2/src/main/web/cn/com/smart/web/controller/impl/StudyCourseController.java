@@ -1,6 +1,5 @@
 package cn.com.smart.web.controller.impl;
 
-import cn.com.smart.Smart;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.utils.DateUtil;
@@ -8,12 +7,8 @@ import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.course.*;
 import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.CourseSearch;
-import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
-import cn.com.smart.web.tag.bean.CustomBtn;
-import cn.com.smart.web.tag.bean.PageParam;
-import cn.com.smart.web.tag.bean.RefreshBtn;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -54,28 +49,6 @@ public class StudyCourseController extends BaseController {
     @RequestMapping("/list")
     public ModelAndView list(CourseSearch searchParam, RequestPage page) {
 	    ModelAndView modelView = new ModelAndView();
-/*        SmartResponse<Object> smartResp = opService.getDatas("select_course_list", searchParam, page.getStartNum(), page.getPageSize());
-
-        Map<String, Object> modelMap = modelView.getModelMap();
-        refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
-        pageParam = new PageParam(this.getUriPath() + "list", null, page.getPage(), page.getPageSize());
-
-        modelMap.put("pageParam", pageParam);
-        modelMap.put("refreshBtn", refreshBtn);
-        modelMap.put("smartResp", smartResp);
-        modelMap.put("searchParam", searchParam);
-
-        modelMap.put("teachers", this.teacherService.findNormal().getDatas());
-
-        CustomBtn customBtnReport = new CustomBtn("generateDailyCourse", "生成周课时表",
-		        "生成周课时表", this.getUriPath() + "record/generateDailyCourse","glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
-        customBtnReport.setWidth("600");
-
-        customBtns = new ArrayList<>(1);
-        customBtns.add(customBtnReport);
-
-        modelMap.put("customBtns", customBtns);*/
-
         modelView.setViewName(this.getPageDir() + "table");
         return modelView;
     }
@@ -105,7 +78,8 @@ public class StudyCourseController extends BaseController {
     @Autowired
     private DictService dictService;
 
-
+    @Autowired
+    private StudyClassroomRentalService classroomRentalService;
 
 	/**
 	 * 封装课时表对象
@@ -116,9 +90,16 @@ public class StudyCourseController extends BaseController {
 
 		// 获取所有课时对象
 		List<TGStudyCourse> courseList = this.courseService.findNormal().getDatas();
+		// 将租赁信息放入课程表
+        List<TGStudyCourse> rentalCourseList = this.packageClassroomRentalToCourse();
+        if(CollectionUtils.isNotEmpty(rentalCourseList)){
+            courseList.addAll(rentalCourseList);
+        }
+
 		if(CollectionUtils.isEmpty(courseList)) {
 			return courseTable;
 		}
+
 		// 表格头
 		CourseTh courseTh = new CourseTh();
 		// 表格行
@@ -145,6 +126,24 @@ public class StudyCourseController extends BaseController {
 
 		courseTable.setTrs(courseTrList);
         return courseTable;
+    }
+
+    private List<TGStudyCourse> packageClassroomRentalToCourse() {
+        List<TGStudyCourse> studyCourseList = new ArrayList<>();
+
+        List<TGStudyClassroomRental> classroomRentalList = this.classroomRentalService.findNormal().getDatas();
+        if(CollectionUtils.isNotEmpty(classroomRentalList)) {
+            TGStudyCourse course;
+            for(TGStudyClassroomRental classroomRental : classroomRentalList) {
+                course = new TGStudyCourse();
+                course.setCourseTimeIndex(classroomRental.getCourseTimeIndex());
+                course.setWeekInfo(classroomRental.getWeekInfo());
+                course.setTeacherName(classroomRental.getName());
+                course.setClassroomId(classroomRental.getClassroomId());
+                studyCourseList.add(course);
+            }
+        }
+        return studyCourseList;
     }
 
 	/**
@@ -340,6 +339,7 @@ public class StudyCourseController extends BaseController {
 			return smartResp;
 		}
 
+		this.packTeacherInfo(course);
 		course.setUpdateTime(new Date());
 		course.setName(this.concatCourseName(course));
 
@@ -366,7 +366,7 @@ public class StudyCourseController extends BaseController {
         }
 
         course.setCreateTime(new Date());
-//        this.packTeacherInfo(course);
+        this.packTeacherInfo(course);
 
         course.setName(this.concatCourseName(course));
 
@@ -383,37 +383,41 @@ public class StudyCourseController extends BaseController {
      * @return              课程存在冲突时返回提示信息,否则返回null
      */
     private String checkCourseConflict(TGStudyCourse course) {
-        String checkRes = this.checkTeacherCourse(course.getCourseTimeIndex(), course.getWeekInfo(), course.getTeacherId());
+        String checkRes = this.checkTeacherCourse(course.getCourseTimeIndex(), course.getWeekInfo(), course.getTeacherId(), course.getId());
         if(StringUtils.isNotBlank(checkRes)) {
             return checkRes;
         }
-        checkRes = this.checkClassroom(course.getCourseTimeIndex(), course.getWeekInfo(), course.getClassroomId());
+        checkRes = this.checkClassroom(course.getCourseTimeIndex(), course.getWeekInfo(), course.getClassroomId(), course.getId());
         if(StringUtils.isNotBlank(checkRes)) {
             return checkRes;
         }
         return "";
     }
 
-    private String checkTeacherCourse(short courseTimeIndex, short weekInfo, String teacherId) {
+    private String checkTeacherCourse(short courseTimeIndex, short weekInfo, String teacherId, String courseId) {
         Map<String, Object> params = new HashMap<>();
         params.put("courseTimeIndex", courseTimeIndex);
         params.put("weekInfo", weekInfo);
         params.put("teacherId", teacherId);
         SmartResponse<TGStudyCourse> courseSmartResponse = this.courseService.findByParam(params);
         if(courseSmartResponse.isSuccess() && courseSmartResponse.getTotalNum() > 0) {
-            return "课程冲突:同时间点,教师存在其他课程";
+        	if(StringUtils.isBlank(courseId) || !StringUtils.equals(courseId, courseSmartResponse.getDatas().get(0).getId())) {
+		        return "课程冲突:同时间点,教师存在其他课程";
+	        }
         }
         return "";
     }
 
-    private String checkClassroom(short courseTimeIndex, short weekInfo, String classroomId) {
+    private String checkClassroom(short courseTimeIndex, short weekInfo, String classroomId, String courseId) {
         Map<String, Object> params = new HashMap<>();
         params.put("courseTimeIndex", courseTimeIndex);
         params.put("weekInfo", weekInfo);
         params.put("classroomId", classroomId);
         SmartResponse<TGStudyCourse> courseSmartResponse = this.courseService.findByParam(params);
         if(courseSmartResponse.isSuccess() && courseSmartResponse.getTotalNum() > 0) {
-            return "课程冲突:同时间点,教室已被其他课程占用.";
+        	if(StringUtils.isBlank(courseId) || !StringUtils.equals(courseId, courseSmartResponse.getDatas().get(0).getId())) {
+		        return "课程冲突:同时间点,教室已被其他课程占用.";
+	        }
         }
         return "";
     }

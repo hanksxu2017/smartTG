@@ -1,24 +1,18 @@
 package cn.com.smart.web.service;
 
-import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
-import cn.com.smart.constant.enumEntity.CourseStudentStatusEnum;
+import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
 import cn.com.smart.service.impl.MgrServiceImpl;
-import cn.com.smart.utils.DateUtil;
-import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
 import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
-import cn.com.smart.web.dao.impl.StudyCourseDao;
+import cn.com.smart.web.bean.entity.TGStudyTeacher;
 import cn.com.smart.web.dao.impl.StudyCourseRecordDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 /**
  *
@@ -35,6 +29,7 @@ public class StudyCourseRecordService extends MgrServiceImpl<TGStudyCourseRecord
 		return (StudyCourseRecordDao)super.getDao();
 	}
 
+
 	/**
 	 * 检查课时的学生是否已经全部进行了签到操作
 	 *
@@ -48,21 +43,18 @@ public class StudyCourseRecordService extends MgrServiceImpl<TGStudyCourseRecord
 			int actual = 0;
 			int personalLeave = 0;
 			int playTruant = 0;
-			int otherAbsent = 0;
 
 			for (TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
-				if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.NORMAL.name())) {
+				if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.NORMAL.name())) {
 					isAllSigned = false;
 					break;
 				}
-				if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.SIGNED.name())) {
+				if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.SIGNED.name())) {
 					actual++;
-				} else if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.PERSONAL_LEAVE.name())) {
+				} else if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.PERSONAL_LEAVE.name())) {
 					personalLeave++;
-				} else if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.PLAY_TRUANT.name())) {
+				} else if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.PLAY_TRUANT.name())) {
 					playTruant++;
-				} else if (StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentStatusEnum.OTHER_ABSENT.name())) {
-					otherAbsent++;
 				}
 			}
 
@@ -72,7 +64,6 @@ public class StudyCourseRecordService extends MgrServiceImpl<TGStudyCourseRecord
 				courseRecord.setStudentQuantityActual(actual);
 				courseRecord.setStudentPersonalLeave(personalLeave);
 				courseRecord.setStudentPlayTruant(playTruant);
-				courseRecord.setStudentOtherAbsent(otherAbsent);
 
 				courseRecord.setUpdateTime(new Date());
 				courseRecord.setStatus(IConstant.STATUS_COURSE_END);

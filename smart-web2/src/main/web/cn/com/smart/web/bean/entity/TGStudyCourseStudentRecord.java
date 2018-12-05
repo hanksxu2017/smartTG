@@ -45,6 +45,10 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
 
 	private String description;
 
+	private String makeUpTargetId;
+
+	private String signType = IConstant.SIGNED_TYPE_NORMAL;
+
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
@@ -126,4 +130,22 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
     public void setCourseId(String courseId) {
         this.courseId = courseId;
     }
+
+	@Column(name="make_up_target_id", length=64)
+	public String getMakeUpTargetId() {
+		return makeUpTargetId;
+	}
+
+	public void setMakeUpTargetId(String makeUpTargetId) {
+		this.makeUpTargetId = makeUpTargetId;
+	}
+
+	@Column(name="sign_type", length=16)
+	public String getSignType() {
+		return signType;
+	}
+
+	public void setSignType(String signType) {
+		this.signType = signType;
+	}
 }

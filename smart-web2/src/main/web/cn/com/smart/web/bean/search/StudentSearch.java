@@ -11,6 +11,10 @@ public class StudentSearch extends FilterParam {
 
 	private String status;
 
+	private String courseRecordId;
+
+	private String courseId;
+
 	@Override
 	public String getParamToString() {
 		StringBuilder strBuilder = new StringBuilder();
@@ -20,6 +24,9 @@ public class StudentSearch extends FilterParam {
 		}
 		if(StringUtils.isNotBlank(status)) {
 			strBuilder.append("&status="+status);
+		}
+		if(StringUtils.isNotBlank(courseId)) {
+			strBuilder.append("&courseId="+courseId);
 		}
 		param = strBuilder.toString();
 		if(StringUtils.isNotBlank(param) && param.startsWith("&")) {

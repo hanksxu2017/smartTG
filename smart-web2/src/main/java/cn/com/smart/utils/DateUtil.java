@@ -66,6 +66,13 @@ public class DateUtil extends BaseUtil {
         return w;
     }
 
+	public static Date addMonth(Date srcDate, int offset) {
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(srcDate);
+		calendar.add(Calendar.MONTH,offset);
+		return calendar.getTime();
+	}
+
     public static Date addDay(Date srcDate, int offset) {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(srcDate);

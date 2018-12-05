@@ -3,6 +3,7 @@ package cn.com.smart.web.bean.entity;
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
 import cn.com.smart.constant.IConstant;
+import cn.com.smart.constant.enumEntity.StudentCourseSignTypeEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +55,8 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
 	private Date createTime;
 
 	private Date updateTime;
+
+	private String signType = StudentCourseSignTypeEnum.NORMAL.name();
 
 	@Id
 	@Column(name="id", length=64)
@@ -179,6 +182,16 @@ public class TGStudyStudentCourseRel extends BaseBeanImpl implements DateBean {
     }
 
     public void setCourseName(String courseName) {
+
         this.courseName = courseName;
     }
+
+    @Column(name="sign_type", length=32)
+	public String getSignType() {
+		return signType;
+	}
+
+	public void setSignType(String signType) {
+		this.signType = signType;
+	}
 }

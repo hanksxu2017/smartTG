@@ -13,6 +13,7 @@ import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.filter.bean.FilterParam;
 import cn.com.smart.service.impl.MgrServiceImpl;
+import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.utils.DataUtil;
 import org.apache.commons.collections.CollectionUtils;
@@ -337,7 +338,29 @@ public abstract class BaseController extends Smart implements IBaseController {
 	    return this.subDir;
     }
 
+	protected ModelAndView packListModelView(FilterParam filterParam, SmartResponse<Object> smartResp,  RequestPage page) {
+		ModelAndView modelView = new ModelAndView();
+		Map<String, Object> modelMap = modelView.getModelMap();
+		addBtn = new EditBtn("add", this.subDir + "add", null, "新增", "800");
+		editBtn = new EditBtn("edit", this.subDir + "edit", null, "修改", "800");
+		delBtn = new DelBtn(this.subDir + "delete", "确定要删除选中的信息吗？", this.subDir + "list", null, null);
+		refreshBtn = new RefreshBtn(this.subDir + "list", null, null);
 
+		modelMap.put("addBtn", addBtn);
+		modelMap.put("editBtn", editBtn);
+		modelMap.put("delBtn", delBtn);
+
+		if(null != page) {
+			pageParam = new PageParam(this.subDir + "list", null, page.getPage(), page.getPageSize());
+			modelMap.put("pageParam", pageParam);
+		}
+
+		modelMap.put("refreshBtn", refreshBtn);
+		modelMap.put("smartResp", smartResp);
+		modelMap.put("searchParam", filterParam);
+		modelView.setViewName(baseDir + this.subDir + "list");
+		return modelView;
+	}
 
     /**
      *
@@ -346,22 +369,6 @@ public abstract class BaseController extends Smart implements IBaseController {
      * @return
      */
     protected ModelAndView packListModelView(FilterParam filterParam, SmartResponse<Object> smartResp) {
-        ModelAndView modelView = new ModelAndView();
-        Map<String, Object> modelMap = modelView.getModelMap();
-        addBtn = new EditBtn("add", this.subDir + "add", null, "新增", "800");
-        editBtn = new EditBtn("edit", this.subDir + "edit", null, "修改", "800");
-        delBtn = new DelBtn(this.subDir + "delete", "确定要删除选中的信息吗？", this.subDir + "list", null, null);
-        refreshBtn = new RefreshBtn(this.subDir + "list", null, null);
-
-        modelMap.put("addBtn", addBtn);
-        modelMap.put("editBtn", editBtn);
-        modelMap.put("delBtn", delBtn);
-        modelMap.put("pageParam", pageParam);
-        modelMap.put("refreshBtn", refreshBtn);
-        modelMap.put("smartResp", smartResp);
-        modelMap.put("searchParam", filterParam);
-
-        modelView.setViewName(baseDir + this.subDir + "list");
-        return modelView;
+    	return this.packListModelView(filterParam, smartResp, null);
     }
 }

@@ -30,6 +30,8 @@ public class TGStudySystemMessage extends BaseBeanImpl implements DateBean {
 
 	private String processDesc;
 
+	private String studentId;
+
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
@@ -102,4 +104,13 @@ public class TGStudySystemMessage extends BaseBeanImpl implements DateBean {
 	public void setProcessDesc(String processDesc) {
 		this.processDesc = processDesc;
 	}
+
+    @Column(name="student_id",length=64)
+    public String getStudentId() {
+        return studentId;
+    }
+
+    public void setStudentId(String studentId) {
+        this.studentId = studentId;
+    }
 }

@@ -58,8 +58,8 @@ public class CommonDaoImpl implements ICommonDao {
 				total = Long.parseLong(obj.toString());
 			} catch (Exception e) {
 				log.info("统计数据SQL["+sql+"]--[异常]--["+e.getMessage()+"]");
-				e.printStackTrace();
-				throw new DaoException(e.getLocalizedMessage(), e.getCause());
+				/*e.printStackTrace();
+				throw new DaoException(e.getLocalizedMessage(), e.getCause());*/
 			}
 		}
 		return total;
