@@ -32,6 +32,9 @@ public class StudyStatisticsTeacherController extends BaseController {
     @Autowired
     private OPService opService;
 
+    @Autowired
+    private StudyTeacherService teacherService;
+
     public StudyStatisticsTeacherController() {
         super.setSubDir("/studyStatistics/teacher/");
     }
@@ -51,9 +54,29 @@ public class StudyStatisticsTeacherController extends BaseController {
 	public ModelAndView list(StatisticsTeacherSearch searchParam, RequestPage page) {
 		if(StringUtils.isBlank(searchParam.getMonth())) {
 			searchParam.setMonth(DateUtil.dateToStr(DateUtil.addMonth(new Date(), -1), "yyyyMM"));
+		} else {
+			searchParam.setMonth(searchParam.getMonth().replaceAll("/",""));
 		}
 		SmartResponse<Object> smartResp = opService.getDatas("statistics_teacher_list", searchParam, page.getStartNum(), page.getPageSize());
-		return this.packListModelView(searchParam, smartResp, page);
+
+		ModelAndView modelAndView = this.packListModelView(searchParam, smartResp, page);
+		modelAndView.getModelMap().put("teachers", teacherService.findNormal().getDatas());
+		modelAndView.getModelMap().put("monthList", this.getMonthList());
+
+		return modelAndView;
+	}
+
+	private List<Map<String, String>> getMonthList() {
+		List<Map<String, String>> monthList = new ArrayList<>();
+		Date date;
+		for(int index = 1; index <= 6; index++) {
+			date = DateUtil.addMonth(new Date(), (-1 * index));
+			Map<String, String> item = new HashMap<>();
+			item.put("month", DateUtil.dateToStr(date, "yyyyMM"));
+			item.put("monthDesc", DateUtil.dateToStr(date, "yyyy年MM月"));
+			monthList.add(item);
+		}
+		return monthList;
 	}
 
 }

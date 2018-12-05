@@ -355,6 +355,7 @@
             DATE_FORMAT(t.create_time,'%Y-%m-%d')
             from tg_study_statistics_teacher t
             where month =:month
+            [and t.teacher_id =:teacherId]
             order by t.course_count
         </sql>
     </sqlUnit>

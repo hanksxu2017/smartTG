@@ -9,7 +9,7 @@ import org.apache.commons.lang3.StringUtils;
 @Setter
 public class StatisticsTeacherSearch extends FilterParam {
 
-    private String teacherName;
+    private String teacherId;
 
     private String month;
 
@@ -20,8 +20,8 @@ public class StatisticsTeacherSearch extends FilterParam {
         if(StringUtils.isNotBlank(param)) {
             strBuilder.append(param);
         }
-        if(StringUtils.isNotBlank(teacherName)) {
-            strBuilder.append("&teacherName="+teacherName);
+        if(StringUtils.isNotBlank(teacherId)) {
+            strBuilder.append("&teacherId="+teacherId);
         }
 	    if(StringUtils.isNotBlank(month)) {
 		    strBuilder.append("&month="+month);
