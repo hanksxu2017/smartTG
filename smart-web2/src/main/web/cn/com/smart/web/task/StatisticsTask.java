@@ -11,7 +11,8 @@ public class StatisticsTask {
 	private StudyStatisticsService statisticsService;
 
 	public void execute() {
-		log.info("------统计任务开始执行------");
+		log.info("------统计任务--开始------");
 		this.statisticsService.doTeacherMonthStatistics();
+		log.info("------统计任务--結束------");
 	}
 }
