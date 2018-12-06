@@ -338,6 +338,7 @@
             WHEN 'EXPIRE' THEN '到期'
             ELSE '未定义' END, t.end_date, DATE_FORMAT(t.create_time,'%Y-%m-%d'), t.description
             from tg_study_classroom_rental t
+            where t.status = 'NORMAL'
             order by t.create_time desc
         </sql>
     </sqlUnit>

@@ -2,6 +2,7 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
+import cn.com.smart.constant.enumEntity.ClassroomRentalStatusEnum;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.ClassroomSearch;
@@ -9,6 +10,7 @@ import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.poi.util.StringUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -75,17 +77,10 @@ public class StudyClassroomRentalController extends BaseController {
         List<TNDict> dictList = dictService.getItems("COURSE_TIMES").getDatas();
         List<TNDict> idleList = new ArrayList<>();
 
-        Map<String, Object> params;
-        List<TGStudyCourse> courseList;
-
         if(CollectionUtils.isNotEmpty(dictList)) {
             for(TNDict tnDict : dictList) {
-                params = new HashMap<>();
-                params.put("classroomId", classroomId);
-                params.put("weekInfo", Short.valueOf(weekInfo));
-                params.put("courseTimeIndex", Short.valueOf(tnDict.getBusiValue()));
-	            courseList = this.courseService.findByParam(params).getDatas();
-                if(CollectionUtils.isEmpty(courseList)) {
+                if(this.isIdleForNewCourse(classroomId,
+                        Short.valueOf(weekInfo), Short.valueOf(tnDict.getBusiValue()), null)) {
                     idleList.add(tnDict);
                 }
             }
@@ -98,6 +93,29 @@ public class StudyClassroomRentalController extends BaseController {
 	    return smartResponse;
     }
 
+    private boolean isIdleForNewCourse(String classroomId, short weekInfo, short courseTimeIndex, String excludeId) {
+        Map<String, Object> params = new HashMap<>();
+        params.put("classroomId", classroomId);
+        params.put("weekInfo", Short.valueOf(weekInfo));
+        params.put("courseTimeIndex", courseTimeIndex);
+        List<TGStudyCourse> courseList = this.courseService.findByParam(params).getDatas();
+        if(CollectionUtils.isNotEmpty(courseList)) {
+            return false;
+        }
+
+        List<TGStudyClassroomRental> classroomRentalList = this.classroomRentalService.findByParam(params).getDatas();
+        if(CollectionUtils.isEmpty(classroomRentalList)) {
+            return true;
+        }
+
+        if(StringUtils.isNotBlank(excludeId) && classroomRentalList.size() == 1 &&
+                StringUtils.equals(classroomRentalList.get(0).getId(), excludeId)) {
+            return true;
+        }
+
+        return false;
+    }
+
 	/**
 	 * 提交新增
 	 *
@@ -106,9 +124,22 @@ public class StudyClassroomRentalController extends BaseController {
 	@RequestMapping(value = "/save", method = RequestMethod.POST)
 	@ResponseBody
 	public SmartResponse<String> save(TGStudyClassroomRental classroomRental) {
+        SmartResponse<String> smartResponse = new SmartResponse<>();
+	    if(null == classroomRental || StringUtils.isBlank(classroomRental.getClassroomId())) {
+            smartResponse.setMsg("请求无效");
+            return smartResponse;
+        }
+
+        if(!this.isIdleForNewCourse(classroomRental.getClassroomId(), classroomRental.getWeekInfo(),
+                classroomRental.getCourseTimeIndex(), null)) {
+            smartResponse.setMsg("课时冲突,无法进行租赁");
+            return smartResponse;
+        }
+
 		classroomRental.setCreateTime(new Date());
 		classroomRental.setName("[租]" + classroomRental.getTenantName());
-		return classroomRentalService.save(classroomRental);
+        smartResponse = classroomRentalService.save(classroomRental);
+        return smartResponse;
 	}
 
 	/**
@@ -132,12 +163,67 @@ public class StudyClassroomRentalController extends BaseController {
 	@RequestMapping(value = "/subEdit", method = RequestMethod.POST)
 	@ResponseBody
 	public SmartResponse<String> subEdit(TGStudyClassroomRental classroomRental) {
-		TGStudyClassroomRental classroomRentalDb = this.classroomRentalService.find(classroomRental.getId()).getData();
-		// 修改配置信息
+        SmartResponse<String> smartResponse = new SmartResponse<>();
+	    if(null == classroomRental || StringUtils.isBlank(classroomRental.getId()) ||
+                StringUtils.isBlank(classroomRental.getClassroomId())) {
+            smartResponse.setMsg("请求无效");
+            return smartResponse;
+        }
 
-		classroomRentalDb.setUpdateTime(new Date());
-		classroomRentalDb.setName("[租]" + classroomRental.getTenantName());
-		return classroomRentalService.update(classroomRentalDb);
+        if(!this.isIdleForNewCourse(classroomRental.getClassroomId(), classroomRental.getWeekInfo(),
+                classroomRental.getCourseTimeIndex(), classroomRental.getId())) {
+            smartResponse.setMsg("课时冲突,无法进行租赁修改");
+            return smartResponse;
+        }
+
+		TGStudyClassroomRental classroomRentalDb = this.classroomRentalService.find(classroomRental.getId()).getData();
+	    if(null != classroomRentalDb) {
+            this.copyClassroomRental(classroomRentalDb, classroomRental);
+            classroomRentalDb.setUpdateTime(new Date());
+            smartResponse = classroomRentalService.update(classroomRentalDb);
+        }
+
+        return smartResponse;
 	}
+
+    /**
+     * 信息拷贝
+     * @param classroomRentalDb 数据库中的租赁信息
+     * @param classroomRental   页面提交的租赁信息
+     */
+	private void copyClassroomRental(TGStudyClassroomRental classroomRentalDb, TGStudyClassroomRental classroomRental) {
+        // 修改配置信息
+        classroomRentalDb.setTenantName(classroomRental.getTenantName());
+        classroomRentalDb.setTenantPhone(classroomRental.getTenantPhone());
+
+        classroomRentalDb.setClassroomId(classroomRental.getClassroomId());
+        classroomRentalDb.setClassroomName(classroomRental.getClassroomName());
+
+        classroomRentalDb.setWeekInfo(classroomRental.getWeekInfo());
+
+        classroomRentalDb.setCourseTimeIndex(classroomRental.getCourseTimeIndex());
+        classroomRentalDb.setCourseTime(classroomRental.getCourseTime());
+
+        classroomRentalDb.setEndDate(classroomRental.getEndDate());
+        classroomRentalDb.setDescription(classroomRental.getDescription());
+
+        classroomRentalDb.setUpdateTime(new Date());
+        classroomRentalDb.setName("[租]" + classroomRental.getTenantName());
+    }
+
+    @RequestMapping(value = "/delete", method = RequestMethod.POST)
+    @ResponseBody
+    public SmartResponse<String> delete(String id) {
+        SmartResponse<String> smartResponse = new SmartResponse<>();
+        TGStudyClassroomRental classroomRentalDb = this.classroomRentalService.find(id).getData();
+        if(null != classroomRentalDb &&
+                !StringUtils.equals(IConstant.STATUS_DELETE, classroomRentalDb.getStatus())) {
+            classroomRentalDb.setStatus(ClassroomRentalStatusEnum.CANCEL.name());
+            classroomRentalDb.setUpdateTime(new Date());
+            smartResponse = classroomRentalService.update(classroomRentalDb);
+        }
+
+        return smartResponse;
+    }
 
 }
