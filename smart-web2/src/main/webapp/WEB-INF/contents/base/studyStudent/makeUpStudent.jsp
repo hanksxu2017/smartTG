@@ -6,11 +6,25 @@
 	String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
 <c:set var="ctx" value="${basePath}"/>
-<script type="text/javascript" src="${pageContext.request.contextPath}/js/class-config.js"></script>
+<%--<script type="text/javascript" src="${pageContext.request.contextPath}/js/class-config.js"></script>--%>
 <div class="wrap-content">
-	<input type="hidden" name="courseRecordId" id="courseRecordId" value="${courseRecordId}">
+	<input type="hidden" name="courseRecordId" id="courseRecordIdForSearchStudentHasAbsent" value="${courseRecordId}">
 	<div class="panel no-border">
-
+		<div class="panel-search">
+			<form class="form-inline cnoj-entry-submit" method="post" role="form">
+				<div class="form-group p-r-10">
+					<label for="nameForSearchStudentHasAbsent">姓名:</label>
+					<input type="text" class="form-control input-form-control"
+                           id="nameForSearchStudentHasAbsent" placeholder="姓名" value="${searchParam.name}"/>
+				</div>
+				<div class="form-group p-l-10">
+					  <span class="btn btn-primary btn-sm cnoj-search-submit" id="subSearchStudentHasAbsent">
+						<i class="glyphicon glyphicon-search"></i>
+						<span>搜索</span>
+					  </span>
+				</div>
+			</form>
+		</div>
 	   <!-- table -->
 	   <cnoj:table
 			   smartResp="${smartResp}"
@@ -26,6 +40,10 @@
 <script>
     $(function () {
         $(".bootstrap-dialog-body").attr("id", "student-absent-course-list-dialog");
+
+        // 给分页按钮增加参数
+        var pageSelect = $("#student-absent-course-list-dialog").find('select').eq(0);
+        $(pageSelect).data('uri', '/studyStudent/makeUpStudent?courseRecordId=${courseRecordId}');
 
         $("#chooseStudentToMakeUp").on("click", function () {
             var value = $(this).attr("selected-value");
@@ -54,6 +72,11 @@
                 BootstrapDialogUtil.warningAlert("请选择要补课的学生!");
             }
         });
-    });
 
+        $("#subSearchStudentHasAbsent").on("click", function () {
+            var uri = "${ctx}/studyStudent/makeUpStudent?courseRecordId=" + $("#courseRecordIdForSearchStudentHasAbsent").val() +
+                "&name=" + $("#nameForSearchStudentHasAbsent").val();
+            loadUri("#student-absent-course-list-dialog", uri);
+        });
+    });
 </script>
