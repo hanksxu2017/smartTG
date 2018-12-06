@@ -1,8 +1,10 @@
 package cn.com.smart.web.service;
 
+import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
 import cn.com.smart.service.impl.MgrServiceImpl;
+import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
 import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
 import cn.com.smart.web.bean.entity.TGStudyTeacher;
@@ -28,7 +30,6 @@ public class StudyCourseRecordService extends MgrServiceImpl<TGStudyCourseRecord
 	public StudyCourseRecordDao getDao() {
 		return (StudyCourseRecordDao)super.getDao();
 	}
-
 
 	/**
 	 * 检查课时的学生是否已经全部进行了签到操作
