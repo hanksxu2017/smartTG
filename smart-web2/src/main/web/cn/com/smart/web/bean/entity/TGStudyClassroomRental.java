@@ -55,6 +55,8 @@ public class TGStudyClassroomRental extends BaseBeanImpl implements DateBean {
 
 	private String courseTime;
 
+	private Date updateTime;
+
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
@@ -180,5 +182,14 @@ public class TGStudyClassroomRental extends BaseBeanImpl implements DateBean {
 
 	public void setEndDate(String endDate) {
 		this.endDate = endDate;
+	}
+
+	@Column(name="update_time", length=16)
+	public Date getUpdateTime() {
+		return updateTime;
+	}
+
+	public void setUpdateTime(Date updateTime) {
+		this.updateTime = updateTime;
 	}
 }

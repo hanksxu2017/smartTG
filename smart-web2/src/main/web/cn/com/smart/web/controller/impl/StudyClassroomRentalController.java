@@ -111,4 +111,33 @@ public class StudyClassroomRentalController extends BaseController {
 		return classroomRentalService.save(classroomRental);
 	}
 
+	/**
+	 *
+	 * @return
+	 */
+	@RequestMapping(value = "/edit")
+	public ModelAndView edit(String id) {
+		ModelAndView modelView = new ModelAndView();
+
+		modelView.getModelMap().put("classroomRental", this.classroomRentalService.find(id).getData());
+
+		modelView.getModelMap().put("classrooms", classroomService.findNormal().getDatas());
+
+		modelView.getModelMap().put("weekInfoList", dictService.getItems("WEEK_INFO_LIST").getDatas());
+
+		modelView.setViewName(getPageDir() + "edit");
+		return modelView;
+	}
+
+	@RequestMapping(value = "/subEdit", method = RequestMethod.POST)
+	@ResponseBody
+	public SmartResponse<String> subEdit(TGStudyClassroomRental classroomRental) {
+		TGStudyClassroomRental classroomRentalDb = this.classroomRentalService.find(classroomRental.getId()).getData();
+		// 修改配置信息
+
+		classroomRentalDb.setUpdateTime(new Date());
+		classroomRentalDb.setName("[租]" + classroomRental.getTenantName());
+		return classroomRentalService.update(classroomRentalDb);
+	}
+
 }
