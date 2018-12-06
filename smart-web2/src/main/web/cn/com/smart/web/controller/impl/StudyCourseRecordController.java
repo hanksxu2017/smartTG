@@ -8,6 +8,7 @@ import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.bean.search.CourseDateSelector;
 import cn.com.smart.web.bean.search.CourseRecordSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
+import cn.com.smart.web.constant.enums.IconType;
 import cn.com.smart.web.constant.enums.SelectedEventType;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
@@ -180,6 +181,20 @@ public class StudyCourseRecordController extends BaseController {
         return smartResponse;
     }
 
+	@Autowired
+	private StudyCourseTableService courseTableService;
+
+	@RequestMapping(value = "/clearSystemMem")
+	@ResponseBody
+	public SmartResponse<String> clearSystemMem() {
+		SmartResponse<String> smartResponse = new SmartResponse<>();
+
+		this.courseTableService.clearCourseTable();
+
+		smartResponse.setResult(IConstant.OP_SUCCESS);
+		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
+		return smartResponse;
+	}
     /**
      *
      * @param startDateStr

@@ -3,6 +3,7 @@ package cn.com.smart.web.controller.impl;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
+import cn.com.smart.constant.enumEntity.StudentCourseRelStatusEnum;
 import cn.com.smart.constant.enumEntity.StudentCourseSignTypeEnum;
 import cn.com.smart.constant.enumEntity.SystemMessageEnum;
 import cn.com.smart.utils.DateUtil;
@@ -316,9 +317,12 @@ public class StudyStudentController extends BaseController {
 		pageParam = null;
 
 		CustomBtn customBtnReport = new CustomBtn("reportCourse", "报班", "报班", this.getUriPath() + "reportCourse?studentId=" + searchParam.getId(), "glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
-		customBtnReport.setWidth("600");
-		customBtns = new ArrayList<>(1);
+
+		CustomBtn customBtnChangeSignType = new CustomBtn("changeSignType", "更改签到类型", "更改签到类型", this.getUriPath() + "changeSignType?studentId=" + searchParam.getId(), "glyphicon-list-alt", BtnPropType.SelectType.ONE.getValue());
+
+		customBtns = new ArrayList<>(2);
 		customBtns.add(customBtnReport);
+		customBtns.add(customBtnChangeSignType);
 		modelMap.put("customBtns", customBtns);
 
 
@@ -481,6 +485,25 @@ public class StudyStudentController extends BaseController {
 		Map<String, Object> params = new HashMap<>();
 		params.put("status", IConstant.STATUS_NORMAL);
 		modelView.getModelMap().put("teachers", this.teacherService.findByParam(params).getDatas());
+		return modelView;
+	}
+
+	@Autowired
+	private StudyCourseService courseService;
+
+	/**
+	 * @return JSP页面对象
+	 */
+	@RequestMapping(value = "/changeSignType")
+	public ModelAndView changeSignType(String studentId, String id) {
+		ModelAndView modelView = new ModelAndView();
+		modelView.setViewName(getPageDir() + "changeSignType");
+
+		modelView.getModelMap().put("student", this.studentService.find(studentId).getData());
+
+
+		modelView.getModelMap().put("course", this.courseService.find(id).getData());
+
 		return modelView;
 	}
 

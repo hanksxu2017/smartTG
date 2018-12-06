@@ -39,8 +39,6 @@ public class StudyCourseController extends BaseController {
         super.setSubDir("/studyCourse/");
     }
 
-
-
     /**
      * @param searchParam   查询参数对象
      * @param page          分页参数对象
@@ -49,24 +47,27 @@ public class StudyCourseController extends BaseController {
     @RequestMapping("/list")
     public ModelAndView list(CourseSearch searchParam, RequestPage page) {
 	    ModelAndView modelView = new ModelAndView();
+	    modelView.getModelMap().put("searchParam", searchParam);
         modelView.setViewName(this.getPageDir() + "table");
         return modelView;
     }
 
-	@RequestMapping("/table")
-	public ModelAndView table() {
-		ModelAndView modelView = new ModelAndView();
-		modelView.setViewName(this.getPageDir() + "table");
-		return modelView;
-	}
+//	@RequestMapping("/table")
+//	public ModelAndView table() {
+//		ModelAndView modelView = new ModelAndView();
+//		modelView.setViewName(this.getPageDir() + "table");
+//		return modelView;
+//	}
 
+	@Autowired
+	private StudyCourseTableService courseTableService;
 
 	@RequestMapping(value = "/generateCourseTable", method = RequestMethod.GET)
 	@ResponseBody
 	public SmartResponse<CourseTable> generateCourseTable() {
 		SmartResponse<CourseTable> smartResponse = new SmartResponse<>();
 
-		smartResponse.setData(this.packageCourseTable());
+		smartResponse.setData(this.courseTableService.getCourseTable());
 		smartResponse.setResult(IConstant.OP_SUCCESS);
 		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
 		return smartResponse;
@@ -207,10 +208,15 @@ public class StudyCourseController extends BaseController {
 
 		if(!isFoundCurWeekInfo) {
             addCourseTdToNewTr(courseTrList, courseTd, isExistEarlier);
-		} else if(!isFoundCurCourseTime) {
-            addCourseTdToNewTr(courseTrList, courseTd, isExistEarlier);
-            this.updateCourseCount(courseTrList, courseTd.getWeekInfo());
-        }
+		} else {
+			// 当情星期已经存在
+			if(!isFoundCurCourseTime) {
+				// 当前星期增加一个课时
+				addCourseTdToNewTr(courseTrList, courseTd, isExistEarlier);
+				this.updateCourseCount(courseTrList, courseTd.getWeekInfo(), courseTd.getCourseTimeIndex());
+			}
+
+		}
     }
 
     private void addCourseTdToNewTr(List<CourseTr> courseTrList, CourseTd courseTd, boolean isExistEarlier) {
@@ -230,12 +236,22 @@ public class StudyCourseController extends BaseController {
      * @param courseTrList      行对象
      * @param weekInfo         星期
      */
-    private void updateCourseCount(List<CourseTr> courseTrList, int weekInfo) {
+    private void updateCourseCount(List<CourseTr> courseTrList, int weekInfo, int courseTimeIndex) {
+    	int count = 0;
         for(CourseTr courseTr : courseTrList) {
             if(courseTr.getWeekInfoEntity().getWeekInfo() == weekInfo) {
-                courseTr.getWeekInfoEntity().setCourseCount(courseTr.getWeekInfoEntity().getCourseCount() + 1);
+				if(courseTr.getCourseTimeEntity().getCourseTimeIndex() != courseTimeIndex) {
+					count = courseTr.getWeekInfoEntity().getCourseCount() + 1;
+					courseTr.getWeekInfoEntity().setCourseCount(count);
+				}
             }
         }
+	    for(CourseTr courseTr : courseTrList) {
+		    if(courseTr.getWeekInfoEntity().getWeekInfo() == weekInfo &&
+				    courseTr.getCourseTimeEntity().getCourseTimeIndex() == courseTimeIndex) {
+			    courseTr.getWeekInfoEntity().setCourseCount(count);
+		    }
+	    }
     }
 
     private String parseCourseTime(int courseTimeIndex) {

@@ -32,6 +32,9 @@
             <button type="button" id="generateWeekCourse" class="btn btn-default"  disabled="disabled">
                 <i class="glyphicon glyphicon-calendar"></i>生成周课时
             </button>
+            <button type="button" id="clearSystemMem" class="btn btn-default"  disabled="disabled">
+                <i class="glyphicon glyphicon-adjust"></i>清理缓存
+            </button>
         </div>
     </div>
 </div>
@@ -60,6 +63,18 @@
                 initEvent(dialog.getModal());
             });
         });
+
+        $("#clearSystemMem").on("click", function () {
+            $.ajax({
+                type: "GET",
+                url: '/studyCourse/record/clearSystemMem',
+                success: function (data) {
+                    if (data.result === '1') {
+                        reloadTab($(this).data("uri"));
+                    }
+                }
+            });
+        });
     });
 
     /**
@@ -81,6 +96,7 @@
 
         $("#refreshCourseTable").attr('disabled',false);
         $("#generateWeekCourse").attr('disabled',false);
+        $("#clearSystemMem").attr('disabled',false);
         // $("#tableDiv").append("</table>");
     }
 

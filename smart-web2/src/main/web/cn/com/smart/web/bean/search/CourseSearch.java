@@ -13,6 +13,8 @@ public class CourseSearch extends FilterParam {
 
     private String weekInfo;
 
+    private int isRefresh = 0;
+
     @Override
     public String getParamToString() {
         StringBuilder strBuilder = new StringBuilder();

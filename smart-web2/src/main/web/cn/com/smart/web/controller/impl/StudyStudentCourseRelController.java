@@ -2,6 +2,8 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
+import cn.com.smart.constant.enumEntity.StudentCourseRelStatusEnum;
+import cn.com.smart.constant.enumEntity.StudentCourseSignTypeEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.*;
@@ -12,6 +14,7 @@ import cn.com.smart.web.service.*;
 import cn.com.smart.web.tag.bean.EditBtn;
 import cn.com.smart.web.tag.bean.PageParam;
 import cn.com.smart.web.tag.bean.RefreshBtn;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -23,6 +26,7 @@ import org.springframework.web.servlet.ModelAndView;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 /**
@@ -201,8 +205,40 @@ public class StudyStudentCourseRelController extends BaseController {
         return rel;
     }
 
+    /**
+     *
+     * @return
+     * @throws Exception
+     */
+    @RequestMapping(value="/subChangeSignType",method=RequestMethod.POST)
+    public @ResponseBody SmartResponse<String> subChangeSignType(String courseId, String studentId, String signType) throws Exception {
+        SmartResponse<String> smartResp = new SmartResponse<String>();
 
+        if(StringUtils.isBlank(courseId) || StringUtils.isBlank(signType)) {
+        	smartResp.setMsg("请求无效");
+        	return smartResp;
+        }
+		Map<String, Object> params = new HashMap<>();
+        params.put("courseId", courseId);
+        params.put("studentId", studentId);
+        List<TGStudyStudentCourseRel> relList = this.studentCourseRelService.findByParam(params).getDatas();
+        if(CollectionUtils.isEmpty(relList)) {
+	        smartResp.setMsg("班级数据不存在");
+	        return smartResp;
+        }
+        for(TGStudyStudentCourseRel rel : relList) {
+	        StudentCourseSignTypeEnum statusEnum = StudentCourseSignTypeEnum.valueOf(signType);
+	        rel.setSignType(statusEnum.name());
+	        smartResp = this.studentCourseRelService.update(rel);
+	        if(!smartResp.isSuccess()) {
+		        return smartResp;
+	        }
+        }
 
+		smartResp.setResult(IConstant.OP_SUCCESS);
+		smartResp.setMsg("签到类型更改成功");
+        return smartResp;
+    }
 
 
 }

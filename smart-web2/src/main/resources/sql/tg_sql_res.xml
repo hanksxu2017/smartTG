@@ -348,11 +348,8 @@
             select t.id, t.month, t.teacher_name,
             t.course_count, t.student_count, t.course_record_count, t.course_record_student_count,
             t.exit_course_count, t.drop_out_count,
-            t.new_student_count, t.new_student_exit_course_count, t.new_student_drop_out_count,
             concat(t.exit_course_rate, '%'),
             concat(t.drop_out_rate, '%'),
-            concat(t. new_student_exit_course_rate, '%'),
-            concat(t.new_student_drop_out_rate, '%'),
             DATE_FORMAT(t.create_time,'%Y-%m-%d')
             from tg_study_statistics_teacher t
             where month =:month

@@ -35,7 +35,7 @@
           </div>
 		<!-- table -->
 
-		<cnoj:table smartResp="${smartResp}" headers="月份,教师,班级,学生,课时数,课时人次,退班,退学,新生,新生退班,新生退学,退班率,退学率,新生退班率,新生退学率,创建时间"
+		<cnoj:table smartResp="${smartResp}" headers="月份,教师,班级,学生,课时数,课时人次,退班,退学,退班率,退学率,创建时间"
 		  isCheckbox="1" isRowSelected="1" currentUri="${currentUri}"
 		  refreshBtn="${refreshBtn}"
 		  page="${pageParam}"
