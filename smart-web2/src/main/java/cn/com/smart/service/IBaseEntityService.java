@@ -32,6 +32,15 @@ public interface IBaseEntityService<T extends BaseBean> extends IBaseService {
 	SmartResponse<T> findNormal();
 
 	/**
+	 * 分页查询状态正常的记录
+	 * @param page
+	 * @param pageSize
+	 * @param orderBy
+	 * @return
+	 */
+	SmartResponse<T> findNormalForPage(int page, int pageSize, String orderBy);
+
+	/**
 	 * 通过参数查询
 	 * @param param 参数
 	 * 如：按排序字段倒序( sortOrder asc)

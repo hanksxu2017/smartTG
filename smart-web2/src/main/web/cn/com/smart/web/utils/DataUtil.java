@@ -1,11 +1,12 @@
 package cn.com.smart.web.utils;
 
+import cn.com.smart.utils.DateUtil;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang3.StringUtils;
 
 import java.io.UnsupportedEncodingException;
 import java.text.DecimalFormat;
-import java.util.Collection;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -225,5 +226,18 @@ public class DataUtil {
 	public static String getRate(int count, int total) {
 		DecimalFormat df = new DecimalFormat("0.00");//格式化小数
 		return df.format((float)(count * 100) /total);//返回的是String类型
+	}
+
+	public static List<Map<String, String>> getMonthList() {
+		List<Map<String, String>> monthList = new ArrayList<>();
+		Date date;
+		for(int index = 1; index <= 6; index++) {
+			date = DateUtil.addMonth(new Date(), (-1 * index));
+			Map<String, String> item = new HashMap<>();
+			item.put("month", DateUtil.dateToStr(date, "yyyyMM"));
+			item.put("monthDesc", DateUtil.dateToStr(date, "yyyy年MM月"));
+			monthList.add(item);
+		}
+		return monthList;
 	}
 }

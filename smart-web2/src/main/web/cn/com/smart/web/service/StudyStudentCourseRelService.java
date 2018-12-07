@@ -13,6 +13,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -74,5 +75,12 @@ public class StudyStudentCourseRelService extends MgrServiceImpl<TGStudyStudentC
 		smartResponse.setResult(IConstant.OP_SUCCESS);
 		smartResponse.setMsg("退班操作成功");
 		return smartResponse;
+	}
+
+	public List<TGStudyStudentCourseRel> findNormalByStudentId(String studentId) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("status", StudentCourseRelStatusEnum.NORMAL.name());
+		params.put("studentId", studentId);
+		return this.findByParam(params).getDatas();
 	}
 }

@@ -62,6 +62,13 @@ public class BaseEntityServiceImpl<T extends BaseBean> extends BaseServiceImpl i
 	}
 
 	@Override
+	public SmartResponse<T> findNormalForPage(int page, int pageSize, String orderBy) {
+		Map<String, Object> param = new HashMap<>();
+		param.put("status", IConstant.STATUS_NORMAL);
+		return findByParam(param, page, pageSize, orderBy);
+	}
+
+	@Override
 	public SmartResponse<T> findByParam(Map<String, Object> param) {
 		return findByParam(param,null);
 	}

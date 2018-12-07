@@ -120,5 +120,7 @@ public interface IConstant {
 	String SIGNED_TYPE_NORMAL = "NORMAL";
 	String SIGNED_TYPE_MAKEUP = "MAKE_UP";
 
+	// 续费应付
+	int MAKE_UP_AMOUNT_PAYABLE = 1000;
 
 }

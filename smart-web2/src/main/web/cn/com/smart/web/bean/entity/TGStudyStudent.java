@@ -60,6 +60,8 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
 	private String isRegister = IConstant.IS_REGISTER_NO;
 
+	private String description;
+
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
@@ -212,5 +214,14 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
 	public void setIsRegister(String isRegiste) {
 		this.isRegister = isRegiste;
+	}
+
+	@Column(name="description", length = 128)
+	public String getDescription() {
+		return description;
+	}
+
+	public void setDescription(String description) {
+		this.description = description;
 	}
 }

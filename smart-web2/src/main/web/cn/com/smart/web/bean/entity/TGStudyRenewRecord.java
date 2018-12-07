@@ -32,7 +32,7 @@ public class TGStudyRenewRecord extends BaseBeanImpl implements DateBean {
 	
 	private String studentName;
 
-	private long amount;
+	private int amount;
 
 	private int courseCount;
 
@@ -73,11 +73,11 @@ public class TGStudyRenewRecord extends BaseBeanImpl implements DateBean {
 	}
 
 	@Column(name="amount", length=16)
-	public long getAmount() {
+	public int getAmount() {
 		return amount;
 	}
 
-	public void setAmount(long amount) {
+	public void setAmount(int amount) {
 		this.amount = amount;
 	}
 

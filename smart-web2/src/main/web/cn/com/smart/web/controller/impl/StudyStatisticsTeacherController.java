@@ -11,6 +11,7 @@ import cn.com.smart.web.bean.search.RenewRecordSearch;
 import cn.com.smart.web.bean.search.StatisticsTeacherSearch;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.*;
+import cn.com.smart.web.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -61,22 +62,9 @@ public class StudyStatisticsTeacherController extends BaseController {
 
 		ModelAndView modelAndView = this.packListModelView(searchParam, smartResp, page);
 		modelAndView.getModelMap().put("teachers", teacherService.findNormal().getDatas());
-		modelAndView.getModelMap().put("monthList", this.getMonthList());
+		modelAndView.getModelMap().put("monthList", DataUtil.getMonthList());
 
 		return modelAndView;
-	}
-
-	private List<Map<String, String>> getMonthList() {
-		List<Map<String, String>> monthList = new ArrayList<>();
-		Date date;
-		for(int index = 1; index <= 6; index++) {
-			date = DateUtil.addMonth(new Date(), (-1 * index));
-			Map<String, String> item = new HashMap<>();
-			item.put("month", DateUtil.dateToStr(date, "yyyyMM"));
-			item.put("monthDesc", DateUtil.dateToStr(date, "yyyy年MM月"));
-			monthList.add(item);
-		}
-		return monthList;
 	}
 
 }

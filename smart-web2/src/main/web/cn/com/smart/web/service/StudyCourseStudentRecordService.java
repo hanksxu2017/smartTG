@@ -7,7 +7,9 @@ import cn.com.smart.web.dao.impl.StudyCourseStudentRecordDao;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -38,4 +40,16 @@ public class StudyCourseStudentRecordService extends MgrServiceImpl<TGStudyCours
 		return statusList;
 	}
 
+	/**
+	 * 获取学生的所有课时记录
+	 * @param studentId
+	 * @return
+	 */
+	public List<TGStudyCourseStudentRecord> findByStudentId(String studentId) {
+		// 检查指定课时的所有学生是否已经全部签到
+		Map<String, Object> params = new HashMap<>();
+		params.put("studentId", studentId);
+		params.put("status", this.getQueryStatus().toArray());
+		return this.findByParam(params).getDatas();
+	}
 }
