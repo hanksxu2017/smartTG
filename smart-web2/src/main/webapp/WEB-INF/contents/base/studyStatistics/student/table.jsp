@@ -106,6 +106,11 @@
             var params = 'pageSize=' + $(this).val() + '&page=1';
             loadStatisticsData(params);
         });
+
+        $("#pageSelectForStudentStatistics").change(function () {
+            var params = 'pageSize=' + $("#pageSizeSelectForStudentStatistics").val() + '&page=' + $(this).val();
+            loadStatisticsData(params);
+        });
     });
     
     function loadStatisticsData(params) {
