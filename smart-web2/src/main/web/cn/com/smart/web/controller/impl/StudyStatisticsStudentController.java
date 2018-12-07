@@ -17,6 +17,7 @@ import cn.com.smart.web.service.StudyStudentService;
 import cn.com.smart.web.service.StudyTeacherService;
 import cn.com.smart.web.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -71,21 +72,24 @@ public class StudyStatisticsStudentController extends BaseController {
 		SmartResponse<StudentStatisticsDataHandle> smartResponse = new SmartResponse<>();
 
 		Map<String, Object> params = new HashMap<>();
-		if(StringUtils.isNotBlank(searchParam.getName())) {
-			params.put("name", searchParam.getName());
-		}
+        if(StringUtils.isNotBlank(searchParam.getName())) {
+            params.put("name", searchParam.getName());
+        }
 		SmartResponse<TGStudyStudent> studentSmartResponse =
 				this.studentService.findByParam(params, page.getPage(), page.getPageSize(), "remain_course, create_time desc");
 		List<TGStudyStudent> studentList = studentSmartResponse.getDatas();
 
+        // TODO DAO方法支持模糊
 		// TODO 如果查询往期月份的统计师数据,直接从数据库读取
 
 		smartResponse.setData(this.statisticsService.doStudentStatistics(studentList));
 		smartResponse.setResult(IConstant.OP_SUCCESS);
 		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
 
-		// TODO 使用学生的分页数据作为分页输出
-
+		smartResponse.setTotalNum(studentSmartResponse.getTotalNum());
+		smartResponse.setTotalPage(studentSmartResponse.getTotalPage());
+        smartResponse.setSize(page.getPage());
+        smartResponse.setPerPageSize(page.getPageSize());
 		return smartResponse;
 	}
 

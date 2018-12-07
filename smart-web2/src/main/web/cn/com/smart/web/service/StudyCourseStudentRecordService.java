@@ -33,9 +33,7 @@ public class StudyCourseStudentRecordService extends MgrServiceImpl<TGStudyCours
 	public List<String> getQueryStatus() {
 		List<String> statusList = new ArrayList<>();
 		for(CourseStudentRecordStatusEnum statusEnum : CourseStudentRecordStatusEnum.values()) {
-			if(!statusEnum.equals(CourseStudentRecordStatusEnum.CANCEL_AS_EXIT)) {
-				statusList.add(statusEnum.name());
-			}
+			statusList.add(statusEnum.name());
 		}
 		return statusList;
 	}

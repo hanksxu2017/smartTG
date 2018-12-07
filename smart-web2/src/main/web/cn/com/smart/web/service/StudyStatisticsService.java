@@ -169,7 +169,7 @@ public class StudyStatisticsService {
 
 		studentStatistics.setStudentId(student.getId());
 		studentStatistics.setStudentName(student.getName());
-		studentStatistics.setDescription(student.getDescription());
+		studentStatistics.setDescription(StringUtils.isNotBlank(student.getDescription()) ? student.getDescription() : "");
 
 		this.packageCourseStatistics(student.getId(), studentStatistics, courseMap);
 
@@ -264,7 +264,11 @@ public class StudyStatisticsService {
 		List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByStudentId(student.getId());
 		if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
 			for(TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
-				if(StringUtils.equals(DateUtil.dateToStr(courseStudentRecord.getCreateTime(), "yyyyMM"), studentStatistics.getMonth())) {
+			    if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.X_MAKE_UP.name())) {
+			        // 补课记录不进行统计
+			        continue;
+                }
+				if(this.isCourseRecordInMonth(courseStudentRecord, studentStatistics.getMonth(), courseRecordMap)) {
 					this.parseCourseStudentRecordToStatistics(courseStudentRecord, courseSignStatistics, courseRecordMap);
 				}
 			}
@@ -274,23 +278,38 @@ public class StudyStatisticsService {
 		studentStatistics.setStudentCourseSignStatistics(courseSignStatistics);
 	}
 
+	private boolean isCourseRecordInMonth(TGStudyCourseStudentRecord courseStudentRecord, String month, Map<String, TGStudyCourseRecord> courseRecordMap) {
+        TGStudyCourseRecord courseRecord = this.getCourseRecordFromMap(courseStudentRecord.getCourseRecordId(), courseRecordMap);
+        if(null != courseRecord && StringUtils.isNotBlank(courseRecord.getCourseDate())) {
+            String courseMonth;
+            try {
+                courseMonth = courseRecord.getCourseDate().replaceAll("-", "").substring(0, 6);
+                log.info("{}----month:{}", courseStudentRecord.getId(), courseMonth);
+            } catch (Exception e) {
+                courseMonth = "";
+            }
+            return StringUtils.equals(courseMonth, month);
+        }
+
+        return false;
+	}
+
 	/**
 	 *
-	 * @param courseStudentRecord
-	 * @param courseSignStatistics
+	 * @param courseStudentRecord   学生的课时对象
+	 * @param courseSignStatistics  课时签到对象
 	 */
 	private void parseCourseStudentRecordToStatistics(TGStudyCourseStudentRecord courseStudentRecord,
 	                                                  StudentCourseSignStatistics courseSignStatistics,
 	                                                  Map<String, TGStudyCourseRecord> courseRecordMap) {
 		courseSignStatistics.setTotalCount(courseSignStatistics.getTotalCount() + 1);
-		if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.SIGNED.name())) {
+		if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.SIGNED.name()) ||
+                StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.SIGNED_MAKE_UP.name())) {
 			courseSignStatistics.setSignedCount(courseSignStatistics.getSignedCount() + 1);
 		} else if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.PERSONAL_LEAVE.name())){
 			courseSignStatistics.setPersonalLeaveCount(courseSignStatistics.getPersonalLeaveCount() + 1);
 		} else if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.PLAY_TRUANT.name())){
 			courseSignStatistics.setPlayTruantCount(courseSignStatistics.getPlayTruantCount() + 1);
-		} else if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.X_MAKE_UP.name())){
-			courseSignStatistics.setMakeUpCount(courseSignStatistics.getMakeUpCount() + 1);
 		} else {
 			courseSignStatistics.setOthersCount(courseSignStatistics.getOthersCount() + 1);
 		}
@@ -299,10 +318,10 @@ public class StudyStatisticsService {
 
 	/**
 	 *
-	 * @param courseStudentRecord
-	 * @param courseSignStatistics
-	 * @param courseRecordMap
-	 * @return
+	 * @param courseStudentRecord   学生的课时对象
+	 * @param courseSignStatistics  课时签到对象
+	 * @param courseRecordMap       课时记录MAP
+	 * @return                      学生课时签到统计信息
 	 */
 	private StudentCourseSignRecord initStudentCourseSignRecord(TGStudyCourseStudentRecord courseStudentRecord,
 	                                                            StudentCourseSignStatistics courseSignStatistics,

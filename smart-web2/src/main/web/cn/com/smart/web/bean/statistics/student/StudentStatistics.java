@@ -39,6 +39,6 @@ public class StudentStatistics implements Comparable<StudentStatistics>{
 		} else if(this.courseCount < o.getCourseCount()) {
 			return -1;
 		}
-		return 0;
+		return this.studentCourseSignStatistics.compareTo(o.getStudentCourseSignStatistics());
 	}
 }
