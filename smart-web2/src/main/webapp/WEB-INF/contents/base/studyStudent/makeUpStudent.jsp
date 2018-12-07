@@ -48,7 +48,7 @@
         $("#chooseStudentToMakeUp").on("click", function () {
             var value = $(this).attr("selected-value");
             if(utils.isNotEmpty(value)) {
-                var uri = "/studyStudent/subMakeUpStudent?courseRecordId=" + $("#courseRecordId").val() + "&studentIds=" + value;
+                var uri = "/studyStudent/subMakeUpStudent?courseRecordId=" + $("#courseRecordIdForSearchStudentHasAbsent").val() + "&studentIds=" + value;
                 var refreshUri = $(this).data('uri');
                 var target = '#has-student-list';
                 // 提交补课信息
