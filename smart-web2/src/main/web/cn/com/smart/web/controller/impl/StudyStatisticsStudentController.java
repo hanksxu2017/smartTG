@@ -70,13 +70,22 @@ public class StudyStatisticsStudentController extends BaseController {
 	public SmartResponse<StudentStatisticsDataHandle> generateStatisticsTable(StatisticsStudentSearch searchParam, RequestPage page) {
 		SmartResponse<StudentStatisticsDataHandle> smartResponse = new SmartResponse<>();
 
-		List<TGStudyStudent> studentList = this.studentService.findNormalForPage(page.getPage(), page.getPageSize(), "remain_course, create_time desc").getDatas();
+		Map<String, Object> params = new HashMap<>();
+		if(StringUtils.isNotBlank(searchParam.getName())) {
+			params.put("name", searchParam.getName());
+		}
+		SmartResponse<TGStudyStudent> studentSmartResponse =
+				this.studentService.findByParam(params, page.getPage(), page.getPageSize(), "remain_course, create_time desc");
+		List<TGStudyStudent> studentList = studentSmartResponse.getDatas();
 
 		// TODO 如果查询往期月份的统计师数据,直接从数据库读取
 
 		smartResponse.setData(this.statisticsService.doStudentStatistics(studentList));
 		smartResponse.setResult(IConstant.OP_SUCCESS);
 		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
+
+		// TODO 使用学生的分页数据作为分页输出
+
 		return smartResponse;
 	}
 

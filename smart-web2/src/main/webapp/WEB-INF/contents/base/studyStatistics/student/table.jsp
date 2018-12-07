@@ -5,34 +5,136 @@
 	String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
 <c:set var="ctx" value="${basePath}"/>
-<div class="panel">
-	<div class="panel-search">
-		<form class="form-inline cnoj-entry-submit" method="post" role="form">
 
-			<div class="form-group p-r-10">
-				<label for="nameForStatistics">姓名:</label>
-				<input type="text" class="form-control input-form-control"
-				       id="nameForStatistics" placeholder="姓名" value="${searchParam.name}"/>
+<div class="panel">
+	<div class="panel-body panel-body-noheader panel-body-noborder">
+		<div class="loading-content"></div>
+			<div class="wrap-content">
+				<div class="panel-search">
+					<form class="form-inline cnoj-entry-submit" id="search-form" method="post" role="form"
+					      action="studyStatistics/student/list">
+						<div class="form-group p-r-10">
+							<label for="studentNameForSearchStatistics">姓名:</label>
+							<input type="text" class="form-control input-form-control" id="studentNameForSearchStatistics" name="name"
+							       placeholder="姓名" value="${searchParam.name }"/>
+						</div>
+						<div class="form-group p-r-10">
+							<label for="monthSelForSearchStatistics" class="control-label">月份</label>
+							<select class="form-control" id="monthSelForSearchStatistics" name="month">
+								<c:forEach items="${monthList}" var="item">
+									<option value="${item.month}" <c:if test="${searchParam.month eq item.month}">selected</c:if>  >${item.monthDesc}</option>
+								</c:forEach>
+							</select>
+						</div>
+						<div class="form-group p-l-10">
+					  <span class="btn btn-primary btn-sm cnoj-search-submit">
+						<i class="glyphicon glyphicon-search"></i>
+						<span>搜索</span>
+					  </span>
+						</div>
+					</form>
+				</div>
+				<div class="panel panel-default no-border">
+					<div class="cnoj-table-wrap table-body-scroll table-wrap-limit cnoj-table-wrap-listener" data-subtract-height="0">
+						<!-- table here -->
+						<table id="studentStatisticsTable" class="table table-striped table-bordered table-condensed"
+						       style="width: 80%;">
+						</table>
+
+					</div>
+					<div class="panel-footer panel-footer-page">
+						<!-- btn -->
+						<div class="btn-list">
+							<div class="btn-group cnoj-op-btn-list">
+								<button type="button" id="refreshStudentStatisticsTable" class="btn btn-default" disabled="disabled">
+									<i class="glyphicon glyphicon-refresh"></i>刷新
+								</button>
+							</div>
+						</div>
+						<div class="btn-page">
+							<div class="page">
+								<ul class="pagination">
+									<li class="disabled"><a href="javascript:void(0)" class="pre-page">«</a></li>
+
+									<li class="active"><a class="cnoj-change-page cnoj-change-page-listener"
+									                      data-uri="/studyStudent/list?page=1" href="#" data-target="">1</a></li>
+									<li class=""><a class="cnoj-change-page cnoj-change-page-listener" data-uri="/studyStudent/list?page=2"
+									                href="#" data-target="">2</a></li>
+									<li class=""><a class="cnoj-change-page cnoj-change-page-listener" data-uri="/studyStudent/list?page=3"
+									                href="#" data-target="">3</a></li>
+									<li class=""><a href="#" data-uri="/studyStudent/list?page=2"
+									                class="cnoj-change-page next-page cnoj-change-page-listener" data-target="">»</a></li>
+
+								</ul>
+							</div>
+						</div>
+
+						<div class="page-info"><span>1 - 14</span><span>&nbsp;&nbsp; 共266条(每页显示<select
+								class="form-control input-sm cnoj-change-pagesize cnoj-change-pagesize-listener"
+								data-uri="/studyStudent/list" data-target=""><option selected="selected" value="20">20</option><option
+								value="30">30</option><option value="40">40</option><option value="50">50</option></select></span>条)
+						</div>
+
+
+					</div>
+
+
+
+
+
+
+
+
+
+
+
+				</div>
+
+
+
+
+
+
+
+
+
 			</div>
 
+
+
+
+
+	</div>
+
+</div>
+<%--
+
+<div class="panel">
+	<div class="panel-search">
+		<form class="form-inline cnoj-entry-submit" id="search-form" method="post" role="form"
+		      action="studyStatistics/student/list">
 			<div class="form-group p-r-10">
-				<label for="monthForSearchStatistics" class="control-label">月份</label>
-				<select class="form-control" id="monthForSearchStatistics" name="month">
+				<label for="studentNameForSearchStatistics">姓名:</label>
+				<input type="text" class="form-control input-form-control" id="studentNameForSearchStatistics" name="name"
+				       placeholder="姓名" value="${searchParam.name }"/>
+			</div>
+			<div class="form-group p-r-10">
+				<label for="monthSelForSearchStatistics" class="control-label">月份</label>
+				<select class="form-control" id="monthSelForSearchStatistics" name="month">
 					<c:forEach items="${monthList}" var="item">
-						<option value="${item.month}"
-						        <c:if test="${searchParam.month eq item.month}">selected</c:if>  >${item.monthDesc}</option>
+						<option value="${item.month}" <c:if test="${searchParam.month eq item.month}">selected</c:if>  >${item.monthDesc}</option>
 					</c:forEach>
 				</select>
 			</div>
-
 			<div class="form-group p-l-10">
-					  <span class="btn btn-primary btn-sm cnoj-search-submit" id="subSearchStudentHasAbsent">
+					  <span class="btn btn-primary btn-sm cnoj-search-submit">
 						<i class="glyphicon glyphicon-search"></i>
 						<span>搜索</span>
 					  </span>
 			</div>
 		</form>
 	</div>
+
 	<div class="panel-body panel-body-noheader panel-body-noborder">
 		<div class="loading-content" style="visibility: visible;">
 
@@ -49,13 +151,12 @@
 		</div>
 	</div>
 
-
 </div>
 
 <div class="panel-footer panel-footer-page" data-height="34">
 	<div class="btn-list">
 		<div class="btn-group cnoj-op-btn-list">
-			<button type="button" id="refreshCourseTable" class="btn btn-default" disabled="disabled">
+			<button type="button" id="refreshStudentStatisticsTable" class="btn btn-default" disabled="disabled">
 				<i class="glyphicon glyphicon-refresh"></i>刷新
 			</button>
 		</div>
@@ -64,6 +165,7 @@
 		<div class="page">
 			<ul class="pagination">
 				<li class="disabled"><a href="javascript:void(0)" class="pre-page">«</a></li>
+
 				<li class="active"><a class="cnoj-change-page cnoj-change-page-listener"
 				                      data-uri="/studyStudent/list?page=1" href="#" data-target="">1</a></li>
 				<li class=""><a class="cnoj-change-page cnoj-change-page-listener" data-uri="/studyStudent/list?page=2"
@@ -72,11 +174,7 @@
 				                href="#" data-target="">3</a></li>
 				<li class=""><a href="#" data-uri="/studyStudent/list?page=2"
 				                class="cnoj-change-page next-page cnoj-change-page-listener" data-target="">»</a></li>
-				<li>&nbsp;到<input class="form-control btn-sm goto-page-input" name="page" value="">页
-					<button data-uri="/studyStudent/list?page="
-					        class="btn btn-default btn-sm cnoj-goto-page cnoj-goto-page-listener" data-target="">确定
-					</button>
-				</li>
+
 			</ul>
 		</div>
 	</div>
@@ -87,12 +185,12 @@
 			value="30">30</option><option value="40">40</option><option value="50">50</option></select></span>条)
 	</div>
 
-</div>
+</div>--%>
 
 <script type="text/javascript">
 
     $(function () {
-        var url = "${ctx}/studyStatistics/student/generateStatisticsTable";
+        var url = "${ctx}/studyStatistics/student/generateStatisticsTable?name=" + $("#studentNameForSearchStatistics").val();
         $.ajax({
             type: "GET",
             url: url,
@@ -103,7 +201,7 @@
             }
         });
 
-        $("#refreshCourseTable").click(function () {
+        $("#refreshStudentStatisticsTable").click(function () {
             reloadTab($(this).data("uri"));
         });
     });
@@ -123,7 +221,7 @@
             tr.appendTo(table);
         }
 
-        $("#refreshCourseTable").attr('disabled', false);
+        $("#refreshStudentStatisticsTable").attr('disabled', false);
     }
 
     function createTh(data) {
