@@ -56,20 +56,9 @@
                         </div>
                     </div>
                     <div class="btn-page">
+	                    <input type="hidden" id="curPage">
                         <div class="page">
                             <ul class="pagination" id="turnPage">
-                                <li class="disabled">
-                                    <span onclick="turnPage(-1)">«</span>
-                                </li>
-                                <li class="disabled">
-                                    <span>
-                                        <select class="form-control input-sm cnoj-change-pagesize" id="pageSelectForStudentStatistics">
-                                        </select>
-                                    </span>
-                                </li>
-                                <li class="disabled">
-                                    <span onclick="turnPage(1)">»</span>
-                                </li>
                             </ul>
                         </div>
                     </div>
@@ -137,14 +126,14 @@
     function disabledAllButton() {
         $(".cnoj-search-submit").attr('disabled',true);
         $("#refreshStudentStatisticsTable").attr('disabled',true);
-        $("#turnPage").find('span').attr('disabled',true);
+        $("#turnPage").find('li').attr('disabled',true);
         $("#pageSizeSelectForStudentStatistics").attr('disabled',true);
     }
 
     function enableAllButton() {
         $(".cnoj-search-submit").attr('disabled',false);
         $("#refreshStudentStatisticsTable").attr('disabled',false);
-        $("#turnPage").find('span').attr('disabled',false);
+        $("#turnPage").find('li').attr('disabled',false);
         $("#pageSizeSelectForStudentStatistics").attr('disabled',false);
     }
 
@@ -325,7 +314,9 @@
         }
         $("#pageSelectForStudentStatistics").val(data.size);
 
-        var lis = $("#turnPage").find('li');
+        createPagination(data);
+
+        /*var lis = $("#turnPage").find('li');
         if(1 == data.size) {
             // 第一页
             $(lis).eq(0).addClass('disabled');
@@ -349,13 +340,67 @@
                 $(lis).eq(2).removeClass('active');
                 $(lis).eq(2).addClass('disabled');
             }
+        }*/
+    }
+    
+    function createPagination(data) {
+        $("#curPage").val(data.size);
+        var paginationUl = $("#turnPage");
+        paginationUl.empty();
+
+        // 前一页
+        var previousPage = null;
+        if(data.size == 1) {
+            previousPage = $("<li class='disabled'><a href='javascript:void(0)' onclick='turnPage(-1)'>&laquo;</a></li>");
+        } else {
+            previousPage = $("<li ><a href='javascript:void(0)' onclick='turnPage(-1)'>&laquo;</a></li>");
         }
+	    previousPage.appendTo(paginationUl);
+
+        // 中间数字页
+	    if(data.totalPage >= 1 && data.totalPage <= 5) {
+            createPageNum(1, data.totalPage, data.size, paginationUl);
+	    } else {
+            if(data.size >= 1 && data.size <= 5) {
+                createPageNum(1, 5, data.size, paginationUl);
+            } else {
+                createPageNum((data.size - 1), (data.size + 1), data.size, paginationUl);
+            }
+	    }
+
+
+		// 后一页
+        var nextPage = null;
+		if(data.size == data.totalPage) {
+			nextPage = $("<li class='disabled'><a href='javascript:void(0)' onclick='turnPage(1)'>&raquo;</a></li>");
+		} else {
+		    nextPage = $("<li><a href='javascript:void(0)' onclick='turnPage(1)'>&raquo;</a></li>");
+		}
+        nextPage.appendTo(paginationUl);
+
+    }
+    
+    function createPageNum(min, max, pageNum, paginationUl) {
+	    for(var index = min; index <= max; index++) {
+            var li = null;
+            if(index == pageNum) {
+                li = $("<li class='active'><a href='javascript:void(0)' onclick='forwardPage(" + index + ")'>" + index + "</a></li>");
+	        } else {
+                li = $("<li><a href='javascript:void(0)' onclick='forwardPage(" + index + ")'>" + index + "</a></li>");
+	        }
+	        li.appendTo(paginationUl);
+	    }
     }
     
     function turnPage(offset) {
-        var curPageNum = $("#pageSelectForStudentStatistics").val();
+        var curPageNum = $("#curPage").val();
         var targetPage = parseInt(curPageNum) + offset;
         var params = 'pageSize=' + $("#pageSizeSelectForStudentStatistics").val() + '&page=' + targetPage;
+        loadStatisticsData(params);
+    }
+    
+    function forwardPage(pageNum) {
+        var params = 'pageSize=' + $("#pageSizeSelectForStudentStatistics").val() + '&page=' + pageNum;
         loadStatisticsData(params);
     }
 
