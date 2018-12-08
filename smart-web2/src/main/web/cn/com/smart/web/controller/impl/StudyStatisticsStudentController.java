@@ -55,7 +55,7 @@ public class StudyStatisticsStudentController extends BaseController {
 		ModelAndView modelView = new ModelAndView();
 		modelView.getModelMap().put("searchParam", searchParam);
 
-		modelView.getModelMap().put("monthList", DataUtil.getMonthList());
+		modelView.getModelMap().put("monthList", DataUtil.getMonthList(true));
 		modelView.setViewName(this.getPageDir() + "table");
 		return modelView;
 	}
@@ -73,7 +73,7 @@ public class StudyStatisticsStudentController extends BaseController {
 
 		Map<String, Object> params = new HashMap<>();
         if(StringUtils.isNotBlank(searchParam.getName())) {
-            params.put("name", searchParam.getName());
+            params.put(IConstant.HQL_LIKE_KEY + "name", "%" + searchParam.getName() + "%");
         }
 		SmartResponse<TGStudyStudent> studentSmartResponse =
 				this.studentService.findByParam(params, page.getPage(), page.getPageSize(), "remain_course, create_time desc");

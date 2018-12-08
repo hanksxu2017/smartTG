@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import cn.com.smart.constant.IConstant;
 import org.apache.commons.lang3.StringUtils;
 import org.hibernate.Query;
 import org.hibernate.SQLQuery;
@@ -366,7 +367,10 @@ public abstract class QueryDaoImpl<T extends BaseBean> extends SuperDao<T> imple
 				hqlBuilder.append(" and ");
 			}
 			if(null != param.get(key) && param.get(key).getClass().isArray()) {
-				hqlBuilder.append(key+" in (:"+key+")");
+				hqlBuilder.append(key + " in (:" + key + ")");
+			}else if(key.startsWith(IConstant.HQL_LIKE_KEY)) {
+				String actKey = key.substring(IConstant.HQL_LIKE_KEY.length());
+				hqlBuilder.append(actKey + " like :" + key);
 			} else {
 				hqlBuilder.append(key+"=:"+key);
 			}

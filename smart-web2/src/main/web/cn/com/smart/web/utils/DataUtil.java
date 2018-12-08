@@ -229,8 +229,20 @@ public class DataUtil {
 	}
 
 	public static List<Map<String, String>> getMonthList() {
+    	return getMonthList(false);
+	}
+
+	public static List<Map<String, String>> getMonthList(boolean isIncludeCurMonth) {
 		List<Map<String, String>> monthList = new ArrayList<>();
 		Date date;
+		if(isIncludeCurMonth) {
+			date = new Date();
+			Map<String, String> item = new HashMap<>();
+			item.put("month", DateUtil.dateToStr(date, "yyyyMM"));
+			item.put("monthDesc", DateUtil.dateToStr(date, "yyyy年MM月"));
+			monthList.add(item);
+		}
+
 		for(int index = 1; index <= 6; index++) {
 			date = DateUtil.addMonth(new Date(), (-1 * index));
 			Map<String, String> item = new HashMap<>();
