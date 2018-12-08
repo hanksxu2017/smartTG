@@ -277,15 +277,23 @@
     </sqlUnit>
     <sqlUnit name="student_has_absent_course_list">
         <sql>
-            select student.id, student.name, student.level, count(t.id)
-            from tg_study_course_student_record t, tg_study_student student
-            where t.student_id = student.id
-            and t.course_id !=:courseId
-            and (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT')
-            and student.status = 'NORMAL'
-            and t.student_id not in(select rec.student_id from tg_study_course_student_record rec where rec.course_record_id =:courseRecordId)
-            [and student.name like '%:name%']
-            group by t.id
+            SELECT student.id, student.name, student.level
+            FROM tg_study_student student
+            WHERE student.status = 'NORMAL'
+            [AND student.name LIKE '%:name%']
+            AND student.id IN (
+                SELECT DISTINCT t.student_id
+                FROM tg_study_course_student_record t
+                WHERE t.course_id !=:courseId
+                AND (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT'))
+        </sql>
+    </sqlUnit>
+    <sqlUnit name="student_has_absent_count">
+        <sql>
+            select count(t.course_record_id)
+            from tg_study_course_student_record t
+            where t.student_id=:studentId
+            AND (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT')
         </sql>
     </sqlUnit>
     <sqlUnit name="student_absent_course_record_list">

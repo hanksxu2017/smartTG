@@ -37,6 +37,7 @@ import org.springframework.web.servlet.ModelAndView;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.math.BigInteger;
 import java.net.URLEncoder;
 import java.text.DecimalFormat;
 import java.util.*;
@@ -549,7 +550,7 @@ public class StudyStudentController extends BaseController {
 	public ModelAndView studentList(StudentCourseRelSearch searchParam, ModelAndView modelView, RequestPage page) {
 		String uri = this.getUriPath() + "studentList";
 		SmartResponse<Object> smartResp = this.opService.getDatas("courseRecord_student_list", searchParam, page.getStartNum(), page.getPageSize());
-		pageParam = new PageParam(uri, null, page.getPage(), page.getPageSize());
+		pageParam = new PageParam(uri, "courseRecord-student-tab", page.getPage(), page.getPageSize());
 		uri = uri + "?courseRecordId=" + searchParam.getCourseRecordId();
 		refreshBtn = new RefreshBtn(uri, null, "#courseRecord-student-tab");
 
@@ -1211,11 +1212,13 @@ public class StudyStudentController extends BaseController {
 		TGStudyCourseRecord studyCourseRecord = this.courseRecordService.find(searchParam.getCourseRecordId()).getData();
 		searchParam.setCourseId(studyCourseRecord.getCourseId());
 		SmartResponse<Object> smartResp = opService.getDatas("student_has_absent_course_list", searchParam, page.getStartNum(), page.getPageSize());
+		this.packageAbsentCount(smartResp);
+
 		ModelAndView modelView = new ModelAndView();
 		Map<String, Object> modelMap = modelView.getModelMap();
-		refreshBtn = new RefreshBtn(this.getUriPath() + "makeUpStudent", null, "#student-absent-course-list-dialog");
+		refreshBtn = new RefreshBtn(this.getUriPath() + "makeUpStudent?courseRecordId=" + searchParam.getCourseRecordId(), null, "#student-absent-course-list-dialog");
 
-		pageParam = new PageParam(this.getUriPath() + "makeUpStudent", "#student-absent-course-list-dialog", page.getPage(), page.getPageSize());
+		pageParam = new PageParam(this.getUriPath() + "makeUpStudent?courseRecordId=" + searchParam.getCourseRecordId(), "#student-absent-course-list-dialog", page.getPage(), page.getPageSize());
 
 		CustomBtn customBtnChoose = new CustomBtn("chooseStudentToMakeUp", "补课",
 				"补课", this.getUriPath() + "studentList?courseRecordId=" + searchParam.getCourseRecordId(),
@@ -1234,6 +1237,33 @@ public class StudyStudentController extends BaseController {
 
 		modelView.setViewName(this.getPageDir() + "makeUpStudent");
 		return modelView;
+	}
+
+	private void packageAbsentCount(SmartResponse<Object> smartResp) {
+		List<Object> objectList = smartResp.getDatas();
+		if(CollectionUtils.isEmpty(objectList)) {
+			return;
+		}
+		List<Object> resObjectList = new ArrayList<>();
+		Object[] objectArr;
+		Object[] resObjectArr;
+		for(int index = 0; index < objectList.size(); index++) {
+			// 每个object是一个object数组
+			objectArr = (Object[]) objectList.get(index);
+			resObjectArr = new Object[objectArr.length + 1];
+			System.arraycopy(objectArr, 0, resObjectArr, 0, objectArr.length);
+			resObjectArr[3] = this.getCountByOpService("student_has_absent_count", objectArr[0].toString());
+			resObjectList.add(resObjectArr);
+		}
+		smartResp.setDatas(resObjectList);
+	}
+
+	private int getCountByOpService(String resId, String studentId) {
+		Map<String,Object> params = new HashMap<>();
+		params.put("studentId", studentId);
+		List<Object> studentCountList = this.opService.getDatas(resId, params).getDatas();
+		BigInteger intValue = (BigInteger)studentCountList.get(0);
+		return intValue.intValue();
 	}
 
 	@RequestMapping(value = "/subMakeUpStudent", method = RequestMethod.POST)
