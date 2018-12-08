@@ -5,7 +5,6 @@ import cn.com.smart.constant.IEnum;
 public enum CourseStudentRecordStatusEnum implements IEnum {
 	NORMAL("正常"),
 	SIGNED("已签到"),
-	SIGNED_MAKE_UP("补课签到"),
 	PERSONAL_LEAVE("事假"),
 	PLAY_TRUANT("缺课"),
 	X_MAKE_UP("补课");

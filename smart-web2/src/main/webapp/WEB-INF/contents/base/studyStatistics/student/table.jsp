@@ -237,11 +237,13 @@
                     if (studentCourseSignRecord.signStatus === 'NORMAL') {
                         createNormalTd(studentCourseSignRecord.courseDate, tr);
                     } else if (studentCourseSignRecord.signStatus === 'SIGNED') {
-                        createSuccessTd(studentCourseSignRecord.courseDate, tr);
+                        if(studentCourseSignRecord.signType === 'MAKE_UP') {
+                            createInfoTd(studentCourseSignRecord.courseDate, tr);
+                        } else {
+                            createSuccessTd(studentCourseSignRecord.courseDate, tr);
+                        }
                     } else if (studentCourseSignRecord.signStatus === 'PERSONAL_LEAVE' || studentCourseSignRecord.signStatus === 'PLAY_TRUANT') {
                         createErrorTd(studentCourseSignRecord.courseDate, tr);
-                    } else if (studentCourseSignRecord.signStatus === 'SIGNED_MAKE_UP') {
-                        createInfoTd(studentCourseSignRecord.courseDate, tr);
                     } else {
                         createStandardTd(studentCourseSignRecord.courseDate, tr);
                     }

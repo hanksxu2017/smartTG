@@ -303,8 +303,7 @@ public class StudyStatisticsService {
 	                                                  StudentCourseSignStatistics courseSignStatistics,
 	                                                  Map<String, TGStudyCourseRecord> courseRecordMap) {
 		courseSignStatistics.setTotalCount(courseSignStatistics.getTotalCount() + 1);
-		if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.SIGNED.name()) ||
-                StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.SIGNED_MAKE_UP.name())) {
+		if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.SIGNED.name())) {
 			courseSignStatistics.setSignedCount(courseSignStatistics.getSignedCount() + 1);
 		} else if(StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.PERSONAL_LEAVE.name())){
 			courseSignStatistics.setPersonalLeaveCount(courseSignStatistics.getPersonalLeaveCount() + 1);
@@ -330,6 +329,7 @@ public class StudyStatisticsService {
 		studentCourseSignRecord.setStudentId(courseStudentRecord.getStudentId());
 		studentCourseSignRecord.setMonth(courseSignStatistics.getMonth());
 		studentCourseSignRecord.setCourseRecordId(courseStudentRecord.getCourseRecordId());
+		studentCourseSignRecord.setSignType(courseStudentRecord.getSignType());
 
 		TGStudyCourseRecord courseRecord = this.getCourseRecordFromMap(courseStudentRecord.getCourseRecordId(), courseRecordMap);
 		if(null != courseRecord && StringUtils.isNotBlank(courseRecord.getCourseDate())) {

@@ -20,8 +20,10 @@ public class StudentCourseSignRecord implements Comparable<StudentCourseSignReco
 	private String month;
 	// 课时日期,格式:dd
 	private int courseDate;
-	// 签到类型
+	// 签到状态
 	private CourseStudentRecordStatusEnum  signStatus;
+	//
+	private String signType;
 	//
 	private String courseRecordId;
 
