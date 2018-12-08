@@ -74,6 +74,8 @@ public class StudyCourseRecordController extends BaseController {
 		modelMap.put("teachers", this.teacherService.findNormal().getDatas());
 		modelMap.put("searchParam", searchParam);
 
+		modelMap.put("curDate", DateUtil.dateToStr(new Date(), "yyyy-MM-dd"));
+
 		modelView.setViewName(this.getPageDir() + "simpList");
 		return modelView;
 	}

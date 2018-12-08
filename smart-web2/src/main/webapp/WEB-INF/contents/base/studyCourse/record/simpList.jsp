@@ -25,8 +25,9 @@
 						<option value="">--请选择--</option>
 						<c:forEach items="${courseDates}" var="courseDate">
 							<option value="${courseDate.courseDate}"
-							        <%--<c:if test="${fn:contains(courseDate.description, '星期一')}">style="background: #C4E1FF" </c:if>--%>
-							        <c:if test="${searchParam.selectCourseDate eq courseDate.courseDate}">selected style="background: #e4e34e"</c:if> >${courseDate.description}</option>
+							        <c:if test="${searchParam.selectCourseDate eq courseDate.courseDate}">selected</c:if>
+							        <c:if test="${curDate eq courseDate.courseDate}">style="background: #84C1FF"</c:if>
+									>${courseDate.description}</option>
 						</c:forEach>
 					</select>
 				</div>
