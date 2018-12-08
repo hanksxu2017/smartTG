@@ -239,7 +239,7 @@ public class StudyStatisticsService {
 				if(StringUtils.equals(DateUtil.dateToStr(renewRecord.getCreateTime(), "yyyyMM"), studentStatistics.getMonth())) {
 					studentRenewRecord.setAmountPay(studentRenewRecord.getAmountPay() + renewRecord.getAmount());
 					studentRenewRecord.setPayDate(studentRenewRecord.getPayDate() + "," +
-							DateUtil.dateToStr(renewRecord.getCreateTime(), "dd"));
+							DateUtil.dateToStr(renewRecord.getCreateTime(), "dd").replaceFirst("^0*", ""));
 				}
 			}
 			studentRenewRecord.setPayDate(studentRenewRecord.getPayDate().replaceFirst(",", ""));
