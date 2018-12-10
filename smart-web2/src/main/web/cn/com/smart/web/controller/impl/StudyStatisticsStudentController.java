@@ -4,20 +4,15 @@ import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
-import cn.com.smart.web.bean.course.CourseTable;
 import cn.com.smart.web.bean.entity.TGStudyStudent;
-import cn.com.smart.web.bean.search.CourseSearch;
 import cn.com.smart.web.bean.search.StatisticsStudentSearch;
-import cn.com.smart.web.bean.search.StatisticsTeacherSearch;
 import cn.com.smart.web.bean.statistics.student.StudentStatisticsDataHandle;
 import cn.com.smart.web.controller.base.BaseController;
 import cn.com.smart.web.service.OPService;
-import cn.com.smart.web.service.StudyStatisticsService;
+import cn.com.smart.web.service.StudyStService;
 import cn.com.smart.web.service.StudyStudentService;
-import cn.com.smart.web.service.StudyTeacherService;
 import cn.com.smart.web.utils.DataUtil;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -61,7 +56,7 @@ public class StudyStatisticsStudentController extends BaseController {
 	}
 
 	@Autowired
-	private StudyStatisticsService statisticsService;
+	private StudyStService statisticsService;
 
 	@Autowired
 	private StudyStudentService studentService;
@@ -80,10 +75,9 @@ public class StudyStatisticsStudentController extends BaseController {
 				this.studentService.findByParam(params, page.getPage(), page.getPageSize(), "course_series_un_signed desc, remain_course");
 		List<TGStudyStudent> studentList = studentSmartResponse.getDatas();
 
-        // TODO DAO方法支持模糊
-		// TODO 如果查询往期月份的统计师数据,直接从数据库读取
+		String month = StringUtils.isNotBlank(searchParam.getMonth()) ? searchParam.getMonth() : DateUtil.dateToStr(new Date(), "yyyyMM");
 
-		smartResponse.setData(this.statisticsService.doStudentStatistics(studentList));
+		smartResponse.setData(this.statisticsService.doStudentStatistics(month, studentList));
 		smartResponse.setResult(IConstant.OP_SUCCESS);
 		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
 

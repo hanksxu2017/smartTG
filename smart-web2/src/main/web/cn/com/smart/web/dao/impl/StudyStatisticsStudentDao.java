@@ -1,7 +1,7 @@
 package cn.com.smart.web.dao.impl;
 
 import cn.com.smart.dao.impl.BaseDaoImpl;
-import cn.com.smart.web.bean.entity.TGStudyStTeacher;
+import cn.com.smart.web.bean.entity.TGStudyStStudent;
 import org.springframework.stereotype.Repository;
 
 /**
@@ -12,6 +12,6 @@ import org.springframework.stereotype.Repository;
  * @since 1.0
  */
 @Repository
-public class StudyStatisticsTeacherDao extends BaseDaoImpl<TGStudyStTeacher> {
+public class StudyStatisticsStudentDao extends BaseDaoImpl<TGStudyStStudent> {
 
 }

@@ -1,7 +1,11 @@
 package cn.com.smart.web.bean.statistics.student;
 
+import cn.com.smart.web.bean.entity.TGStudyStStudentSignRecord;
 import lombok.Getter;
 import lombok.Setter;
+
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * 描述:
@@ -22,6 +26,8 @@ public class StudentStatistics implements Comparable<StudentStatistics>{
 	//
 	private String studentName;
 	//
+	private String studentPhone;
+	//
 	private String description = "";
 	//
 	private int courseCount;
@@ -31,6 +37,7 @@ public class StudentStatistics implements Comparable<StudentStatistics>{
 	private StudentRenewRecord studentRenewRecord;
 	//
 	private StudentCourseSignStatistics studentCourseSignStatistics;
+
 
 	@Override
 	public int compareTo(StudentStatistics o) {

@@ -124,4 +124,5 @@ public interface IConstant {
 	int MAKE_UP_AMOUNT_PAYABLE = 1000;
 
 	String HQL_LIKE_KEY = "__L_I_K_E__";
+
 }

@@ -1,8 +1,10 @@
 package cn.com.smart.web.bean.statistics.student;
 
+import cn.com.smart.web.bean.entity.TGStudyStStudentSignRecord;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -17,12 +19,13 @@ import java.util.List;
 public class StudentStatisticsDataHandle {
 
 	private String monthInTable;
-
 	// 最大班级数
 	int maxCourseCount;
-
 	// 最大月时数
 	int maxCourseDay;
+	//
+	private List<StudentStatistics> studentStatisticsList = new ArrayList<>();
 
-	private List<StudentStatistics> studentStatisticsList;
+	private String previousMonthInTable = "";
+	private int previousMaxCourseDay = 0;
 }

@@ -17,7 +17,7 @@ import java.util.Date;
  */
 @Entity
 @Table(name="tg_study_statistics_teacher")
-public class TGStudyStatisticsTeacher extends BaseBeanImpl implements DateBean {
+public class TGStudyStTeacher extends BaseBeanImpl implements DateBean {
 
 	private String id;
 

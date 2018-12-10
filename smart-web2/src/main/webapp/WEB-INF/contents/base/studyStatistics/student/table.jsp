@@ -57,6 +57,7 @@
                     </div>
                     <div class="btn-page">
 	                    <input type="hidden" id="curPage">
+	                    <input type="hidden" id="totalPage">
                         <div class="page">
                             <ul class="pagination" id="turnPage">
                             </ul>
@@ -151,7 +152,7 @@
         th.appendTo(table);
 
         for (var index = 0; index < data.studentStatisticsList.length; index++) {
-            var tr = createTr(data.studentStatisticsList[index], data.maxCourseCount, data.maxCourseDay);
+            var tr = createTr(data.studentStatisticsList[index], data.maxCourseCount, data.maxCourseDay, data.previousMaxCourseDay);
             tr.appendTo(table);
         }
 
@@ -179,8 +180,15 @@
         var renewRecordTh = $("<th colspan='4' style='text-align:center;width: 20%;'>缴费情况</th>");
         renewRecordTh.appendTo(tr);
 
-        var courseDayTh = $("<th colspan='" + data.maxCourseDay + "' style='text-align:center;width: 50%;'>" + data.monthInTable + "</th>");
+        if(data.previousMaxCourseDay > 0) {
+            // 历史月份
+            var courseDayLastMonthTh = $("<th colspan='" + data.maxCourseDay + "' style='text-align:center;width: 25%;'>" + data.previousMonthInTable + "</th>");
+            courseDayLastMonthTh.appendTo(tr);
+        }
+
+        var courseDayTh = $("<th colspan='" + data.maxCourseDay + "' style='text-align:center;width: 25%;'>" + data.monthInTable + "</th>");
         courseDayTh.appendTo(tr);
+
 
         // 标题第二行
         var trSecond = $("<tr class='ui-state-default'></tr>");
@@ -194,6 +202,10 @@
         createStandardTh('应付', trSecond);
         createStandardTh('实付', trSecond);
         createStandardTh('日期', trSecond);
+
+        for (var index = 1; index <= data.previousMaxCourseDay; index++) {
+            createStandardTh(index, trSecond);
+        }
 
         for (var index = 1; index <= data.maxCourseDay; index++) {
             createStandardTh(index, trSecond);
@@ -213,7 +225,7 @@
     }
 
 
-    function createTr(studentStatistics, maxCourseCount, maxCourseDay) {
+    function createTr(studentStatistics, maxCourseCount, maxCourseDay, previousMaxCourseDay) {
 
         var tr = $("<tr></tr>");
 
@@ -234,33 +246,44 @@
         createStandardTd(studentStatistics.studentRenewRecord.amountPay, tr);
         createStandardTd(studentStatistics.studentRenewRecord.payDate, tr);
 
+		for(var index = 0; index < previousMaxCourseDay; index++) {
+            if (index < studentStatistics.studentCourseSignStatistics.previousSignCount) {
+                var previousSignRecord = studentStatistics.studentCourseSignStatistics.stStudentSignRecordList[index];
+                createCourseSignRecordTd(previousSignRecord, tr);
+            } else {
+                createStandardTd('', tr);
+            }
+		}
+
         for (var index2 = 0; index2 < maxCourseDay; index2++) {
             if (index2 < studentStatistics.studentCourseSignStatistics.totalCount) {
-                var studentCourseSignRecord = studentStatistics.studentCourseSignStatistics.studentCourseSignRecordList[index2];
-                if (typeof(studentCourseSignRecord) !== "undefined") {
-                    if (studentCourseSignRecord.signStatus === 'NORMAL') {
-                        createNormalTd(studentCourseSignRecord.courseDate, tr);
-                    } else if (studentCourseSignRecord.signStatus === 'SIGNED') {
-                        if(studentCourseSignRecord.signType === 'MAKE_UP') {
-                            createInfoTd(studentCourseSignRecord.courseDate, tr);
-                        } else {
-                            createSuccessTd(studentCourseSignRecord.courseDate, tr);
-                        }
-                    } else if (studentCourseSignRecord.signStatus === 'PERSONAL_LEAVE' || studentCourseSignRecord.signStatus === 'PLAY_TRUANT') {
-                        createErrorTd(studentCourseSignRecord.courseDate, tr);
-                    } else {
-                        createStandardTd(studentCourseSignRecord.courseDate, tr);
-                    }
-                } else {
-                    createStandardTd('0', tr);
-                }
+                var signRecord = studentStatistics.studentCourseSignStatistics.studentCourseSignRecordList[index2];
+                createCourseSignRecordTd(signRecord, tr);
             } else {
                 createStandardTd('', tr);
             }
         }
-
-
         return tr;
+    }
+
+    function createCourseSignRecordTd(signRecord, tr) {
+        if (typeof(signRecord) !== "undefined") {
+            if (signRecord.signStatus === 'NORMAL') {
+                createNormalTd(signRecord.courseDate, tr);
+            } else if (signRecord.signStatus === 'SIGNED') {
+                if(signRecord.signType === 'MAKE_UP') {
+                    createInfoTd(signRecord.courseDate, tr);
+                } else {
+                    createSuccessTd(signRecord.courseDate, tr);
+                }
+            } else if (signRecord.signStatus === 'PERSONAL_LEAVE' || signRecord.signStatus === 'PLAY_TRUANT') {
+                createErrorTd(signRecord.courseDate, tr);
+            } else {
+                createStandardTd(signRecord.courseDate, tr);
+            }
+        } else {
+            createStandardTd('0', tr);
+        }
     }
 
     function createStandardTd(name, tr, bgColor) {
@@ -321,32 +344,6 @@
         $("#pageSelectForStudentStatistics").val(data.size);
 
         createPagination(data);
-
-        /*var lis = $("#turnPage").find('li');
-        if(1 == data.size) {
-            // 第一页
-            $(lis).eq(0).addClass('disabled');
-            if(data.totalPage > data.size){
-                $(lis).eq(2).removeClass('disabled');
-                $(lis).eq(2).addClass('active');
-            } else {
-                $(lis).eq(2).removeClass('active');
-                $(lis).eq(2).addClass('disabled');
-            }
-        } else if(data.size > 1){
-            $(lis).eq(0).removeClass('disabled');
-            $(lis).eq(0).addClass('active');
-
-            if(data.totalPage > data.size) {
-                // 开启下一页
-                $(lis).eq(2).removeClass('disabled');
-                $(lis).eq(2).addClass('active');
-            } else {
-                // 关闭下一页
-                $(lis).eq(2).removeClass('active');
-                $(lis).eq(2).addClass('disabled');
-            }
-        }*/
     }
     
     function createPagination(data) {
@@ -357,7 +354,7 @@
         // 前一页
         var previousPage = null;
         if(data.size == 1) {
-            previousPage = $("<li class='disabled'><a href='javascript:void(0)' onclick='turnPage(-1)'>&laquo;</a></li>");
+            previousPage = $("<li class='disabled'><a href='javascript:void(0)'>&laquo;</a></li>");
         } else {
             previousPage = $("<li ><a href='javascript:void(0)' onclick='turnPage(-1)'>&laquo;</a></li>");
         }
@@ -370,7 +367,11 @@
             if(data.size >= 1 && data.size <= 5) {
                 createPageNum(1, 5, data.size, paginationUl);
             } else {
-                createPageNum((data.size - 1), (data.size + 1), data.size, paginationUl);
+                var maxPage = (data.size + 2);
+                if(maxPage > data.totalPage) {
+                    maxPage = data.totalPage;
+                }
+                createPageNum((data.size - 2), maxPage, data.size, paginationUl);
             }
 	    }
 
@@ -378,7 +379,7 @@
 		// 后一页
         var nextPage = null;
 		if(data.size == data.totalPage) {
-			nextPage = $("<li class='disabled'><a href='javascript:void(0)' onclick='turnPage(1)'>&raquo;</a></li>");
+			nextPage = $("<li class='disabled'><a href='javascript:void(0)'>&raquo;</a></li>");
 		} else {
 		    nextPage = $("<li><a href='javascript:void(0)' onclick='turnPage(1)'>&raquo;</a></li>");
 		}
@@ -400,9 +401,12 @@
     
     function turnPage(offset) {
         var curPageNum = $("#curPage").val();
+        var totalPageNum = $("#totalPage").val();
         var targetPage = parseInt(curPageNum) + offset;
-        var params = 'pageSize=' + $("#pageSizeSelectForStudentStatistics").val() + '&page=' + targetPage;
-        loadStatisticsData(params);
+        if(targetPage <= parseInt(totalPageNum)) {
+            var params = 'pageSize=' + $("#pageSizeSelectForStudentStatistics").val() + '&page=' + targetPage;
+            loadStatisticsData(params);
+        }
     }
     
     function forwardPage(pageNum) {

@@ -1,6 +1,5 @@
 package cn.com.smart.web.service;
 
-import cn.com.smart.constant.IConstant;
 import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.entity.*;
@@ -24,7 +23,7 @@ import java.util.*;
  */
 @Service
 @Slf4j
-public class StudyStatisticsService {
+public class StudyStService {
 
 	@Autowired
 	private StudyTeacherService teacherService;
@@ -33,7 +32,7 @@ public class StudyStatisticsService {
 	private OPService opService;
 
 	@Autowired
-	private StudyStatisticsTeacherService statisticsTeacherService;
+	private StudyStTeacherService statisticsTeacherService;
 
 	/**
 	 * 月末必须结清所有课时
@@ -43,8 +42,8 @@ public class StudyStatisticsService {
 		String curMonth = DateUtil.dateToStr(DateUtil.addMonth(new Date(), -1), "yyyyMM");
 		List<TGStudyTeacher> teacherList = this.teacherService.findNormal().getDatas();
 		if(CollectionUtils.isNotEmpty(teacherList)) {
-			TGStudyStatisticsTeacher dbRecord;
-			TGStudyStatisticsTeacher statisticsTeacher;
+			TGStudyStTeacher dbRecord;
+			TGStudyStTeacher statisticsTeacher;
 			for(TGStudyTeacher teacher : teacherList) {
 				dbRecord = this.statisticsTeacherService.getByMonthAndTeacher(curMonth, teacher.getId());
 				statisticsTeacher = this.statisticsTeacher(curMonth, teacher);
@@ -59,8 +58,8 @@ public class StudyStatisticsService {
 		}
 	}
 
-	private TGStudyStatisticsTeacher statisticsTeacher(String curMonth, TGStudyTeacher teacher) {
-		TGStudyStatisticsTeacher statisticsTeacher = new TGStudyStatisticsTeacher();
+	private TGStudyStTeacher statisticsTeacher(String curMonth, TGStudyTeacher teacher) {
+		TGStudyStTeacher statisticsTeacher = new TGStudyStTeacher();
 		statisticsTeacher.setMonth(curMonth);
 		statisticsTeacher.setTeacherId(teacher.getId());
 		statisticsTeacher.setTeacherName(teacher.getName());
@@ -104,32 +103,149 @@ public class StudyStatisticsService {
 		return intValue.intValue();
 	}
 
+
+	@Autowired
+	private StudyStudentService studentService;
+
+	/**
+	 * 统计所有学生的信息,包括续费，课时
+	 * 月末必须对所有课时进行点名操作
+	 */
+	public void doStudentStatistics() {
+		List<TGStudyStudent> studentList = this.studentService.findNormal().getDatas();
+		if(CollectionUtils.isEmpty(studentList)) {
+			return;
+		}
+
+		String month = DateUtil.dateToStr(DateUtil.addMonth(new Date(), -1), "yyyyMM");
+
+		Map<String, TGStudyCourse> courseMap = new HashMap<>();
+		Map<String, TGStudyCourseRecord> courseRecordMap = new HashMap<>();
+
+		TGStudyStStudent stStudent;
+		List<TGStudyStStudentSignRecord> stStudentSignRecordList;
+		StudentStatistics studentStatistics;
+
+		for(TGStudyStudent student : studentList) {
+			studentStatistics = this.doSingleStudentStatistics(student, month, courseMap, courseRecordMap);
+			stStudent = parseStStudent(studentStatistics);
+			this.stStudentService.save(stStudent);
+
+			if(stStudent.getTotalCount() > 0) {
+				stStudentSignRecordList = this.parseStStudentSignRecord(stStudent.getId(), studentStatistics);
+				this.stStudentSignRecordService.save(stStudentSignRecordList);
+			}
+		}
+	}
+
+	private TGStudyStStudent parseStStudent(StudentStatistics studentStatistics) {
+		TGStudyStStudent stStudent = new TGStudyStStudent();
+		if(null != studentStatistics) {
+			stStudent.setMonth(studentStatistics.getMonth());
+			stStudent.setStudentId(studentStatistics.getStudentId());
+			stStudent.setStudentName(studentStatistics.getStudentName());
+			stStudent.setDescription(studentStatistics.getDescription());
+			stStudent.setCourseCount(studentStatistics.getCourseCount());
+			stStudent.setCourseArr(DataUtil.arrayToString(studentStatistics.getCourseArr(), ","));
+			stStudent.setCreateTime(new Date());
+
+			StudentCourseSignStatistics signStatistics = studentStatistics.getStudentCourseSignStatistics();
+			if(null != signStatistics) {
+				stStudent.setTotalCount(signStatistics.getTotalCount());
+				stStudent.setSignedCount(signStatistics.getSignedCount());
+				stStudent.setPersonalLeaveCount(signStatistics.getPersonalLeaveCount());
+				stStudent.setPlayTruantCount(signStatistics.getPlayTruantCount());
+				stStudent.setMakeUpCount(signStatistics.getMakeUpCount());
+				stStudent.setOthersCount(signStatistics.getOthersCount());
+			}
+
+			StudentRenewRecord renewRecord = studentStatistics.getStudentRenewRecord();
+			if(null != renewRecord) {
+				stStudent.setRemainCourse(renewRecord.getRemainCourse());
+				stStudent.setAmountPayable(renewRecord.getAmountPayable());
+				stStudent.setAmountPay(renewRecord.getAmountPay());
+				stStudent.setPayDate(renewRecord.getPayDate());
+			}
+		}
+		return stStudent;
+	}
+
+	/**
+	 * 封装学生的课时签到信息
+	 * @param stId                  学生统计信息编号
+	 * @param studentStatistics     学生统计信息
+	 * @return                      学生课时信息统计列表
+	 */
+	private List<TGStudyStStudentSignRecord> parseStStudentSignRecord(String stId, StudentStatistics studentStatistics) {
+		List<TGStudyStStudentSignRecord> recordList = new ArrayList<>();
+		if(null != studentStatistics && null != studentStatistics.getStudentCourseSignStatistics() &&
+			CollectionUtils.isNotEmpty(studentStatistics.getStudentCourseSignStatistics().getStudentCourseSignRecordList())) {
+			TGStudyStStudentSignRecord stStudentSignRecord;
+			for(StudentCourseSignRecord studentCourseSignRecord : studentStatistics.getStudentCourseSignStatistics().getStudentCourseSignRecordList()) {
+				stStudentSignRecord = parseStStudentSignRecord(stId, studentCourseSignRecord);
+				recordList.add(stStudentSignRecord);
+			}
+		}
+		return recordList;
+	}
+
+	private TGStudyStStudentSignRecord parseStStudentSignRecord(String stId, StudentCourseSignRecord studentCourseSignRecord) {
+		TGStudyStStudentSignRecord record = new TGStudyStStudentSignRecord();
+		record.setStatisticsId(stId);
+		record.setCourseDate(studentCourseSignRecord.getCourseDate());
+		record.setSignStatus(studentCourseSignRecord.getSignStatus().name());
+		record.setSignType(studentCourseSignRecord.getSignType());
+		record.setCourseRecordId(studentCourseSignRecord.getCourseRecordId());
+		record.setCreateTime(new Date());
+		return record;
+	}
+
 	/**
 	 * 学生信息统计
+	 * @param month         目标月份
 	 * @param studentList   要统计的学生列表
 	 * @return              统计对象
 	 */
-	public StudentStatisticsDataHandle doStudentStatistics(List<TGStudyStudent> studentList) {
+	public StudentStatisticsDataHandle doStudentStatistics(String month, List<TGStudyStudent> studentList) {
 		StudentStatisticsDataHandle handle = new StudentStatisticsDataHandle();
-		this.packageStudentStatistics(studentList, handle);
+
+		String curMonth = DateUtil.dateToStr(new Date(), "yyyyMM");
+		if(StringUtils.equals(curMonth, month)) {
+			// 查找当前月份的数据
+			this.packageCurMonthStudentStatistics(month, studentList, handle);
+		} else {
+			// TODO 全部历史月份
+
+		}
+
+
 		return handle;
 	}
+
+	@Autowired
+	private StudyStStudentService stStudentService;
+
+	@Autowired
+	private StudyStStudentSignRecordService stStudentSignRecordService;
+
+
 
 	/**
 	 * 执行学生统计</br>
 	 * @param studentList   要统计的学生列表
 	 * @param dataHandle    统计对象
 	 */
-	private void packageStudentStatistics(List<TGStudyStudent> studentList, StudentStatisticsDataHandle dataHandle) {
+	private void packageCurMonthStudentStatistics(String month, List<TGStudyStudent> studentList, StudentStatisticsDataHandle dataHandle) {
 		List<StudentStatistics> studentStatisticsList = new ArrayList<>();
 		if(CollectionUtils.isNotEmpty(studentList)) {
 			// 最大班级数
 			int maxCourseCount = 0;
 			// 最大月时数
 			int maxCourseDay = 0;
+			//
+			int previousMaxCourseDay = 0;
 			StudentStatistics studentStatistics;
 
-			String month = DateUtil.dateToStr(new Date(), "yyyyMM");
 			Map<String, TGStudyCourse> courseMap = new HashMap<>();
 			Map<String, TGStudyCourseRecord> courseRecordMap = new HashMap<>();
 			for(TGStudyStudent student : studentList) {
@@ -142,11 +258,19 @@ public class StudyStatisticsService {
 				if(studentStatistics.getStudentCourseSignStatistics().getTotalCount() > maxCourseDay) {
 					maxCourseDay = studentStatistics.getStudentCourseSignStatistics().getTotalCount();
 				}
+
+				if(studentStatistics.getStudentCourseSignStatistics().getPreviousSignCount() > previousMaxCourseDay) {
+					previousMaxCourseDay = studentStatistics.getStudentCourseSignStatistics().getPreviousSignCount();
+				}
 			}
 
-			dataHandle.setMonthInTable(DateUtil.dateToStr(new Date(), "yyyy年MM月"));
+			dataHandle.setMonthInTable(month.substring(0, 4) + "年" + month.substring(4));
 			dataHandle.setMaxCourseCount(maxCourseCount);
 			dataHandle.setMaxCourseDay(maxCourseDay);
+
+			Date lastMonth = DateUtil.addMonth(new Date(), -1);
+			dataHandle.setPreviousMonthInTable(DateUtil.dateToStr(lastMonth, "yyyy年MM月"));
+			dataHandle.setPreviousMaxCourseDay(previousMaxCourseDay);
 
 //			Collections.sort(studentStatisticsList);
 			dataHandle.setStudentStatisticsList(studentStatisticsList);
@@ -260,6 +384,9 @@ public class StudyStatisticsService {
 		StudentCourseSignStatistics courseSignStatistics = new StudentCourseSignStatistics();
 		courseSignStatistics.setStudentId(student.getId());
 		courseSignStatistics.setMonth(studentStatistics.getMonth());
+		// 上一个月的签到统计信息
+		courseSignStatistics.setStStudentSignRecordList(parsePreviousSignRecord(studentStatistics.getMonth(), student));
+		courseSignStatistics.setPreviousSignCount(courseSignStatistics.getStStudentSignRecordList().size());
 
 		List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByStudentId(student.getId());
 		if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
@@ -276,6 +403,27 @@ public class StudyStatisticsService {
 		}
 
 		studentStatistics.setStudentCourseSignStatistics(courseSignStatistics);
+	}
+
+	/**
+	 * 查询历史月份的学生统计信息
+	 * @param month         要查找的月份
+	 * @param student       要查找的学生
+	 */
+	private List<TGStudyStStudentSignRecord> parsePreviousSignRecord(String month, TGStudyStudent student) {
+		String previousMonth = DateUtil.dateToStr(DateUtil.addMonth(DateUtil.parseDate(month, "yyyyMM"), -1), "yyyyMM");
+		TGStudyStStudent statisticsStudent;
+		List<TGStudyStStudentSignRecord> stStudentSignRecordList;
+		statisticsStudent = stStudentService.findByStudentId(student.getId(), previousMonth);
+		if (null != statisticsStudent) {
+			// 查询课时签到信息
+			stStudentSignRecordList = this.stStudentSignRecordService.findByStatisticsId(statisticsStudent.getId());
+			if (CollectionUtils.isNotEmpty(stStudentSignRecordList)) {
+				Collections.sort(stStudentSignRecordList);
+				return stStudentSignRecordList;
+			}
+		}
+		return null;
 	}
 
 	private boolean isCourseRecordInMonth(TGStudyCourseStudentRecord courseStudentRecord, String month, Map<String, TGStudyCourseRecord> courseRecordMap) {

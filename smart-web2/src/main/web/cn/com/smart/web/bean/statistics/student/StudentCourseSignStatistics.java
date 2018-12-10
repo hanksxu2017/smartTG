@@ -1,5 +1,6 @@
 package cn.com.smart.web.bean.statistics.student;
 
+import cn.com.smart.web.bean.entity.TGStudyStStudentSignRecord;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -34,6 +35,9 @@ public class StudentCourseSignStatistics implements Comparable<StudentCourseSign
 	private int othersCount;
 	//
 	List<StudentCourseSignRecord> studentCourseSignRecordList = new ArrayList<>();
+	// 前一个月的签到信息
+	private int previousSignCount;
+	private List<TGStudyStStudentSignRecord> stStudentSignRecordList = new ArrayList<>();
 
 	@Override
 	public int compareTo(StudentCourseSignStatistics o) {

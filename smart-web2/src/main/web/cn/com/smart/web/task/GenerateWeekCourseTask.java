@@ -4,8 +4,6 @@ import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.service.CourseBusinessService;
 import cn.com.smart.web.service.StudyCourseService;
-import cn.com.smart.web.service.StudyCourseStudentRecordService;
-import cn.com.smart.web.service.StudyStatisticsService;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.beans.factory.annotation.Autowired;
