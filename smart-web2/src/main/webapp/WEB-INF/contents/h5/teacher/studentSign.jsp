@@ -103,7 +103,7 @@
                             var absent = data.data.studentPersonalLeave + data.data.studentPlayTruant;
                             $("#absentCount").text(absent);
 
-                            var unSign = data.data.studentQuantityPlan - data.data.studentQuantityActual;
+                            var unSign = data.data.studentQuantityPlan - data.data.studentQuantityActual - absent;
                             $("#unSignCount").text(unSign);
                             $("#courseInfoDiv").show();
                         }
@@ -181,7 +181,7 @@
                     tr += "</td>";
                 } else if (value.status === 'PERSONAL_LEAVE') {
                     tr += "<td>";
-                    tr += "<button class='btn' data-type='signed' data-type='signed' data-studentid='" + value.studentId + "' onclick='subStudentSign(this)'>签到</button>";
+                    tr += "<button class='btn' data-type='signed' data-studentid='" + value.studentId + "' onclick='subStudentSign(this)'>签到</button>";
                     tr += "<button class='btn btn-info' data-type='leave' data-studentid='" + value.studentId + "' onclick='subStudentSign(this)'>请假</button>";
                     tr += "<button class='btn' data-type='truant' data-studentid='" + value.studentId + "' onclick='subStudentSign(this)'>缺课</button>";
                     tr += "</td>";

@@ -24,8 +24,6 @@ public class StudyTeacherH5Controller {
     private final String pathDir = "h5/teacher/";
 
     @Autowired
-    private StudySystemMessageService systemMessageService;
-    @Autowired
     private StudyCourseRecordService courseRecordService;
 
     @RequestMapping(value = "/index")
@@ -98,17 +96,36 @@ public class StudyTeacherH5Controller {
         return courseRecordService.find(courseRecordId);
     }
 
+
     @Autowired
-    private StudyStudentService studentService;
+    private StudyCourseRecordSignService courseRecordSignService;
 
     @RequestMapping(value = "/subStudentSign")
     @ResponseBody
     public SmartResponse<String> subStudentSign(String courseRecordId, String studentId, String status) {
         SmartResponse<String> smartResponse = new SmartResponse<>();
 
-        smartResponse.setResult(IConstant.OP_SUCCESS);
-        smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
+        CourseStudentRecordStatusEnum statusEnum = this.parseStatus(status);
+        if(StringUtils.isBlank(courseRecordId) || StringUtils.isBlank(studentId) ||
+                null == statusEnum) {
+            smartResponse.setMsg("请求无效");
+            return smartResponse;
+        }
+
+        smartResponse = this.courseRecordSignService.subStudentSign(courseRecordId, studentId, statusEnum);
+
         return smartResponse;
+    }
+
+    private CourseStudentRecordStatusEnum parseStatus(String status) {
+        if(StringUtils.equals(status, "signed")) {
+            return CourseStudentRecordStatusEnum.SIGNED;
+        } else if (StringUtils.equals(status, "leave")) {
+            return CourseStudentRecordStatusEnum.PERSONAL_LEAVE;
+        } else if (StringUtils.equals(status, "truant")) {
+            return CourseStudentRecordStatusEnum.PLAY_TRUANT;
+        }
+        return null;
     }
 
 }

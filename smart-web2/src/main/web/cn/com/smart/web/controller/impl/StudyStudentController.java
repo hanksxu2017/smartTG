@@ -3,13 +3,14 @@ package cn.com.smart.web.controller.impl;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
-import cn.com.smart.constant.enumEntity.StudentCourseRelStatusEnum;
-import cn.com.smart.constant.enumEntity.StudentCourseSignTypeEnum;
 import cn.com.smart.constant.enumEntity.SystemMessageEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.UserInfo;
-import cn.com.smart.web.bean.entity.*;
+import cn.com.smart.web.bean.entity.TGStudyCourseRecord;
+import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
+import cn.com.smart.web.bean.entity.TGStudyRenewRecord;
+import cn.com.smart.web.bean.entity.TGStudyStudent;
 import cn.com.smart.web.bean.search.StudentCourseRelSearch;
 import cn.com.smart.web.bean.search.StudentSearch;
 import cn.com.smart.web.constant.enums.BtnPropType;
@@ -633,7 +634,7 @@ public class StudyStudentController extends BaseController {
 
 		SmartResponse<TGStudyStudent> res = new SmartResponse<>();
 
-		SmartResponse<String> smartResponse = this.processSingleStudentSign(courseRecordId, studentId, null, this.parseCourseStudentStatus(signType));
+		SmartResponse<String> smartResponse = this.courseRecordSignService.subStudentSign(courseRecordId, studentId, this.parseCourseStudentStatus(signType));
 		if (smartResponse.isSuccess()) {
 			res.setData(this.studentService.find(studentId).getData());
 			res.setResult(IConstant.OP_SUCCESS);
@@ -771,6 +772,9 @@ public class StudyStudentController extends BaseController {
 		return modelView;
 	}
 
+	@Autowired
+	private StudyCourseRecordSignService courseRecordSignService;
+
 	@RequestMapping(value = "/subSign", method = RequestMethod.POST)
 	@ResponseBody
 	public SmartResponse<String> subSign(String courseRecordId, String studentId, String status, String description) {
@@ -786,7 +790,7 @@ public class StudyStudentController extends BaseController {
 
 		String[] studentIds = studentId.split(",");
 		for (String sid : studentIds) {
-			smartResponse = processSingleStudentSign(courseRecordId, sid, description, statusEnum);
+			smartResponse = courseRecordSignService.subStudentSign(courseRecordId, sid, statusEnum, description);
 			if (!smartResponse.isSuccess()) {
 				return smartResponse;
 			}
@@ -795,119 +799,6 @@ public class StudyStudentController extends BaseController {
 		smartResponse.setResult(IConstant.OP_SUCCESS);
 		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
 		return smartResponse;
-	}
-
-	private SmartResponse<String> processSingleStudentSign(String courseRecordId, String studentId, String description, CourseStudentRecordStatusEnum statusEnum) {
-		SmartResponse<String> smartResponse = new SmartResponse<>();
-		Map<String, Object> params = new HashMap<>();
-		params.put("courseRecordId", courseRecordId);
-		params.put("studentId", studentId);
-		SmartResponse<TGStudyCourseStudentRecord> recordSmartResponse = this.courseStudentRecordService.findByParam(params);
-		if (!recordSmartResponse.isSuccess()) {
-			smartResponse.setMsg(recordSmartResponse.getMsg());
-			return smartResponse;
-		}
-		TGStudyCourseStudentRecord courseStudentRecord = recordSmartResponse.getDatas().get(0);
-
-		if (null == courseStudentRecord) {
-			smartResponse.setMsg("学生课时数据不存在!");
-			return smartResponse;
-		}
-//        if (StringUtils.equals(courseStudentRecord.getStatus(), IConstant.STATUS_NORMAL)) {
-		// 进行签到操作
-		if (!this.checkCourseStudentRecordCanSign(courseStudentRecord)) {
-			smartResponse.setMsg("课时目前无法进行签到操作,请稍后再试!");
-			return smartResponse;
-		}
-		if(StringUtils.equals(IConstant.SIGNED_TYPE_MAKEUP, courseStudentRecord.getSignType())) {
-			smartResponse.setMsg("补课签到不支持此项操作!");
-			return smartResponse;
-		}
-
-		boolean isFirstSign = StringUtils.equals(courseStudentRecord.getStatus(), CourseStudentRecordStatusEnum.NORMAL.name());
-
-		// 更新学生课时的签到信息
-		courseStudentRecord.setStatus(statusEnum.name());
-		courseStudentRecord.setDescription(description);
-		courseStudentRecord.setUpdateTime(new Date());
-		final SmartResponse<String> updateSmartResponse = this.courseStudentRecordService.update(courseStudentRecord);
-		if (!updateSmartResponse.isSuccess()) {
-			smartResponse.setMsg("学生课时更新失败!");
-			return smartResponse;
-		}
-
-		TGStudyStudent student = this.studentService.find(courseStudentRecord.getStudentId()).getData();
-		student.setUpdateTime(new Date());
-		if (CourseStudentRecordStatusEnum.SIGNED.equals(statusEnum)) {
-			// 学生课时-1
-			if(isFirstSign) {
-				student.setRemainCourse(student.getRemainCourse() - 1);
-			}
-			student.setCourseSeriesUnSigned(0);
-			this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
-		} else {
-			if (!isSignAsHasCome(studentId, courseStudentRecord.getCourseId())) {
-				// 签到类型非到班签到时计算缺课逻辑
-				// 学生课时-1
-				if(isFirstSign){
-					student.setRemainCourse(student.getRemainCourse() - 1);
-				}
-				// 非正常签到,生成异常签到记录
-				student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
-			}
-		}
-		this.studentService.update(student);
-		if (student.getCourseSeriesUnSigned() >= IConstant.NOTIFY_COURSE_SERIES_UNSIGNED) {
-			// 连续未签到,系统提示
-			String content = "学生[" + student.getName() + "]已连续 " + student.getCourseSeriesUnSigned() + "次缺席!";
-			this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_ABSENT_NOTE, content, student.getId());
-		}
-		if (student.getRemainCourse() <= IConstant.NOTIFY_COURSE_RENEW) {
-			// 课时不足
-			String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
-			this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content, student.getId());
-		}
-//        }
-
-		// 检查指定课时的所有学生是否已经全部签到
-		params = new HashMap<>();
-		params.put("courseRecordId", courseRecordId);
-		params.put("status", this.courseStudentRecordService.getQueryStatus().toArray());
-		this.courseRecordService.updateCourseRecordToEndIfAllSigned(courseRecordId, this.courseStudentRecordService.findByParam(params).getDatas());
-
-		smartResponse.setResult(IConstant.OP_SUCCESS);
-		return smartResponse;
-	}
-
-	/**
-	 * 查看课时是否支持签到操作
-	 *
-	 * @param courseStudentRecord 学生课时信息对象
-	 * @return 可以执行签到时返回true, 否则返回false
-	 */
-	private boolean checkCourseStudentRecordCanSign(TGStudyCourseStudentRecord courseStudentRecord) {
-		TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseStudentRecord.getCourseRecordId()).getData();
-		return null != courseRecord && courseRecord.canSign();
-	}
-
-	/**
-	 * 判断学生课时的签到类型是否为到班签到
-	 *
-	 * @param studentId 学生编号
-	 * @param courseId  课时编号
-	 * @return 到班签到时返回true, 否则返回false
-	 */
-	private boolean isSignAsHasCome(String studentId, String courseId) {
-		Map<String, Object> params = new HashMap<>();
-		params.put("studentId", studentId);
-		params.put("courseId", courseId);
-		params.put("status", IConstant.STATUS_NORMAL);
-		List<TGStudyStudentCourseRel> studentCourseRelList = this.studentCourseRelService.findByParam(params).getDatas();
-		if (CollectionUtils.isNotEmpty(studentCourseRelList)) {
-			return StringUtils.equals(StudentCourseSignTypeEnum.SIGN_AS_HAS.name(), studentCourseRelList.get(0).getSignType());
-		}
-
-		return false;
 	}
 
 	@Autowired
@@ -1138,7 +1029,6 @@ public class StudyStudentController extends BaseController {
 				relist.add(tempMap);
 			}
 		} catch (IOException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 
@@ -1247,14 +1137,14 @@ public class StudyStudentController extends BaseController {
 		List<Object> resObjectList = new ArrayList<>();
 		Object[] objectArr;
 		Object[] resObjectArr;
-		for(int index = 0; index < objectList.size(); index++) {
-			// 每个object是一个object数组
-			objectArr = (Object[]) objectList.get(index);
-			resObjectArr = new Object[objectArr.length + 1];
-			System.arraycopy(objectArr, 0, resObjectArr, 0, objectArr.length);
-			resObjectArr[3] = this.getCountByOpService("student_has_absent_count", objectArr[0].toString());
-			resObjectList.add(resObjectArr);
-		}
+        for (Object anObjectList : objectList) {
+            // 每个object是一个object数组
+            objectArr = (Object[]) anObjectList;
+            resObjectArr = new Object[objectArr.length + 1];
+            System.arraycopy(objectArr, 0, resObjectArr, 0, objectArr.length);
+            resObjectArr[3] = this.getCountByOpService("student_has_absent_count", objectArr[0].toString());
+            resObjectList.add(resObjectArr);
+        }
 		smartResp.setDatas(resObjectList);
 	}
 
