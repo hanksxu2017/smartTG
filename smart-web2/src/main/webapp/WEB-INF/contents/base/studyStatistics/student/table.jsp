@@ -41,7 +41,7 @@
                      data-subtract-height="0">
                     <!-- table here -->
                     <table id="studentStatisticsTable" class="table table-striped table-bordered table-condensed"
-                           style="width: 80%;">
+                           style="width: 100%;">
                     </table>
 
                 </div>
@@ -164,8 +164,11 @@
         var tr = $("<tr class='ui-state-default'></tr>");
         tr.appendTo(tableHeader);
 
-        var nameTh = $("<th rowspan='2' style='text-align:center;width: 10%;'>姓名</th>");
+        var nameTh = $("<th rowspan='2' style='text-align:center;width: 5%;'>姓名</th>");
         nameTh.appendTo(tr);
+
+        var phoneTh = $("<th rowspan='2' style='text-align:center;width: 5%;'>联系方式</th>");
+        phoneTh.appendTo(tr);
 
         var descTh = $("<th rowspan='2' style='text-align:center;width: 10%;'>备注</th>");
         descTh.appendTo(tr);
@@ -215,6 +218,7 @@
         var tr = $("<tr></tr>");
 
         createStandardTd(studentStatistics.studentName, tr);
+        createStandardTd(studentStatistics.studentPhone, tr);
         createStandardTd(studentStatistics.description, tr);
 
         for (var index = 0; index < maxCourseCount; index++) {

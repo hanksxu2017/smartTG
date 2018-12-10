@@ -73,6 +73,13 @@
                        id="totalCourse" value="20"/>
             </div>
         </div>
+        <div class="form-group m-b-10">
+            <label for="renewAmount" class="col-sm-2 control-label">续费额度</label>
+            <div class="col-sm-9 p-l-0">
+                <input type="text" class="form-control require" name="renewAmount" data-label-name="初始课时"
+                       id="renewAmount" value="1000"/>
+            </div>
+        </div>
 	    <div class="form-group m-b-10">
 		    <label for="isRegisterForAddStudent" class="col-sm-2 control-label">是否注册</label>
 		    <div class="col-sm-9 p-l-0">

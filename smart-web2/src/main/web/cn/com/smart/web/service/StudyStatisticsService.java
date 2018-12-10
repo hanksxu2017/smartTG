@@ -170,7 +170,7 @@ public class StudyStatisticsService {
 		studentStatistics.setStudentId(student.getId());
 		studentStatistics.setStudentName(student.getName());
 		studentStatistics.setDescription(StringUtils.isNotBlank(student.getDescription()) ? student.getDescription() : "");
-
+		studentStatistics.setStudentPhone(student.getParentPhone());
 		this.packageCourseStatistics(student.getId(), studentStatistics, courseMap);
 
 		this.packageStudentRenewRecord(student, studentStatistics);
@@ -232,9 +232,9 @@ public class StudyStatisticsService {
 		studentRenewRecord.setStudentId(student.getId());
 		studentRenewRecord.setMonth(studentStatistics.getMonth());
 		studentRenewRecord.setRemainCourse(student.getRemainCourse());
+		studentRenewRecord.setAmountPayable(student.getRenewAmount());
 		List<TGStudyRenewRecord> renewRecordList = this.renewRecordService.findByStudentId(student.getId());
 		if(CollectionUtils.isNotEmpty(renewRecordList)) {
-			studentRenewRecord.setAmountPayable(IConstant.MAKE_UP_AMOUNT_PAYABLE * renewRecordList.size());
 			for(TGStudyRenewRecord renewRecord : renewRecordList) {
 				if(StringUtils.equals(DateUtil.dateToStr(renewRecord.getCreateTime(), "yyyyMM"), studentStatistics.getMonth())) {
 					studentRenewRecord.setAmountPay(studentRenewRecord.getAmountPay() + renewRecord.getAmount());

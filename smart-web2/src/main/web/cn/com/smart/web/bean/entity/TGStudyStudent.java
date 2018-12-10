@@ -62,6 +62,9 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
 	private String description;
 
+	// 续费额度
+	private int renewAmount = IConstant.MAKE_UP_AMOUNT_PAYABLE;
+
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
@@ -223,5 +226,14 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
 	public void setDescription(String description) {
 		this.description = description;
+	}
+
+	@Column(name="renew_amount", length = 8)
+	public int getRenewAmount() {
+		return renewAmount;
+	}
+
+	public void setRenewAmount(int renewAmount) {
+		this.renewAmount = renewAmount;
 	}
 }
