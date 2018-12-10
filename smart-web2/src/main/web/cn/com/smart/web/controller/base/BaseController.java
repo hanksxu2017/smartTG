@@ -15,6 +15,7 @@ import cn.com.smart.filter.bean.FilterParam;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
+import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.utils.DataUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -344,6 +345,8 @@ public abstract class BaseController extends Smart implements IBaseController {
 		addBtn = new EditBtn("add", this.subDir + "add", null, "新增", "800");
 		editBtn = new EditBtn("edit", this.subDir + "edit", null, "修改", "800");
 		delBtn = new DelBtn(this.subDir + "delete", "确定要删除选中的信息吗？", this.subDir + "list", null, null);
+		// 删除操作限制为选中一条
+		delBtn.setSelectedType(BtnPropType.SelectType.ONE.name());
 		refreshBtn = new RefreshBtn(this.subDir + "list", null, null);
 
 		modelMap.put("addBtn", addBtn);
