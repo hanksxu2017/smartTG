@@ -20,7 +20,7 @@
 
 		<cnoj:table smartResp="${smartResp}" headers="学生,金额(单位元),课时数,操作人,时间,备注"
 		  isCheckbox="1" isRowSelected="1" currentUri="${currentUri}"
-		  refreshBtn="${refreshBtn}"
+		  refreshBtn="${refreshBtn}" editBtn="${editBtn}"
 		  page="${pageParam}"
 		/>
    </div>
