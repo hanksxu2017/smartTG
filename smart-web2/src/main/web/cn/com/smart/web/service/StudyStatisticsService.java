@@ -148,7 +148,7 @@ public class StudyStatisticsService {
 			dataHandle.setMaxCourseCount(maxCourseCount);
 			dataHandle.setMaxCourseDay(maxCourseDay);
 
-			Collections.sort(studentStatisticsList);
+//			Collections.sort(studentStatisticsList);
 			dataHandle.setStudentStatisticsList(studentStatisticsList);
 		}
 	}
@@ -197,7 +197,7 @@ public class StudyStatisticsService {
 				studentCourseRel = studentCourseRelList.get(index);
 				course = this.getCourseFromMap(studentCourseRel.getCourseId(), courseMap);
 				if(null != course) {
-					courseArr[index] = DataUtil.numToCN(course.getWeekInfo()) + course.getCourseTimeIndex();
+					courseArr[index] = course.getTeacherName().substring(0, 1) + DataUtil.numToCN(course.getWeekInfo()) + course.getCourseTimeIndex();
 				}
 
 			}

@@ -77,7 +77,7 @@ public class StudyStatisticsStudentController extends BaseController {
         }
         params.put("status", IConstant.STATUS_NORMAL);
 		SmartResponse<TGStudyStudent> studentSmartResponse =
-				this.studentService.findByParam(params, page.getPage(), page.getPageSize(), "remain_course, create_time desc");
+				this.studentService.findByParam(params, page.getPage(), page.getPageSize(), "course_series_un_signed desc, remain_course");
 		List<TGStudyStudent> studentList = studentSmartResponse.getDatas();
 
         // TODO DAO方法支持模糊
