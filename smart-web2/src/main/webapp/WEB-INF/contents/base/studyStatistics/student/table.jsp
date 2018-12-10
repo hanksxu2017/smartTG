@@ -88,7 +88,7 @@
         loadStatisticsData(initParams);
 
         $("#refreshStudentStatisticsTable").click(function () {
-            reloadTab($(this).data("uri"));
+            reloadTab('studyStatistics/student/list');
         });
         
         $("#pageSizeSelectForStudentStatistics").change(function () {
