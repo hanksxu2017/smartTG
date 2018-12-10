@@ -75,6 +75,7 @@ public class StudyStatisticsStudentController extends BaseController {
         if(StringUtils.isNotBlank(searchParam.getName())) {
             params.put(IConstant.HQL_LIKE_KEY + "name", "%" + searchParam.getName() + "%");
         }
+        params.put("status", IConstant.STATUS_NORMAL);
 		SmartResponse<TGStudyStudent> studentSmartResponse =
 				this.studentService.findByParam(params, page.getPage(), page.getPageSize(), "remain_course, create_time desc");
 		List<TGStudyStudent> studentList = studentSmartResponse.getDatas();
