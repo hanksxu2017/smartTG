@@ -98,6 +98,7 @@ public class StudyClassroomRentalController extends BaseController {
         params.put("classroomId", classroomId);
         params.put("weekInfo", Short.valueOf(weekInfo));
         params.put("courseTimeIndex", courseTimeIndex);
+        params.put("status", IConstant.STATUS_NORMAL);
         List<TGStudyCourse> courseList = this.courseService.findByParam(params).getDatas();
         if(CollectionUtils.isNotEmpty(courseList)) {
             return false;

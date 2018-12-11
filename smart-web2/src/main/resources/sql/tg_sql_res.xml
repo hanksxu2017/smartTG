@@ -57,7 +57,7 @@
             ELSE '未定义' END,
             t.remain_course, date_format(t.create_time, '%Y-%c-%d'),
             CASE t.is_register WHEN 'YES' THEN '已注册'
-            ELSE '未注册' END
+            ELSE '未注册' END, description
             from tg_study_student t
             where 1=1
             [and t.name like '%:name%']

@@ -76,6 +76,13 @@
 			</div>
 		</div>
 
+		<div class="form-group m-b-10">
+			<label for="input03" class="col-sm-2 control-label">备注</label>
+			<div class="col-sm-9 p-l-0">
+				<textarea class="form-control require" name="description" data-label-name="描述" rows="8" id="input03" cols="60">${objBean.description}</textarea>
+			</div>
+		</div>
+
 		<div class="text-center">
 			<button type="button" class="btn btn-primary cnoj-data-submit" data-refresh-uri="studyStudent/list">
 				<i class="glyphicon glyphicon-ok-sign"></i> 确定

@@ -51,7 +51,6 @@ public class TGStudyStStudent extends BaseBeanImpl implements DateBean {
 	private int makeUpCount;
 	//
 	private int othersCount;
-
 	// 结余课时
 	private int remainCourse;
 	// 应付款项,单位元

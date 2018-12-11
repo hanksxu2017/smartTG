@@ -171,22 +171,22 @@
         var phoneTh = $("<th rowspan='2' style='text-align:center;width: 5%;'>联系方式</th>");
         phoneTh.appendTo(tr);
 
-        var descTh = $("<th rowspan='2' style='text-align:center;width: 10%;'>备注</th>");
+        var descTh = $("<th rowspan='2' style='text-align:center;width: 5%;'>备注</th>");
         descTh.appendTo(tr);
 
         var courseTh = $("<th colspan='" + data.maxCourseCount + "' style='text-align:center;width: 10%;'>课时</th>");
         courseTh.appendTo(tr);
 
-        var renewRecordTh = $("<th colspan='4' style='text-align:center;width: 20%;'>缴费情况</th>");
+        var renewRecordTh = $("<th colspan='4' style='text-align:center;width: 15%;'>缴费情况</th>");
         renewRecordTh.appendTo(tr);
 
         if(data.previousMaxCourseDay > 0) {
             // 历史月份
-            var courseDayLastMonthTh = $("<th colspan='" + data.maxCourseDay + "' style='text-align:center;width: 25%;'>" + data.previousMonthInTable + "</th>");
+            var courseDayLastMonthTh = $("<th colspan='" + data.maxCourseDay + "' style='text-align:center;width: 30%;'>" + data.previousMonthInTable + "</th>");
             courseDayLastMonthTh.appendTo(tr);
         }
 
-        var courseDayTh = $("<th colspan='" + data.maxCourseDay + "' style='text-align:center;width: 25%;'>" + data.monthInTable + "</th>");
+        var courseDayTh = $("<th colspan='" + data.maxCourseDay + "' style='text-align:center;width: 30%;'>" + data.monthInTable + "</th>");
         courseDayTh.appendTo(tr);
 
 

@@ -99,20 +99,20 @@ public class StudyStudentController extends BaseController {
 		customBtnCourseInfo.setWidth("800");
 		customBtnCourseInfo.setModalBodyId("student-course-list-dialog");
 
-		CustomBtn customBtnUploadBatch = new CustomBtn("uploadBatch", "信息导入", "导入",
+/*		CustomBtn customBtnUploadBatch = new CustomBtn("uploadBatch", "信息导入", "导入",
 				this.getUriPath() + "uploadBatch", "glyphicon-save", BtnPropType.SelectType.NONE.getValue());
-		customBtnUploadBatch.setWidth("600");
+		customBtnUploadBatch.setWidth("600");*/
 
 		CustomBtn customBtnExport = new CustomBtn("exportStudent", "信息导出", "导出",
 				this.getUriPath() + "exportStudent", "glyphicon-open", BtnPropType.SelectType.NONE.getValue());
 		customBtnExport.setOpenStyle(BtnPropType.OpenStyle.NONE);
 		customBtnExport.setWidth("600");
 
-		customBtns = new ArrayList<>(5);
+		customBtns = new ArrayList<>(4);
 		customBtns.add(customBtnReport);
 		customBtns.add(customBtnTempLeave);
 		customBtns.add(customBtnCourseInfo);
-		customBtns.add(customBtnUploadBatch);
+//		customBtns.add(customBtnUploadBatch);
 		customBtns.add(customBtnExport);
 		modelMap.put("customBtns", customBtns);
 
@@ -289,6 +289,9 @@ public class StudyStudentController extends BaseController {
 		}
 		if(!StringUtils.equals(dbStudent.getIsRegister(), student.getIsRegister())) {
 			dbStudent.setIsRegister(student.getIsRegister());
+		}
+		if(!StringUtils.equals(dbStudent.getDescription(), student.getDescription())) {
+			dbStudent.setDescription(student.getDescription());
 		}
 	}
 

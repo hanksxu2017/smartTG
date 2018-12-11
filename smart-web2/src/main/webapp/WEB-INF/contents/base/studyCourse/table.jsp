@@ -29,9 +29,9 @@
             <button type="button" id="refreshCourseTable" class="btn btn-default" disabled="disabled">
                 <i class="glyphicon glyphicon-refresh"></i>刷新
             </button>
-            <button type="button" id="generateWeekCourse" class="btn btn-default"  disabled="disabled">
+<%--            <button type="button" id="generateWeekCourse" class="btn btn-default"  disabled="disabled">
                 <i class="glyphicon glyphicon-calendar"></i>生成周课时
-            </button>
+            </button>--%>
             <button type="button" id="clearSystemMem" class="btn btn-default"  disabled="disabled">
                 <i class="glyphicon glyphicon-adjust"></i>清理缓存
             </button>
