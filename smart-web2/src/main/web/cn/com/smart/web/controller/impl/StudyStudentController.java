@@ -259,9 +259,37 @@ public class StudyStudentController extends BaseController {
 	@ResponseBody
 	public SmartResponse<String> update(TGStudyStudent studyStudent) {
 		TGStudyStudent studyStudentDb = this.studentService.find(studyStudent.getId()).getData();
-		studyStudent.setCreateTime(studyStudentDb.getCreateTime());
-		studyStudent.setUpdateTime(new Date());
-		return studentService.update(studyStudent);
+		this.copyUpdateInfoToStudent(studyStudentDb, studyStudent);
+		studyStudentDb.setUpdateTime(new Date());
+		return studentService.update(studyStudentDb);
+	}
+
+	private void copyUpdateInfoToStudent(TGStudyStudent dbStudent, TGStudyStudent student) {
+		if(StringUtils.equals(dbStudent.getName(), student.getName())) {
+			dbStudent.setName(student.getName());
+		}
+		if(dbStudent.getSex() != student.getSex()) {
+			dbStudent.setSex(student.getSex());
+		}
+		if(!StringUtils.equals(dbStudent.getBirthday(), student.getBirthday())) {
+			dbStudent.setBirthday(student.getBirthday());
+			dbStudent.setAge(this.getAge(dbStudent.getBirthday()));
+		}
+		if(!StringUtils.equals(dbStudent.getSchoolName(), student.getSchoolName())) {
+			dbStudent.setSchoolName(student.getSchoolName());
+		}
+		if(!StringUtils.equals(dbStudent.getLevel(), student.getLevel())){
+			dbStudent.setLevel(student.getLevel());
+		}
+		if(!StringUtils.equals(dbStudent.getParentPhone(), student.getParentPhone())) {
+			dbStudent.setParentPhone(student.getParentPhone());
+		}
+		if(dbStudent.getRenewAmount() != student.getRenewAmount() && student.getRenewAmount() > 0) {
+			dbStudent.setRenewAmount(student.getRenewAmount());
+		}
+		if(!StringUtils.equals(dbStudent.getIsRegister(), student.getIsRegister())) {
+			dbStudent.setIsRegister(student.getIsRegister());
+		}
 	}
 
 	@Autowired

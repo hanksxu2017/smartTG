@@ -60,13 +60,6 @@
 		</div>
 
 		<div class="form-group m-b-10">
-			<label for="totalCourse" class="col-sm-2 control-label">初始课时</label>
-			<div class="col-sm-9 p-l-0">
-				<input type="text" class="form-control input-readonly" name="totalCourse" data-label-name="初始课时"
-				       id="totalCourse" value="${objBean.totalCourse}" readonly/>
-			</div>
-		</div>
-		<div class="form-group m-b-10">
 			<label for="renewAmount" class="col-sm-2 control-label">续费额度</label>
 			<div class="col-sm-9 p-l-0">
 				<input type="text" class="form-control require" name="renewAmount" data-label-name="初始课时"
