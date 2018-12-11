@@ -1,27 +1,29 @@
-<%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
+<%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
 <div class="wrap-content">
-  <div class="container-fluid">
-	   <div class="row">
-		   <div class="col-sm-4 p-l-0 p-r-0">
-		      <div class="panel panel-default m-b-0">
-				    <div class="panel-tabs-wrap" id="config-class-tabs">
+	<div class="container-fluid">
+		<div class="row">
+			<div class="col-sm-5 p-l-0 p-r-0">
+				<div class="panel panel-default m-b-0">
+					<div class="panel-tabs-wrap" id="config-class-tabs">
 
-				         <div class="panel-heading p-0 p-t-3">
+						<div class="panel-heading p-0 p-t-3">
 							<div class="panel-tabs-tab">
 								<ul class="nav nav-tabs" role="tablist">
-									<li class="active"><a href="#teacher-tab" role="presentation" data-toggle="tab">教师</a></li>
+									<li class="active"><a href="#teacher-tab" role="presentation"
+									                      data-toggle="tab">教师</a></li>
 									<li><a href="#student-tab" role="presentation" data-toggle="tab">学生</a></li>
 								</ul>
 							</div>
 						</div>
 
 						<div class="panel-body p-0">
-							<div class="tab-content panel-tab-content bg-color-white cnoj-auto-limit-height" style="padding: 0">
-							  	<div role="tabpanel" class="tab-pane active" id="teacher-tab">
-							  	   <div class="cnoj-load-url" data-uri="studyTeacher/simpList" ></div>
+							<div class="tab-content panel-tab-content bg-color-white cnoj-auto-limit-height"
+							     style="padding: 0">
+								<div role="tabpanel" class="tab-pane active" id="teacher-tab">
+									<div class="cnoj-load-url" data-uri="studyTeacher/simpList"></div>
 								</div>
 								<div role="tabpanel" class="tab-pane" id="student-tab">
-								   <div class="cnoj-load-url" data-uri="studyStudent/simpList" ></div>
+									<div class="cnoj-load-url" data-uri="studyStudent/simpList"></div>
 								</div>
 							</div>
 						</div>
@@ -29,31 +31,31 @@
 				</div><!-- panel -->
 			</div><!-- col -->
 
-			<div class="col-sm-8 p-l-5 p-r-0">
-			    <div id="has-class-list">
-			       <div class="panel panel-default m-b-0">
-			        <div class="panel-heading ui-widget-header">已拥有的班级</div>
-			        <div class="panel-body p-b-0">
-			           <div class="cnoj-auto-limit-height"></div>
-			        </div>
-			      </div>
-			  </div>
+			<div class="col-sm-7 p-l-5 p-r-0">
+				<div id="has-class-list">
+					<div class="panel panel-default m-b-0">
+						<div class="panel-heading ui-widget-header">已拥有的班级</div>
+						<div class="panel-body p-b-0">
+							<div class="cnoj-auto-limit-height"></div>
+						</div>
+					</div>
+				</div>
 			</div>
 		</div>
 
 	</div>
 	<script type="text/javascript">
-	  $(function(){
-		  var isResize = false;
-		  $("#config-class-tabs").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
-			  var id = $(e.target).attr("href");
-			  var $tag = $(id);
-			  tableWrapListener($tag, isResize);
-			  limitHeightListener($tag, isResize);
-		  });
-		  $(window).resize(function(){
-			  isResize = true; 
-	      });
-	  });
+        $(function () {
+            var isResize = false;
+            $("#config-class-tabs").find('a[data-toggle="tab"]').on('shown.bs.tab', function (e) {
+                var id = $(e.target).attr("href");
+                var $tag = $(id);
+                tableWrapListener($tag, isResize);
+                limitHeightListener($tag, isResize);
+            });
+            $(window).resize(function () {
+                isResize = true;
+            });
+        });
 	</script>
 </div>
