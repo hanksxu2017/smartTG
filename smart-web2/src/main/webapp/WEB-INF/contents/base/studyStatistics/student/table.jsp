@@ -336,6 +336,7 @@
         $("#totalNumSpan").text('共' + data.totalNum + '条');
         $("#pageSizeSelect").val(data.perPageSize);
         $("#curPageNum").text(data.size);
+        $("#totalPage").text(data.totalPage);
 
         $("#pageSelectForStudentStatistics").empty();
         for(var index = 1; index <= data.totalPage; index++) {
@@ -348,6 +349,7 @@
     
     function createPagination(data) {
         $("#curPage").val(data.size);
+        $("#totalPage").val(data.totalPage);
         var paginationUl = $("#turnPage");
         paginationUl.empty();
 
