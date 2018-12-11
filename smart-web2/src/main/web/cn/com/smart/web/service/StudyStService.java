@@ -386,7 +386,9 @@ public class StudyStService {
 		courseSignStatistics.setMonth(studentStatistics.getMonth());
 		// 上一个月的签到统计信息
 		courseSignStatistics.setStStudentSignRecordList(parsePreviousSignRecord(studentStatistics.getMonth(), student));
-		courseSignStatistics.setPreviousSignCount(courseSignStatistics.getStStudentSignRecordList().size());
+		if(CollectionUtils.isNotEmpty(courseSignStatistics.getStStudentSignRecordList())) {
+			courseSignStatistics.setPreviousSignCount(courseSignStatistics.getStStudentSignRecordList().size());
+		}
 
 		List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByStudentId(student.getId());
 		if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
