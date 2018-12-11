@@ -36,27 +36,27 @@ public class StudyTeacherH5Controller {
             return modelView;
         }
 
-        Map<String, Object> params = new HashMap<>();
-        params.put("status", IConstant.STATUS_NORMAL);
-        params.put("teacherId", teacher.getId());
-        List<TGStudyCourseRecord> courseRecordList = courseRecordService.findByParam(params).getDatas();
-        if(CollectionUtils.isNotEmpty(courseRecordList)) {
-            List<TGStudyCourseRecord> unSignedCourseRecordList = new ArrayList<>();
-            Date curDate = new Date();
-            Date courseDate;
-            for(TGStudyCourseRecord courseRecord : courseRecordList) {
-                courseDate = this.parseCourseDate(courseRecord);
-                if(null != courseDate && courseDate.before(curDate)) {
-                    // 课时已结束当未结课的课时
-                    unSignedCourseRecordList.add(courseRecord);
-                }
-            }
-            Collections.sort(unSignedCourseRecordList);
-            modelView.getModelMap().put("courseRecordList", unSignedCourseRecordList);
-        }
+	    modelView.getModelMap().put("courseRecordList", this.findCourseRecordAtToday(teacher));
 
         modelView.setViewName(this.pathDir + "studentSign");
         return modelView;
+    }
+
+	/**
+	 * 查找教师在今日的所有课时
+	 * @param teacher
+	 * @return
+	 */
+	private List<TGStudyCourseRecord> findCourseRecordAtToday(TGStudyTeacher teacher) {
+	    Map<String, Object> params = new HashMap<>();
+	    params.put("status", IConstant.STATUS_NORMAL);
+	    params.put("teacherId", teacher.getId());
+	    params.put("courseDate", DateUtil.dateToStr(new Date(), "yyyy-MM-dd"));
+	    List<TGStudyCourseRecord> courseRecordList = courseRecordService.findByParam(params).getDatas();
+	    if(CollectionUtils.isNotEmpty(courseRecordList)) {
+		    Collections.sort(courseRecordList);
+	    }
+	    return courseRecordList;
     }
 
     @Autowired
@@ -73,11 +73,6 @@ public class StudyTeacherH5Controller {
         return null;
     }
 
-    private Date parseCourseDate(TGStudyCourseRecord courseRecord) {
-        String courseEndTime = courseRecord.getCourseTime().substring(courseRecord.getCourseTime().indexOf('-') + 1);
-        return DateUtil.parseDate(courseRecord.getCourseDate() + " " + courseEndTime, "yyyy-MM-dd HH:mm");
-    }
-
     @Autowired
     private StudyCourseStudentRecordService courseStudentRecordService;
 
@@ -87,7 +82,14 @@ public class StudyTeacherH5Controller {
         Map<String, Object> params = new HashMap<>();
         params.put("courseRecordId", courseRecordId);
         params.put("status", this.courseStudentRecordService.getQueryStatus().toArray());
-        return courseStudentRecordService.findByParam(params);
+	    SmartResponse<TGStudyCourseStudentRecord> smartResponse = courseStudentRecordService.findByParam(params);
+
+	    TGStudyCourseRecord courseRecord = this.courseRecordService.find(courseRecordId).getData();
+	    if(null != courseRecord && !courseRecord.canSign()) {
+		    smartResponse.setSize(-1);
+	    }
+
+	    return smartResponse;
     }
 
     @RequestMapping(value = "/queryCourseRecord")
