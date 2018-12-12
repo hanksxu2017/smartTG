@@ -78,20 +78,20 @@ public class StudyStudentController extends BaseController {
 		ModelAndView modelView = new ModelAndView();
 		Map<String, Object> modelMap = modelView.getModelMap();
 		addBtn = new EditBtn("add", this.getUriPath() + "add", null, "新增", "800");
-		editBtn = new EditBtn("edit", this.getUriPath() + "edit", null, "修改", "800");
+		editBtn = new EditBtn("edit", this.getUriPath() + "edit?searchStudentName=" + searchParam.getName(), null, "修改", "800");
 
-		delBtn = new DelBtn(this.getUriPath() + "delete", "确定进行退学操作吗？", this.getUriPath() + "list", null, null);
+		delBtn = new DelBtn(this.getUriPath() + "delete", "确定进行退学操作吗？", this.getUriPath() + "list?searchStudentName=" + searchParam.getName(), null, null);
 		delBtn.setName("退学");
 		delBtn.setSelectedType(BtnPropType.SelectType.MULTI.getValue());
 
 		refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
 
 		CustomBtn customBtnReport = new CustomBtn("increaseRemainCourse", "课时续费", "续费",
-				this.getUriPath() + "increaseRemainCourse?studentId=" + searchParam.getId(), "glyphicon-plus", BtnPropType.SelectType.ONE.getValue());
+				this.getUriPath() + "increaseRemainCourse?studentId=" + searchParam.getId() + "&searchStudentName=" + searchParam.getName(), "glyphicon-plus", BtnPropType.SelectType.ONE.getValue());
 		customBtnReport.setWidth("600");
 
 		CustomBtn customBtnTempLeave = new CustomBtn("tempLeave", "休学", "休学",
-				this.getUriPath() + "tempLeave?studentId=" + searchParam.getId(), "glyphicon-pause", BtnPropType.SelectType.ONE.getValue());
+				this.getUriPath() + "tempLeave?studentId=" + searchParam.getId() +"&searchStudentName=" + searchParam.getName(), "glyphicon-pause", BtnPropType.SelectType.ONE.getValue());
 		customBtnTempLeave.setWidth("600");
 
 		CustomBtn customBtnCourseInfo = new CustomBtn("courseInfo", "班级信息", "班级",
@@ -216,7 +216,7 @@ public class StudyStudentController extends BaseController {
 	}
 
 	@RequestMapping(value = "/edit")
-	public ModelAndView update(String id) {
+	public ModelAndView update(String id, String searchStudentName) {
 		ModelAndView modelView = new ModelAndView();
 		if (StringUtils.isNotBlank(id)) {
 			TGStudyStudent studyStudent = studentService.find(id).getData();
@@ -225,6 +225,7 @@ public class StudyStudentController extends BaseController {
 			}
 		}
 		modelView.getModelMap().put("levels", getLevels());
+		modelView.getModelMap().put("searchStudentName", searchStudentName);
 
 		modelView.setViewName(getPageDir() + "edit");
 		return modelView;
@@ -396,11 +397,12 @@ public class StudyStudentController extends BaseController {
 	 * @return JSP页面对象
 	 */
 	@RequestMapping(value = "/increaseRemainCourse")
-	public ModelAndView increaseRemainCourse(String id) {
+	public ModelAndView increaseRemainCourse(String id, String searchStudentName) {
 		ModelAndView modelView = new ModelAndView();
 		modelView.setViewName(getPageDir() + "increaseRemainCourse");
 
 		modelView.getModelMap().put("student", this.studentService.find(id).getData());
+		modelView.getModelMap().put("searchStudentName", searchStudentName);
 
 		return modelView;
 	}
@@ -451,11 +453,12 @@ public class StudyStudentController extends BaseController {
 	 * @return JSP页面对象
 	 */
 	@RequestMapping(value = "/tempLeave")
-	public ModelAndView tempLeave(String id) {
+	public ModelAndView tempLeave(String id, String searchStudentName) {
 		ModelAndView modelView = new ModelAndView();
 		modelView.setViewName(getPageDir() + "tempLeave");
 
 		modelView.getModelMap().put("student", this.studentService.find(id).getData());
+		modelView.getModelMap().put("searchStudentName", searchStudentName);
 
 		return modelView;
 	}

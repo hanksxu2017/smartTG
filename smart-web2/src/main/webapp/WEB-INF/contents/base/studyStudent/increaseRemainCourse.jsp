@@ -48,7 +48,7 @@
 
 
        <div class="text-center">
-           <button type="button" class="btn btn-primary cnoj-data-submit" data-refresh-uri="studyStudent/list">
+           <button type="button" class="btn btn-primary cnoj-data-submit" data-refresh-uri="studyStudent/list?name=${searchStudentName}">
                <i class="glyphicon glyphicon-ok-sign"></i> 确定</button>
        </div>
 	</form>
