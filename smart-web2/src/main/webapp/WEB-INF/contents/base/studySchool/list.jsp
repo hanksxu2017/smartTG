@@ -20,7 +20,7 @@
 		<cnoj:table smartResp="${smartResp}" headers="学校名称,地址"
 		headerWidths="50%,50%"
 		  isCheckbox="1" isRowSelected="1" currentUri="${currentUri}"
-		  addBtn="${addBtn}" editBtn="${editBtn}" delBtn="${delBtn}" refreshBtn="${refreshBtn}"
+		  addBtn="${addBtn}" editBtn="${editBtn}" refreshBtn="${refreshBtn}"
 		  page="${pageParam}"
 		/>
    </div>
