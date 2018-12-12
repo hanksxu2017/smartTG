@@ -38,6 +38,8 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
 
 	private Date updateTime;
 
+	private String idCard;
+
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
@@ -92,4 +94,13 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
     public void setCreateTime(Date createTime) {
         this.createTime = createTime;
     }
+
+	@Column(name="id_card", length=32)
+	public String getIdCard() {
+		return idCard;
+	}
+
+	public void setIdCard(String idCard) {
+		this.idCard = idCard;
+	}
 }

@@ -13,7 +13,7 @@
         </sql>
     </sqlUnit>
 
-    <sqlUnit name="select_study_teacher_list">
+    <sqlUnit name="teacher_list">
         <sql>
             select t.id, t.name, t.phone, date_format(t.create_time, '%Y-%c-%d'),
             (SELECT COUNT(c1.id) FROM tg_study_course c1 WHERE c1.teacher_id = t.id AND c1.status = 'NORMAL'),

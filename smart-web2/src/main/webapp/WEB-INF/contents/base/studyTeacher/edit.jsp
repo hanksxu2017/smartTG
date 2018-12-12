@@ -16,12 +16,19 @@
 		   </div>
 	   </div>
 
-       <div class="form-group m-b-10">
+	   <div class="form-group m-b-10">
+		   <label for="input03" class="col-sm-2 control-label">身份证</label>
+		   <div class="col-sm-9 p-l-0">
+			   <input type="text" class="form-control require" name="idCard" data-label-name="身份证" id="input03" value="${objBean.idCard}" />
+		   </div>
+	   </div>
+
+<%--       <div class="form-group m-b-10">
            <label for="input04" class="col-sm-2 control-label">状态</label>
            <div class="col-sm-9 p-l-0">
                <input type="text" class="form-control input-readonly" data-label-name="入职时间" id="input04" value="${objBean.status}" readonly/>
            </div>
-       </div>
+       </div>--%>
 
        <div class="form-group m-b-10">
            <label for="input05" class="col-sm-2 control-label">入职时间</label>

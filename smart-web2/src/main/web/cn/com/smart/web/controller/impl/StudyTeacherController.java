@@ -47,7 +47,7 @@ public class StudyTeacherController extends BaseController {
      */
     @RequestMapping("/list")
     public ModelAndView list(TeacherSearch searchParam, RequestPage page) {
-        SmartResponse<Object> smartResp = opService.getDatas("select_study_teacher_list", searchParam, page.getStartNum(), page.getPageSize());
+        SmartResponse<Object> smartResp = opService.getDatas("teacher_list", searchParam, page.getStartNum(), page.getPageSize());
         return this.packListModelView(searchParam, smartResp);
     }
 
@@ -91,18 +91,35 @@ public class StudyTeacherController extends BaseController {
     /**
      * 提交编辑
      *
-     * @param studyTeacher
+     * @param teacher
      * @return
      */
     @RequestMapping(value = "/update", method = RequestMethod.POST)
     @ResponseBody
-    public SmartResponse<String> update(TGStudyTeacher studyTeacher) {
-        TGStudyTeacher studyTeacherDb = this.teacherService.find(studyTeacher.getId()).getData();
-        studyTeacher.setCreateTime(studyTeacherDb.getCreateTime());
-        studyTeacher.setUpdateTime(new Date());
-        SmartResponse<String> smartResp = teacherService.update(studyTeacher);
+    public SmartResponse<String> update(TGStudyTeacher teacher) {
+	    SmartResponse<String> smartResp = new SmartResponse<>();
+		TGStudyTeacher teacherDb = this.teacherService.find(teacher.getId()).getData();
+        if(null != teacherDb) {
+			this.copyUpdateInfoToTeacher(teacherDb, teacher);
+	        teacherDb.setUpdateTime(new Date());
+	        smartResp = teacherService.update(teacherDb);
+        }
+
         return smartResp;
     }
+
+	private void copyUpdateInfoToTeacher(TGStudyTeacher dbStudent, TGStudyTeacher teacher) {
+		if(StringUtils.equals(dbStudent.getName(), teacher.getName())) {
+			dbStudent.setName(teacher.getName());
+		}
+		if(StringUtils.equals(dbStudent.getPhone(), teacher.getPhone())) {
+			dbStudent.setPhone(teacher.getPhone());
+		}
+		if(StringUtils.equals(dbStudent.getIdCard(), teacher.getIdCard())) {
+			dbStudent.setIdCard(teacher.getIdCard());
+		}
+
+	}
 
     /**
      * 简单列表
