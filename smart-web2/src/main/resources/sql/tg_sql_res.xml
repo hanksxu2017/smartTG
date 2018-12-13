@@ -55,6 +55,13 @@
             WHEN 'DROP_OUT' THEN '退学'
             WHEN 'TEMP_LEAVE' THEN "休学"
             ELSE '未定义' END,
+            (
+                SELECT GROUP_CONCAT(temp.cname SEPARATOR  ',') FROM (
+                    SELECT student_id, CONCAT(SUBSTR(course_name, 1, 1), SUBSTR(course_name, -2)) AS cname
+                    FROM tg_study_student_course_rel) temp
+                    where temp.student_id = t.id
+                    GROUP BY temp.student_id
+            ),
             t.remain_course, date_format(t.create_time, '%Y-%c-%d'),
             CASE t.is_register WHEN 'YES' THEN '已注册'
             ELSE '未注册' END, description
