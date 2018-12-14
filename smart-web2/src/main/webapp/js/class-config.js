@@ -38,14 +38,18 @@ function authConfigSubmitBtnListener($elementWrap) {
 		var configId = $this.data("config-id");
 		var submitUri = $this.data("uri");
 		var formId = $this.data("form-id");
+		var modalBodyId = $this.data("modal-body-id");
 		if(!utils.isEmpty(alertMsg) && !utils.isEmpty(refreshUri) && 
 				!utils.isEmpty(refreshTarget) && !utils.isEmpty(configId) && 
 				!utils.isEmpty(submitUri)) {
 
             var $form = $("#" + formId);
             var param = decodeURIComponent($form.serialize());
-            cnoj.submitDialogData(submitUri, param, null, refreshUri, refreshTarget, false);
-
+            if(utils.isNotEmpty(modalBodyId)) {
+                cnoj.submitDialogDataAndCloseDialog(submitUri, param, null, refreshUri, refreshTarget, false);
+			} else {
+                cnoj.submitDialogData(submitUri, param, null, refreshUri, refreshTarget, false);
+			}
 		}
 	}
 }

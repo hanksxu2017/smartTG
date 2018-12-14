@@ -3413,9 +3413,16 @@ function openProp(obj,op,flag) {
 	} else if(!utils.isEmpty(flag) && flag == 'open-new-tab') {
 		openTab(title, uri,true);
 	} else {
-		BootstrapDialogUtil.loadUriDialog(title,uri,width,"#fff",false,function(dialog){
-			initEvent(dialog.getModal());
-		});
+		if(utils.isNotEmpty(modalBodyId)) {
+            BootstrapDialogUtil.loadUriDialogForModal(modalBodyId, title,uri,width,"#fff",false,function(dialog){
+                initEvent(dialog.getModal());
+            });
+		} else {
+            BootstrapDialogUtil.loadUriDialog(title,uri,width,"#fff",false,function(dialog){
+                initEvent(dialog.getModal());
+            });
+		}
+
 	}
 }
 

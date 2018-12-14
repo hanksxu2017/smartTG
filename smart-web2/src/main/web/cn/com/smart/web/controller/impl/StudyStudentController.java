@@ -281,6 +281,14 @@ public class StudyStudentController extends BaseController {
 		refreshBtn = new RefreshBtn(this.getUriPath() + "courseInfo?id=" + searchParam.getId(), null, "#student-course-list-dialog");
 		modelView.getModelMap().put("refreshBtn", refreshBtn);
 
+		CustomBtn customBtnChooseCourse = new CustomBtn("reportCourse", "报班",
+				"报班", this.getUriPath() + "reportCourse?studentId=" + searchParam.getId(),
+				"glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
+		customBtnChooseCourse.setModalBodyId("student-choose-course-dialog");
+		customBtns = new ArrayList<>(1);
+		customBtns.add(customBtnChooseCourse);
+		modelView.getModelMap().put("customBtns", customBtns);
+
 		return modelView;
 	}
 

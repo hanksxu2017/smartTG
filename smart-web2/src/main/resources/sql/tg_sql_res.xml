@@ -185,7 +185,7 @@
             where rel.student_id =:id and rel.course_id = t.id
             [and rel.status =:status]
             [and rel.student_name like '%:studentName%']
-            order by t.week_info, t.course_time_index
+            order by rel.status, t.week_info, t.course_time_index
         </sql>
     </sqlUnit>
 

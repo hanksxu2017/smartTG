@@ -83,6 +83,13 @@ var BootstrapDialog = null;
             dialogInstance.close();
         });
     };
+    BootstrapDialog.closeById = function(dialogId) {
+        $.each(BootstrapDialog.dialogs, function(id, dialogInstance) {
+           if(dialogId === id) {
+               dialogInstance.close();
+           }
+        });
+    };
 
     BootstrapDialog.prototype = {
         constructor: BootstrapDialog,

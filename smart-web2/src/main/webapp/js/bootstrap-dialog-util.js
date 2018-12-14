@@ -7,6 +7,45 @@ var BootstrapDialogUtil = function() {
 	
 }
 
+BootstrapDialogUtil.loadUriDialogForModal = function(modalBodyId, title,uri,popWidth,bgColor,isFooter,callback, closable, isCloseBtn) {
+    if(isNaN(popWidth) || typeof(popWidth) === 'undefined' || popWidth == null) {
+        popWidth = 600;
+    }
+    if(typeof(isFooter) === 'undefined') {
+        isFooter = false;
+    }
+    if(typeof(closable) === 'undefined') {
+        closable = true;
+    }
+    if(typeof(isCloseBtn) === 'undefined') {
+        isCloseBtn = true;
+    }
+    $.ajax({
+        url: uri,global: false,type: "POST",dataType: "html",async:false,
+        success: function(msg){
+            if(typeof(callback) !== 'function') {
+                callback = null;
+            }
+            BootstrapDialog.show({
+                id:modalBodyId + "-btDialog",
+                title:title,draggable: true,width:popWidth,backgroundColor:bgColor,
+                message: function(dialog) {
+                    var html = dialog.getModalFooter();
+                    if(!isFooter)
+                        $(html).find(".bootstrap-dialog-footer").parent().addClass("not-modal-footer");
+                    else
+                        $(html).find(".bootstrap-dialog-footer").parent().removeClass("not-modal-footer");
+                    return msg;
+                },
+                callback:callback,
+                closable:closable,
+                isCloseBtn: isCloseBtn
+            });
+
+        }
+    });
+}
+
 /**
  * 弹出一个uri窗口
  * @param title
@@ -224,4 +263,8 @@ BootstrapDialogUtil.warningAlert = function(msg) {
  */
 BootstrapDialogUtil.close = function() {
 	BootstrapDialog.closeAll();
+}
+
+BootstrapDialogUtil.closeById = function(dialogId) {
+    BootstrapDialog.closeById(dialogId);
 }

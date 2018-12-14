@@ -7,7 +7,7 @@
 <c:set var="ctx" value="${basePath}"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/class-config.js"></script>
 <div class="wrap-content-dialog">
-    <form class="form-horizontal" role="form" id="student-class-add" action="studyStudent/course/subReportCourse">
+    <form class="form-horizontal" role="form" id="student-course-add" action="studyStudent/course/subReportCourse">
         <input type="hidden" name="studentId" id="studentId" value="${studentId}"/>
 
         <div class="form-group m-b-10">
@@ -67,16 +67,16 @@
 		    </div>
 	    </div>
 
-
         <div class="text-center">
             <button type="button"
                     class="btn btn-sm btn-success cnoj-class-config-submit"
                     data-uri="studyStudent/course/subReportCourse"
                     data-config-id="${studentId}"
-                    data-form-id="student-class-add"
+                    data-form-id="student-course-add"
                     data-alert-msg="请正确填写！"
-                    data-refresh-uri="studyStudent/courseList?id=${studentId}"
-                    data-refresh-target="#student-course-tab" > &nbsp;
+                    data-modal-body-id="student-choose-course-dialog-btDialog"
+                    data-refresh-uri="studyStudent/courseInfo?id=${studentId}"
+                    data-refresh-target="#student-course-list-dialog" > &nbsp;
                 <i class="glyphicon glyphicon-ok-sign"></i> 确定 &nbsp;</button>
         </div>
     </form>

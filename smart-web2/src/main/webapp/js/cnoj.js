@@ -88,6 +88,65 @@ cnoj.submitDialogData = function(uri,param,fun,$this,$form,isObj) {
 };
 
 /**
+ * 弹出窗口提交数据,并删除指定id的弹出窗口
+ * @param uri
+ * @param param
+ * @param fun
+ * @param $this
+ * @param $form
+ * @param isObj $this和$form传进来的参数是否为对象;默认为true
+ */
+cnoj.submitDialogDataAndCloseDialog = function(uri,param,fun,$this,$form,isObj,modalBodyId) {
+    if(!utils.isEmpty(uri)) {
+        utils.waitLoading("正在提交数据...");
+        $.post(uri,param,function(data){
+            utils.closeWaitLoading();
+            var output = data;//$.parseJSON(data.output);
+            utils.showMsg(output.msg+"！");
+            var jqGridId = null;
+            if(typeof($this) !== 'string') {
+                jqGridId = $this.data("jqgrid-id");
+            }
+            if(output.result == '1') {
+                if(!utils.isEmpty(fun) && typeof(eval(fun)) === 'function') {
+                    fun = eval(fun);
+                    fun();
+                } else if(!utils.isEmpty(jqGridId)){
+                    $(jqGridId).trigger("reloadGrid",[{current:true}]);
+                } else {
+                    if(utils.isEmpty(isObj))
+                        isObj = true;
+                    else
+                        isObj = (isObj==true)?true:false;
+                    var refreshUri = '';
+                    var target = '';
+                    if(!isObj) {
+                        refreshUri = $this;
+                        target = $form;
+                    } else {
+                        refreshUri = $this.data("refresh-uri");
+                        target = $form.attr("target");
+                    }
+
+                    if(!utils.isEmpty(refreshUri)) {
+                        if(!utils.isEmpty(target) && mainTag != target) {
+                            loadUri(target, refreshUri, true);
+                        } else {
+                            //loadLocation(refreshUri);
+                            loadActivePanel(refreshUri);
+                        }
+                    }
+                }
+                BootstrapDialogUtil.closeById(modalBodyId);
+            }
+            data = null;
+        });
+    } else {
+        utils.showMsg("提交URL未指定！");
+    }
+};
+
+/**
  * 提交form表单数据（含有附件时）
  * @param uri
  * @param param
