@@ -3,7 +3,7 @@ package cn.com.smart.web.bean.entity;
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
 import cn.com.smart.constant.IConstant;
-import cn.com.smart.constant.enumEntity.StudentCourseSignTypeEnum;
+import cn.com.smart.web.constant.enums.tg.StudentCourseSignTypeEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;

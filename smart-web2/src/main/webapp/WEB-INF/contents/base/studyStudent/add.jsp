@@ -44,20 +44,6 @@
             </div>
         </div>
 
-<%--        <div class="form-group m-b-10">
-            <label for="parentName" class="col-sm-2 control-label">家长</label>
-            <div class="col-sm-3 p-l-0">
-                <select class="form-control" name="parentType" id="parentType">
-                    <option value="">--请选择--</option>
-                    <option value="1">父亲</option>
-                    <option value="2">母亲</option>
-                </select>
-            </div>
-            <div class="col-sm-5 p-l-0">
-                <input type="text" class="form-control require" name="parentName" data-label-name="家长" id="parentName"/>
-            </div>
-        </div>--%>
-
         <div class="form-group m-b-10">
             <label for="parentPhone" class="col-sm-2 control-label">联系方式</label>
             <div class="col-sm-9 p-l-0">
@@ -89,6 +75,18 @@
 			    </select>
 		    </div>
 	    </div>
+
+        <div class="form-group m-b-10">
+            <label for="statusSelForAddStudent" class="col-sm-2 control-label">状态</label>
+            <div class="col-sm-9 p-l-0">
+                <select class="form-control require" name="status" id="statusSelForAddStudent">
+                    <option value="">--请选择--</option>
+	                <c:forEach items="${statusList}" var="item">
+		                <option value="${item.name}" <c:if test="${item.name eq 'NORMAL'}">selected</c:if> >${item.message}</option>
+	                </c:forEach>
+                </select>
+            </div>
+        </div>
 
 	    <div class="form-group m-b-10">
 		    <label for="input03" class="col-sm-2 control-label">备注</label>

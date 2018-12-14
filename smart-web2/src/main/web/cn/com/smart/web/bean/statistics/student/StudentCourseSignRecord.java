@@ -1,6 +1,6 @@
 package cn.com.smart.web.bean.statistics.student;
 
-import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
+import cn.com.smart.web.constant.enums.tg.CourseStudentRecordStatusEnum;
 import lombok.Getter;
 import lombok.Setter;
 

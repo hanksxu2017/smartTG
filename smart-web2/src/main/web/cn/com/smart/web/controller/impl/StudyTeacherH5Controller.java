@@ -2,8 +2,7 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
-import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
-import cn.com.smart.constant.enumEntity.SystemMessageEnum;
+import cn.com.smart.web.constant.enums.tg.CourseStudentRecordStatusEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.service.*;

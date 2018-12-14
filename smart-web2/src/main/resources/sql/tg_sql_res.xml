@@ -53,12 +53,13 @@
             t.level,
             CASE t.status WHEN 'NORMAL' THEN '正常'
             WHEN 'DROP_OUT' THEN '退学'
-            WHEN 'TEMP_LEAVE' THEN "休学"
+            WHEN 'TEMP_LEAVE' THEN '休学'
+            WHEN 'SIGN_UP' THEN '报名'
             ELSE '未定义' END,
             (
                 SELECT GROUP_CONCAT(temp.cname SEPARATOR  ',') FROM (
                     SELECT student_id, CONCAT(SUBSTR(course_name, 1, 1), SUBSTR(course_name, -2)) AS cname
-                    FROM tg_study_student_course_rel) temp
+                    FROM tg_study_student_course_rel where status = 'NORMAL') temp
                     where temp.student_id = t.id
                     GROUP BY temp.student_id
             ),

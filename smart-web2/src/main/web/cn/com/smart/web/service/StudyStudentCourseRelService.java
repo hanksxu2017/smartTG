@@ -2,7 +2,7 @@ package cn.com.smart.web.service;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
-import cn.com.smart.constant.enumEntity.StudentCourseRelStatusEnum;
+import cn.com.smart.web.constant.enums.tg.StudentCourseRelStatusEnum;
 import cn.com.smart.exception.DaoException;
 import cn.com.smart.exception.ServiceException;
 import cn.com.smart.service.impl.MgrServiceImpl;

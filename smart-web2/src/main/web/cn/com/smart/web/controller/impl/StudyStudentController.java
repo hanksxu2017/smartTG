@@ -2,8 +2,9 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
-import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
-import cn.com.smart.constant.enumEntity.SystemMessageEnum;
+import cn.com.smart.web.constant.enums.tg.CourseStudentRecordStatusEnum;
+import cn.com.smart.web.constant.enums.tg.StudentStatusEnum;
+import cn.com.smart.web.constant.enums.tg.SystemMessageEnum;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.UserInfo;
@@ -66,8 +67,8 @@ public class StudyStudentController extends BaseController {
 	public ModelAndView list(StudentSearch searchParam, RequestPage page) {
 		String queryStatus = searchParam.getStatus();
 		if (StringUtils.isBlank(queryStatus)) {
-			searchParam.setStatus(IConstant.STATUS_NORMAL);
-			queryStatus = IConstant.STATUS_NORMAL;
+			searchParam.setStatus(StudentStatusEnum.NORMAL.name());
+			queryStatus = StudentStatusEnum.NORMAL.name();
 		} else if (StringUtils.equals(queryStatus, "ALL")) {
 			searchParam.setStatus("");
 		}
@@ -77,22 +78,31 @@ public class StudyStudentController extends BaseController {
 
 		ModelAndView modelView = new ModelAndView();
 		Map<String, Object> modelMap = modelView.getModelMap();
-		addBtn = new EditBtn("add", this.getUriPath() + "add", null, "新增", "800");
-		editBtn = new EditBtn("edit", this.getUriPath() + "edit?searchStudentName=" + searchParam.getName(), null, "修改", "800");
+		addBtn = new EditBtn("add",
+				this.getUriPath() + "add" + this.addQueryParam("searchStudentName", searchParam.getName(), "?"),
+				null, "新增", "800");
 
-		delBtn = new DelBtn(this.getUriPath() + "delete", "确定进行退学操作吗？", this.getUriPath() + "list?searchStudentName=" + searchParam.getName(), null, null);
+		editBtn = new EditBtn("edit",
+				this.getUriPath() + "edit" + this.addQueryParam("searchStudentName", searchParam.getName(), "?"),
+				null, "修改", "800");
+
+		delBtn = new DelBtn(this.getUriPath() + "delete", "确定进行退学操作吗？",
+				this.getUriPath() + "list" + this.addQueryParam("searchStudentName", searchParam.getName(), "?"),
+				null, null);
 		delBtn.setName("退学");
 		delBtn.setSelectedType(BtnPropType.SelectType.MULTI.getValue());
 
 		refreshBtn = new RefreshBtn(this.getUriPath() + "list", null, null);
 
 		CustomBtn customBtnReport = new CustomBtn("increaseRemainCourse", "课时续费", "续费",
-				this.getUriPath() + "increaseRemainCourse?studentId=" + searchParam.getId() + "&searchStudentName=" + searchParam.getName(), "glyphicon-plus", BtnPropType.SelectType.ONE.getValue());
+				this.getUriPath() + "increaseRemainCourse?studentId=" + searchParam.getId() + this.addQueryParam("searchStudentName", searchParam.getName(), "&"),
+				"glyphicon-plus", BtnPropType.SelectType.ONE.getValue());
 		customBtnReport.setWidth("600");
 
-		CustomBtn customBtnTempLeave = new CustomBtn("tempLeave", "休学", "休学",
-				this.getUriPath() + "tempLeave?studentId=" + searchParam.getId() +"&searchStudentName=" + searchParam.getName(), "glyphicon-pause", BtnPropType.SelectType.ONE.getValue());
-		customBtnTempLeave.setWidth("600");
+/*		CustomBtn customBtnTempLeave = new CustomBtn("tempLeave", "休学", "休学",
+				this.getUriPath() + "tempLeave?studentId=" + searchParam.getId() + this.addQueryParam("searchStudentName", searchParam.getName(), "&"),
+				"glyphicon-pause", BtnPropType.SelectType.ONE.getValue());
+		customBtnTempLeave.setWidth("600");*/
 
 		CustomBtn customBtnCourseInfo = new CustomBtn("courseInfo", "班级信息", "班级",
 				this.getUriPath() + "courseInfo", "glyphicon-align-justify", BtnPropType.SelectType.ONE.getValue());
@@ -108,9 +118,9 @@ public class StudyStudentController extends BaseController {
 		customBtnExport.setOpenStyle(BtnPropType.OpenStyle.NONE);
 		customBtnExport.setWidth("600");
 
-		customBtns = new ArrayList<>(4);
+		customBtns = new ArrayList<>(3);
 		customBtns.add(customBtnReport);
-		customBtns.add(customBtnTempLeave);
+//		customBtns.add(customBtnTempLeave);
 		customBtns.add(customBtnCourseInfo);
 //		customBtns.add(customBtnUploadBatch);
 		customBtns.add(customBtnExport);
@@ -130,6 +140,13 @@ public class StudyStudentController extends BaseController {
 		return modelView;
 	}
 
+	private String addQueryParam(String name, String value, String sperator) {
+		if(StringUtils.isBlank(name) || StringUtils.isBlank(value)) {
+			return "";
+		}
+		return sperator + name + "=" + value;
+	}
+
 	/**
 	 * @return JSP页面对象
 	 */
@@ -139,6 +156,8 @@ public class StudyStudentController extends BaseController {
 		modelView.setViewName(getPageDir() + "add");
 
 		modelView.getModelMap().put("levels", getLevels());
+
+		modelView.getModelMap().put("statusList", this.getStatusList());
 
 		return modelView;
 	}
@@ -152,6 +171,18 @@ public class StudyStudentController extends BaseController {
 			levels.add(String.valueOf(index) + "段");
 		}
 		return levels;
+	}
+
+	private List<Map<String, String>> getStatusList() {
+		List<Map<String, String>> statusList = new ArrayList<>();
+		StudentStatusEnum[] enums = StudentStatusEnum.values();
+		for(StudentStatusEnum enumItem : enums) {
+			Map<String, String> item = new HashMap<>();
+			item.put("name", enumItem.name());
+			item.put("message", enumItem.getMessage());
+			statusList.add(item);
+		}
+		return statusList;
 	}
 
 	/**
@@ -225,6 +256,9 @@ public class StudyStudentController extends BaseController {
 			}
 		}
 		modelView.getModelMap().put("levels", getLevels());
+
+		modelView.getModelMap().put("statusList", this.getStatusList());
+
 		modelView.getModelMap().put("searchStudentName", searchStudentName);
 
 		modelView.setViewName(getPageDir() + "edit");
@@ -293,6 +327,9 @@ public class StudyStudentController extends BaseController {
 		}
 		if(!StringUtils.equals(dbStudent.getDescription(), student.getDescription())) {
 			dbStudent.setDescription(student.getDescription());
+		}
+		if(!StringUtils.equals(dbStudent.getStatus(), student.getStatus())) {
+			dbStudent.setStatus(student.getStatus());
 		}
 	}
 

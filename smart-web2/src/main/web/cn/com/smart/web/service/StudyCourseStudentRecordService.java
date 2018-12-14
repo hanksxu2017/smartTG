@@ -1,6 +1,6 @@
 package cn.com.smart.web.service;
 
-import cn.com.smart.constant.enumEntity.CourseStudentRecordStatusEnum;
+import cn.com.smart.web.constant.enums.tg.CourseStudentRecordStatusEnum;
 import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.entity.TGStudyCourseStudentRecord;
 import cn.com.smart.web.dao.impl.StudyCourseStudentRecordDao;

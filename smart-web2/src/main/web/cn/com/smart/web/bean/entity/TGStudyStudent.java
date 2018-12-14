@@ -3,6 +3,7 @@ package cn.com.smart.web.bean.entity;
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
 import cn.com.smart.constant.IConstant;
+import cn.com.smart.web.constant.enums.tg.StudentStatusEnum;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -46,7 +47,7 @@ public class TGStudyStudent extends BaseBeanImpl implements DateBean {
 
 	private short parentType;
 
-	private String status = IConstant.STATUS_NORMAL;
+	private String status = StudentStatusEnum.NORMAL.name();
 
 	private int totalCourse;
 

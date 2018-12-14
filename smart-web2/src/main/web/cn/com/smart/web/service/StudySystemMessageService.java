@@ -1,10 +1,8 @@
 package cn.com.smart.web.service;
 
-import cn.com.smart.constant.enumEntity.SystemMessageEnum;
+import cn.com.smart.web.constant.enums.tg.SystemMessageEnum;
 import cn.com.smart.service.impl.MgrServiceImpl;
-import cn.com.smart.web.bean.entity.TGStudyClassroom;
 import cn.com.smart.web.bean.entity.TGStudySystemMessage;
-import cn.com.smart.web.dao.impl.StudyClassroomDao;
 import cn.com.smart.web.dao.impl.StudySystemMessageDao;
 import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package cn.com.smart.constant.enumEntity;
+package cn.com.smart.web.constant.enums.tg;
 
 import cn.com.smart.constant.IEnum;
 

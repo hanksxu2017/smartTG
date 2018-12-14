@@ -2,7 +2,7 @@ package cn.com.smart.web.controller.impl;
 
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
-import cn.com.smart.constant.enumEntity.SystemMessageEnum;
+import cn.com.smart.web.constant.enums.tg.SystemMessageEnum;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudySystemMessage;
 import cn.com.smart.web.bean.search.SystemMessageSearch;
