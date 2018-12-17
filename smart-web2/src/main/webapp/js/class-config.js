@@ -46,7 +46,7 @@ function authConfigSubmitBtnListener($elementWrap) {
             var $form = $("#" + formId);
             var param = decodeURIComponent($form.serialize());
             if(utils.isNotEmpty(modalBodyId)) {
-                cnoj.submitDialogDataAndCloseDialog(submitUri, param, null, refreshUri, refreshTarget, false);
+                cnoj.submitDialogDataAndCloseDialog(submitUri, param, null, refreshUri, refreshTarget, false, modalBodyId);
 			} else {
                 cnoj.submitDialogData(submitUri, param, null, refreshUri, refreshTarget, false);
 			}
