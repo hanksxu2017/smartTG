@@ -286,6 +286,11 @@ public class StudyStudentController extends BaseController {
 				"glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
 		customBtnChooseCourse.setModalBodyId("student-choose-course-dialog");
 
+		CustomBtn customBtnChangeSignType = new CustomBtn("changeSignType", "更改签到类型",
+				"更改签到类型", this.getUriPath() + "changeSignType?studentId=" + searchParam.getId(),
+				"glyphicon-road", BtnPropType.SelectType.ONE.getValue());
+		customBtnChangeSignType.setModalBodyId("student-change-sign-type-dialog");
+
 		delBtn = new DelBtn(this.getUriPath() + "exitCourse?studentId=" + searchParam.getId(), "确定要从该班中退出吗？",
 				this.getUriPath() + "courseInfo?id=" + searchParam.getId(), "#student-course-list-dialog", null);
 		delBtn.setSelectedType(BtnPropType.SelectType.ONE.getValue());
@@ -293,6 +298,7 @@ public class StudyStudentController extends BaseController {
 
 		customBtns = new ArrayList<>(2);
 		customBtns.add(customBtnChooseCourse);
+		customBtns.add(customBtnChangeSignType);
 		modelView.getModelMap().put("customBtns", customBtns);
 
 		modelView.getModelMap().put("delBtn", delBtn);

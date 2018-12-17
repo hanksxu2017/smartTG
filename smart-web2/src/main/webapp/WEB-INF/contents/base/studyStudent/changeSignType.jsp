@@ -35,16 +35,16 @@
 		    </div>
 	    </div>
 
-
         <div class="text-center">
             <button type="button"
                     class="btn btn-sm btn-success cnoj-class-config-submit"
                     data-uri="studyStudent/course/subChangeSignType"
                     data-config-id="${student.id}"
                     data-form-id="student-course-change-sign-type"
+                    data-modal-body-id="student-change-sign-type-dialog-btDialog"
                     data-alert-msg="请正确填写！"
-                    data-refresh-uri="studyStudent/courseList?id=${student.id}"
-                    data-refresh-target="#student-course-tab" > &nbsp;
+                    data-refresh-uri="studyStudent/courseInfo?id=${student.id}"
+                    data-refresh-target="#student-course-list-dialog" > &nbsp;
                 <i class="glyphicon glyphicon-ok-sign"></i> 确定 &nbsp;</button>
         </div>
     </form>
