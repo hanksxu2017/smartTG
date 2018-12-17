@@ -122,10 +122,16 @@
 				var successFun = $(this).data("del-after");
 				var refreshUri = $(this).data("refresh-uri");
 				var target = $(this).data("target");
+				var selectedType = $(this).data("selected-type");
 				if(utils.isNotEmpty(value)) {
 					if(utils.isEmpty(uri)) {
 						return;
 					}
+                    if((value).indexOf(',') > 0 && utils.isNotEmpty(selectedType) && selectedType === 'one-selected') {
+
+                        BootstrapDialogUtil.warningAlert("只能选择一条数据!");
+                        return;
+                    }
 					if(uri.indexOf("?")>0)
 						uri = uri+"&id="+value+"&busiName="+busiName;
 					else 
