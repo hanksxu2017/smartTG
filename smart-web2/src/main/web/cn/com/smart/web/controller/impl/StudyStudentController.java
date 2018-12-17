@@ -285,9 +285,17 @@ public class StudyStudentController extends BaseController {
 				"报班", this.getUriPath() + "reportCourse?studentId=" + searchParam.getId(),
 				"glyphicon-list-alt", BtnPropType.SelectType.NONE.getValue());
 		customBtnChooseCourse.setModalBodyId("student-choose-course-dialog");
-		customBtns = new ArrayList<>(1);
+
+		delBtn = new DelBtn(this.getUriPath() + "exitCourse?studentId=" + searchParam.getId(), "确定要从该班中退出吗？",
+				this.getUriPath() + "courseInfo?id=" + searchParam.getId(), "#student-course-list-dialog", null);
+		delBtn.setSelectedType(BtnPropType.SelectType.ONE.getValue());
+		delBtn.setName("退班");
+
+		customBtns = new ArrayList<>(2);
 		customBtns.add(customBtnChooseCourse);
 		modelView.getModelMap().put("customBtns", customBtns);
+
+		modelView.getModelMap().put("delBtn", delBtn);
 
 		return modelView;
 	}

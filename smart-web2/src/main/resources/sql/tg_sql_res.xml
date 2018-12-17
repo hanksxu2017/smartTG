@@ -183,7 +183,7 @@
             ELSE '未定义' END
             from tg_study_course t, tg_study_student_course_rel rel
             where rel.student_id =:id and rel.course_id = t.id
-            [and rel.status =:status]
+            and rel.status ='NORMAL'
             [and rel.student_name like '%:studentName%']
             order by rel.status, t.week_info, t.course_time_index
         </sql>
