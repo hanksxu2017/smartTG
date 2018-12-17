@@ -1,9 +1,6 @@
 package cn.com.smart.web.controller.base;
 
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
@@ -16,6 +13,7 @@ import cn.com.smart.service.impl.MgrServiceImpl;
 import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.TGStudyCourse;
 import cn.com.smart.web.constant.enums.BtnPropType;
+import cn.com.smart.web.tag.bean.*;
 import cn.com.smart.web.utils.DataUtil;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -32,13 +30,6 @@ import cn.com.smart.web.bean.UserInfo;
 import cn.com.smart.web.constant.IActionConstant;
 import cn.com.smart.web.helper.HttpRequestHelper;
 import cn.com.smart.web.service.RoleService;
-import cn.com.smart.web.tag.bean.ALink;
-import cn.com.smart.web.tag.bean.CustomBtn;
-import cn.com.smart.web.tag.bean.DelBtn;
-import cn.com.smart.web.tag.bean.EditBtn;
-import cn.com.smart.web.tag.bean.PageParam;
-import cn.com.smart.web.tag.bean.RefreshBtn;
-import cn.com.smart.web.tag.bean.SelectedEventProp;
 import org.springframework.web.servlet.ModelAndView;
 
 /**
@@ -374,4 +365,19 @@ public abstract class BaseController extends Smart implements IBaseController {
     protected ModelAndView packListModelView(FilterParam filterParam, SmartResponse<Object> smartResp) {
     	return this.packListModelView(filterParam, smartResp, null);
     }
+
+	/**
+	 * 构建操作栏
+	 *
+	 * @return  操作列
+	 */
+	protected List<CustomTableCell> generateSimpleOperationBtn(String content, int position) {
+		Map<String, Object> cellParam = new HashMap<>();
+		cellParam.put("id", 0);
+		List<CustomTableCell> customCells = new ArrayList<>();
+		CustomTableCell cell = new CustomTableCell(content, position, cellParam);
+		customCells.add(cell);
+
+		return customCells;
+	}
 }

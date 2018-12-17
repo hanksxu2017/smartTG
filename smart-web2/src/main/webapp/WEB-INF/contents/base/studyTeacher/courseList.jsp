@@ -2,7 +2,7 @@
 <%@ taglib prefix="cnoj" uri="/cnoj-tags" %>
 <div class="wrap-content">
     <div class="panel no-border">
-        <div class="panel-search">
+        <div class="panel-search" hidden>
               <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyTeacher/courseList" target="#teacher-course-tab">
                   <input type="hidden" name="id" value="${searchParam.id }" />
                   <div class="form-group p-r-10">
@@ -19,8 +19,7 @@
           </div>
 
 		<cnoj:table smartResp="${smartResp }"
-					headers="名称,星期,时间,教室,学生数"
-		            headerWidths="30%,20%,20%,20%,10%"
+					headers="名称,星期,时间,教室,学生数,建班日期"
 					isCheckbox="1" isRowSelected="1"
 					page="${pageParam }"
 					currentUri="${currentUri }"

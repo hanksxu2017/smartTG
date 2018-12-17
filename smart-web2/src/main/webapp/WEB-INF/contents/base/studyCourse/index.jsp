@@ -2,7 +2,7 @@
 <div class="wrap-content">
 	<div class="container-fluid">
 		<div class="row">
-			<div class="col-sm-5 p-l-0 p-r-0">
+			<div class="col-sm-4 p-l-0 p-r-0">
 				<div class="panel panel-default m-b-0">
 					<div class="panel-tabs-wrap" id="config-class-tabs">
 
@@ -11,7 +11,7 @@
 								<ul class="nav nav-tabs" role="tablist">
 									<li class="active"><a href="#teacher-tab" role="presentation"
 									                      data-toggle="tab">教师</a></li>
-									<li><a href="#student-tab" role="presentation" data-toggle="tab">学生</a></li>
+									<%--<li><a href="#student-tab" role="presentation" data-toggle="tab">学生</a></li>--%>
 								</ul>
 							</div>
 						</div>
@@ -31,7 +31,7 @@
 				</div><!-- panel -->
 			</div><!-- col -->
 
-			<div class="col-sm-7 p-l-5 p-r-0">
+			<div class="col-sm-8 p-l-5 p-r-0">
 				<div id="has-class-list">
 					<div class="panel panel-default m-b-0">
 						<div class="panel-heading ui-widget-header">已拥有的班级</div>

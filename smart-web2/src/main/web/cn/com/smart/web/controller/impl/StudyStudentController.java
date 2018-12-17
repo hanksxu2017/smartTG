@@ -670,28 +670,13 @@ public class StudyStudentController extends BaseController {
 		customBtns.add(customBtnSign);
 		customBtns.add(customBtnMakeUp);
 
-		modelMap.put("customCells", generateOperationBtn());
+		modelMap.put("customCells", generateSimpleOperationBtn(this.concatBtnDiv(), 5));
 
 		modelMap.put("customBtns", customBtns);
 
 
 		modelView.setViewName(this.getPageDir() + "studentList");
 		return modelView;
-	}
-
-	/**
-	 * 构建操作栏
-	 *
-	 * @return  操作列
-	 */
-	private List<CustomTableCell> generateOperationBtn() {
-		Map<String, Object> cellParam = new HashMap<>();
-		cellParam.put("id", 0);
-		List<CustomTableCell> customCells = new ArrayList<>();
-		CustomTableCell cell = new CustomTableCell(this.concatBtnDiv(), 5, cellParam);
-		customCells.add(cell);
-
-		return customCells;
 	}
 
 	/**

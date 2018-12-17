@@ -31,8 +31,7 @@
             </form>
         </div>--%>
 
-        <cnoj:table smartResp="${smartResp}" headers="姓名,等级,剩余课时,入学时间,状态"
-                    headerWidths="20%,10%,20%,30%,20%"
+        <cnoj:table smartResp="${smartResp}" headers="姓名,等级,剩余课时,入学时间,操作"
                     isCheckbox="1"
                     isRowSelected="1"
                     page="${pageParam }"
@@ -40,6 +39,7 @@
                     customBtns="${customBtns}"
                     refreshBtn="${refreshBtn}"
                     delBtn="${delBtn}"
+                    customCells="${customCells }"
         />
     </div>
 </div>

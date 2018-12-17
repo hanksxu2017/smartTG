@@ -127,7 +127,7 @@ public class StudyTeacherController extends BaseController {
      * @throws Exception
      */
     @RequestMapping("/simpList")
-    public ModelAndView simpList(HttpSession session, UserSearchParam searchParam,
+    public ModelAndView simpList(TeacherSearch searchParam,
                                  ModelAndView modelView, RequestPage page) throws Exception {
         String uri = this.getUriPath() + "simpList";
         SmartResponse<Object> smartResp = this.opService.getDatas("teacher_simp_list",searchParam, page.getStartNum(), page.getPageSize());
@@ -139,6 +139,7 @@ public class StudyTeacherController extends BaseController {
         modelMap.put("pageParam", pageParam);
         modelMap.put("searchParam", searchParam);
         modelMap.put("selectedEventProp", selectedEventProp);
+        modelMap.put("teachers", this.teacherService.findNormal().getDatas());
         pageParam = null;
 
         modelView.setViewName(this.getPageDir() + "simpList");
@@ -246,9 +247,19 @@ public class StudyTeacherController extends BaseController {
 		modelMap.put("searchParam", searchParam);
 		modelMap.put("refreshBtn", refreshBtn);
 
+		modelMap.put("customCells", this.generateSimpleOperationBtn(this.concatBtnDiv(), 5));
 
 		modelView.setViewName(this.getPageDir() + "studentList");
 		return modelView;
+	}
+
+	/**
+	 * @return  按钮组
+	 */
+	private String concatBtnDiv() {
+		return "<div class='btn-group'>" +
+				"<a class='student-drop-out-course' href='javascript:void(0);' data-id='${id}'><span style='color:darkslategrey;'>退班</span></a>" +
+				"</div>";
 	}
 
     @Autowired

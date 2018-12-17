@@ -26,8 +26,12 @@
     <!-- 教师简单列表 -->
     <sqlUnit name="teacher_simp_list">
         <sql>
-            select t.id, t.name, t.level from tg_study_teacher t
-            [ where t.name like '%:name%']
+            select t.id, t.name, count(course.id) from tg_study_teacher t
+            left join tg_study_course course on t.id = course.teacher_id
+            where t.id = course.teacher_id
+            and course.status = 'NORMAL'
+            group by course.teacher_id
+            [and t.id=:teacherId]
             order by t.create_time asc
         </sql>
     </sqlUnit>
@@ -114,7 +118,8 @@
                 temp.week_info,
                 temp.course_time,
                 temp.classroom_name,
-                (SELECT COUNT(rel.id) AS studentCount FROM tg_study_student_course_rel rel WHERE rel.course_id = temp.id AND rel.status = 'NORMAL')
+                (SELECT COUNT(rel.id) AS studentCount FROM tg_study_student_course_rel rel WHERE rel.course_id = temp.id AND rel.status = 'NORMAL'),
+                DATE_FORMAT(temp.create_time,'%Y-%m-%d')
             FROM (
                 SELECT t.id,
                     t.name,
@@ -150,10 +155,7 @@
     <!-- 课时的学生列表 -->
     <sqlUnit name="course_student_list">
         <sql>
-            select t.id, t.name, t.level, t.remain_course, t.create_time,
-            CASE rel.status WHEN 'NORMAL' THEN '正常'
-            WHEN 'EXIT_COURSE' THEN '已退班'
-            ELSE '未定义' END
+            select t.id, t.name, t.level, t.remain_course, DATE_FORMAT(t.create_time,'%Y-%m-%d')
             from tg_study_student t, tg_study_student_course_rel rel
             where t.id = rel.student_id
             and rel.course_id = :id
