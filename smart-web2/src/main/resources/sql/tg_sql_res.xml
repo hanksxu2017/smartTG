@@ -15,7 +15,7 @@
 
     <sqlUnit name="teacher_list">
         <sql>
-            select t.id, t.name, t.phone, date_format(t.create_time, '%Y-%c-%d'),
+            select t.id, t.name, t.phone, t.id_card, date_format(t.create_time, '%Y-%c-%d'),
             (SELECT COUNT(c1.id) FROM tg_study_course c1 WHERE c1.teacher_id = t.id AND c1.status = 'NORMAL'),
             (SELECT COUNT(DISTINCT rel1.student_id) FROM tg_study_student_course_rel rel1 WHERE rel1.status = 'NORMAL' and rel1.course_id IN (SELECT c2.id FROM tg_study_course c2 WHERE c2.teacher_id = t.id)),
             (SELECT COUNT(rel2.id) FROM tg_study_student_course_rel rel2 WHERE rel2.status = 'NORMAL' and rel2.course_id IN (SELECT c3.id FROM tg_study_course c3 WHERE c3.teacher_id = t.id))

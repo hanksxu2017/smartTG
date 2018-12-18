@@ -3,7 +3,7 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="wrap-content">
 	<div class="panel no-border">
-        <div class="panel-search borer-bottom">
+<%--        <div class="panel-search borer-bottom">
               <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyTeacher/simpList" target="#teacher-tab">
 	              <div class="form-group p-r-10">
 		              <label for="teacherId">教师:</label>
@@ -23,7 +23,7 @@
 					  </span>
 				  </div>
               </form>
-          </div>
+          </div>--%>
 		<cnoj:tableItem smartResp="${smartResp}" headers="姓名,班级数" isRowSelected="1" currentUri="${currentUri }"
 		  selectedEventProp="${selectedEventProp }" page="${pageParam }" refreshBtn="${refreshBtn}"
 		 />
