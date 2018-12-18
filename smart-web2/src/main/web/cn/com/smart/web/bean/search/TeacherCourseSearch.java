@@ -11,6 +11,8 @@ public class TeacherCourseSearch extends FilterParam {
 
 	private String courseName;
 
+	private String weekInfo;
+
 	@Override
 	public String getParamToString() {
 		StringBuilder strBuilder = new StringBuilder();
@@ -20,6 +22,9 @@ public class TeacherCourseSearch extends FilterParam {
 		}
 		if(StringUtils.isNotBlank(courseName)) {
 			strBuilder.append("&courseName="+courseName);
+		}
+		if(StringUtils.isNotBlank(weekInfo)) {
+			strBuilder.append("&weekInfo="+weekInfo);
 		}
 		param = strBuilder.toString();
 		if(StringUtils.isNotBlank(param) && param.startsWith("&")) {

@@ -141,6 +141,7 @@
                 WHERE t.teacher_id =:id
                     and t.status != 'DELETE'
                     [and t.name like '%:courseName%']
+                    [and t.week_Info = :weekInfo]
                 ORDER BY t.week_info, t.course_time_index) temp
         </sql>
     </sqlUnit>

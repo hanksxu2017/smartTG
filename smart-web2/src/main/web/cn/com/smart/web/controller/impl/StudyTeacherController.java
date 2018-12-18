@@ -182,6 +182,7 @@ public class StudyTeacherController extends BaseController {
 	    customBtns.add(customBtnStudentList);
 	    modelMap.put("customBtns", customBtns);
 
+	    modelMap.put("weekInfoList", dictService.getItems("WEEK_INFO_LIST").getDatas());
 
         modelView.setViewName(this.getPageDir() + "courseList");
         return modelView;
@@ -247,7 +248,7 @@ public class StudyTeacherController extends BaseController {
 		modelMap.put("searchParam", searchParam);
 		modelMap.put("refreshBtn", refreshBtn);
 
-		modelMap.put("customCells", this.generateSimpleOperationBtn(this.concatBtnDiv(), 5));
+		modelMap.put("customCells", this.generateSimpleOperationBtn(this.concatBtnDiv(searchParam.getId()), 5));
 
 		modelView.setViewName(this.getPageDir() + "studentList");
 		return modelView;
@@ -256,9 +257,9 @@ public class StudyTeacherController extends BaseController {
 	/**
 	 * @return  按钮组
 	 */
-	private String concatBtnDiv() {
+	private String concatBtnDiv(String courseId) {
 		return "<div class='btn-group'>" +
-				"<a class='student-drop-out-course' href='javascript:void(0);' data-id='${id}'><span style='color:darkslategrey;'>退班</span></a>" +
+				"<a class='btn btn-info student-drop-out-course' data-course-id = '" + courseId + "'href='javascript:void(0);' data-id='${id}'><span style='color:darkslategrey;'>退班</span></a>" +
 				"</div>";
 	}
 

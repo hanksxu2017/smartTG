@@ -1,13 +1,20 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="cnoj" uri="/cnoj-tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="wrap-content">
     <div class="panel no-border">
-        <div class="panel-search" hidden>
+        <div class="panel-search">
               <form class="form-inline cnoj-entry-submit" id="search-form-user" method="post" role="form" action="studyTeacher/courseList" target="#teacher-course-tab">
                   <input type="hidden" name="id" value="${searchParam.id }" />
+
                   <div class="form-group p-r-10">
-				    <label for="search-input02">班级名称：</label>
-				    <input type="text" class="form-control input-form-sm-control" id="search-input02" name="courseName" placeholder="请输入班级名称" value="${searchParam.courseName }"/>
+				    <label for="weekInfoForSearchCourse">星期:</label>
+	                  <select name="weekInfo" class="form-control" id="weekInfoForSearchCourse">
+		                  <option value="">--请选择--</option>
+		                  <c:forEach items="${weekInfoList}" var="weekInfo">
+			                  <option value="${weekInfo.busiValue}" <c:if test="${weekInfo.busiValue eq searchParam.weekInfo}">selected</c:if> >${weekInfo.busiName}</option>
+		                  </c:forEach>
+	                  </select>
 				  </div>
 				  <div class="form-group p-l-10">
 					  <span class="btn btn-info btn-sm cnoj-search-submit">

@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="cnoj" uri="/cnoj-tags" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <div class="wrap-content">
 	<div class="panel no-border">
         <div class="panel-search borer-bottom">
@@ -24,7 +25,7 @@
               </form>
           </div>
 		<cnoj:tableItem smartResp="${smartResp}" headers="姓名,班级数" isRowSelected="1" currentUri="${currentUri }"
-		  selectedEventProp="${selectedEventProp }" page="${pageParam }"
+		  selectedEventProp="${selectedEventProp }" page="${pageParam }" refreshBtn="${refreshBtn}"
 		 />
 	</div>
 </div>

@@ -47,6 +47,28 @@
 <script>
     $(function () {
 		$(".bootstrap-dialog-body").attr("id", "course-student-list-dialog");
+
+
+        $(".student-drop-out-course").on("click", function () {
+
+            var studentId = $(this).data('id');
+            var courseId = $(this).data('course-id');
+
+            $.ajax({
+                type: "POST",
+                dataType: 'json',
+                async:false,
+                data:{studentId:studentId, id:courseId},
+                url: "${ctx}/studyStudent/exitCourse",
+                success: function(data){
+                    if(data.result === '1') {
+                        loadUri("#course-student-list-dialog", "/studyTeacher/studentList?id=" + courseId);
+                    } else {
+                        utils.showMsg(data.msg);
+                    }
+                }
+            });
+        });
     });
 
 </script>
