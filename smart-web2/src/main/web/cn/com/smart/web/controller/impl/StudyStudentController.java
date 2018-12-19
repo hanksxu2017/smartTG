@@ -210,6 +210,8 @@ public class StudyStudentController extends BaseController {
 		TGStudyStudent studyStudentDb = this.studentService.find(id).getData();
 		studyStudentDb.setStatus(IConstant.STATUS_DROP_OUT);
 		studyStudentDb.setUpdateTime(new Date());
+        this.setDeleteStudentDesc(studyStudentDb);
+
 		// 退学操作时清零剩余课时
 		studyStudentDb.setRemainCourse(0);
 		SmartResponse<String> smartResponse = studentService.update(studyStudentDb);
@@ -227,6 +229,13 @@ public class StudyStudentController extends BaseController {
 
 		return smartResponse;
 	}
+
+	private void setDeleteStudentDesc(TGStudyStudent studentDb) {
+        String desc = "退学时间:[" + DateUtil.dateToStr(new Date(), "yyyy-MM-dd日 HH:mm:ss") + "]";
+        String oldDesc = studentDb.getDescription();
+        String newDesc = StringUtils.isNotBlank(oldDesc) ? oldDesc + ";" + desc : desc;
+        studentDb.setDescription(newDesc);
+    }
 
 	/**
 	 * 根据出生日期计算年龄
@@ -318,6 +327,7 @@ public class StudyStudentController extends BaseController {
 		TGStudyStudent studyStudentDb = this.studentService.find(studyStudent.getId()).getData();
 		this.copyUpdateInfoToStudent(studyStudentDb, studyStudent);
 		studyStudentDb.setUpdateTime(new Date());
+		// TODO 修改状态时,要进行负责的配置
 		return studentService.update(studyStudentDb);
 	}
 

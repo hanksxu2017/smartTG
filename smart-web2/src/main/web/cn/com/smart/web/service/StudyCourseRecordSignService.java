@@ -70,17 +70,17 @@ public class StudyCourseRecordSignService {
             smartResponse.setMsg(checkCourseStudentRecordRes.getMsg());
             return smartResponse;
         }
-
-        // 4. 更新学生课时为点名结果
         TGStudyCourseStudentRecord courseStudentRecord = checkCourseStudentRecordRes.getData();
-        smartResponse = this.updateCourseStudentRecord(courseStudentRecord, statusEnum, description);
+
+        // 4. 更新学生信息(剩余课时,连续缺课)
+        TGStudyStudent student = checkStudentRes.getData();
+        smartResponse = this.updateStudent(student, courseStudentRecord, statusEnum);
         if(!smartResponse.isSuccess()) {
             return smartResponse;
         }
 
-        // 5. 更新学生信息(剩余课时,连续缺课)
-        TGStudyStudent student = checkStudentRes.getData();
-        smartResponse = this.updateStudent(student, courseStudentRecord, statusEnum);
+        // 5. 更新学生课时为点名结果
+        smartResponse = this.updateCourseStudentRecord(courseStudentRecord, statusEnum, description);
         if(!smartResponse.isSuccess()) {
             return smartResponse;
         }

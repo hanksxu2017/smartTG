@@ -25,9 +25,11 @@ import java.io.InputStreamReader;
 @Slf4j
 public class VxAuthUtil {
 
-	public static final String APP_ID = "wx2aa0116110bb18bb";
+//	public static final String APP_ID = "wx2aa0116110bb18bb";
+//	private static final String APP_SECRET = "5e067b9537236dcd3a8df3a755e29186";
 
-	private static final String APP_SECRET = "5e067b9537236dcd3a8df3a755e29186";
+	public static final String APP_ID = "wx801d618790dfb4e5";
+	private static final String APP_SECRET = "0d143c9c2a99254add2c126085207856";
 
 	public static String getUserInfoByCode(String code) {
 		/**
