@@ -40,7 +40,7 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
 
 	private String idCard;
 
-	private String openId;
+	private String openid;
 
 	@Id
 	@Column(name="id", length=64)
@@ -107,11 +107,11 @@ public class TGStudyTeacher extends BaseBeanImpl implements DateBean {
 	}
 
 	@Column(name="openid", length=32)
-	public String getOpenId() {
-		return openId;
+	public String getOpenid() {
+		return openid;
 	}
 
-	public void setOpenId(String openId) {
-		this.openId = openId;
+	public void setOpenid(String openId) {
+		this.openid = openid;
 	}
 }

@@ -5,7 +5,6 @@ import cn.com.smart.constant.IConstant;
 import cn.com.smart.utils.DateUtil;
 import cn.com.smart.web.bean.entity.*;
 import cn.com.smart.web.constant.enums.tg.CourseStudentRecordStatusEnum;
-import cn.com.smart.web.dao.impl.StudyVxUserInfoDao;
 import cn.com.smart.web.service.*;
 import cn.com.smart.web.utils.VxAuthUtil;
 import com.alibaba.fastjson.JSONObject;
@@ -148,12 +147,12 @@ public class StudyTeacherH5Controller {
 	public ModelAndView register(String phone, String openid) {
 
 		TGStudyTeacher teacher = this.teacherService.getTeacherByPhone(phone);
-		if(null != teacher) {
+		if(null != teacher && StringUtils.isNotBlank(teacher.getOpenid()) && !StringUtils.equals(openid, teacher.getOpenid())) {
 			return forwardErrorPage("手机号已绑定");
 		}
 
 		teacher = this.teacherService.getTeacherByOpenId(openid);
-		if(null != teacher) {
+		if(null != teacher && !StringUtils.equals(phone, teacher.getPhone())) {
 			return forwardErrorPage("微信已绑定");
 		}
 
