@@ -30,14 +30,20 @@
 <body>
 
 <div class="container">
-
-    <form class="form-signin">
-        <label for="phone" class="sr-only">手机号</label>
-        <input type="text" id="phone" class="form-control" placeholder="手机号" required autofocus>
-        <button class="btn btn-lg btn-primary btn-block" type="button">提交申请</button>
-    </form>
-
-</div> <!-- /container -->
+	<div class="panel panel-info">
+		<div class="panel-heading">
+			<h3 class="panel-title">教师信息绑定</h3>
+		</div>
+		<div class="panel-body">
+			<form class="form-signin" action="subRegister">
+				<input type="hidden" name="openid" value="${openid}">
+				<label for="phone" class="sr-only">手机号</label>
+				<input type="text" id="phone" name="phone" class="form-control" placeholder="手机号" required autofocus>
+				<button class="btn btn-lg btn-primary btn-block" type="submit">提交申请</button>
+			</form>
+		</div>
+	</div>
+</div>
 
 </body>
 </html>

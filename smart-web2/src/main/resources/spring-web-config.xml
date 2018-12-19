@@ -70,7 +70,7 @@
 						<value>user/logout</value>
 						<value>captcha</value>
 						<value>user/islogin.json</value>
-                        <value>studyTeacherH5/*</value>
+                        <value>h5/*</value>
 					</list>
 				</property>
 				<property name="resSuffix">

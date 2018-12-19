@@ -40,6 +40,7 @@
         addBtn="${addBtn}"
         editBtn="${editBtn}"
         delBtn="${delBtn}"
+        refreshBtn="${refreshBtn}"
         customBtns="${customBtns}"
         page="${pageParam }"
     />

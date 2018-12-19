@@ -5,7 +5,12 @@ import cn.com.smart.web.bean.entity.TGStudySchool;
 import cn.com.smart.web.bean.entity.TGStudyTeacher;
 import cn.com.smart.web.dao.impl.StudySchoolDao;
 import cn.com.smart.web.dao.impl.StudyTeacherDao;
+import org.apache.commons.collections.CollectionUtils;
 import org.springframework.stereotype.Service;
+
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 /**
  *
@@ -22,5 +27,24 @@ public class StudyTeacherService extends MgrServiceImpl<TGStudyTeacher> {
 		return (StudyTeacherDao)super.getDao();
 	}
 
+	public TGStudyTeacher getTeacherByPhone(String phone) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("phone", phone);
+		return getOneByParams(params);
+	}
+
+	private TGStudyTeacher getOneByParams(Map<String, Object> params) {
+		List<TGStudyTeacher> teacherList = this.findByParam(params).getDatas();
+		if(CollectionUtils.isNotEmpty(teacherList)) {
+			return teacherList.get(0);
+		}
+		return null;
+	}
+
+	public TGStudyTeacher getTeacherByOpenId(String openid) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("openid", openid);
+		return getOneByParams(params);
+	}
 
 }

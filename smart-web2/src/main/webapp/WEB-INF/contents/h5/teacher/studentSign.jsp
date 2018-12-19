@@ -102,7 +102,7 @@
             if (null != courseRecId && '' !== courseRecId) {
                 $.ajax({
                     type: "GET",
-                    url: "${ctx}/studyTeacherH5/queryCourseRecord?courseRecordId=" + courseRecId,
+                    url: "${ctx}/h5/queryCourseRecord?courseRecordId=" + courseRecId,
                     success: function (data) {
                         if (null != data.result && '1' === data.result) {
                             $("#courseTime").text(data.data.courseDate + ' ' + data.data.courseTime);
@@ -121,7 +121,7 @@
 
                 $.ajax({
                     type: "GET",
-                    url: "${ctx}/studyTeacherH5/queryStudent?courseRecordId=" + courseRecId,
+                    url: "${ctx}/h5/queryStudent?courseRecordId=" + courseRecId,
                     success: function (data) {
                         initStudentTable(data);
                     }
@@ -138,7 +138,7 @@
         if (null != studentId && '' != studentId &&
             null != status && '' != status &&
             null != courseRecordId && '' != courseRecordId) {
-            var url = '${ctx}/studyTeacherH5/subStudentSign?studentId=' + studentId +
+            var url = '${ctx}/h5/subStudentSign?studentId=' + studentId +
                 '&courseRecordId=' + courseRecordId + '&status=' + status;
             $.ajax({
                 type: 'GET',
