@@ -118,7 +118,6 @@ public class StudyTeacherController extends BaseController {
 		if(StringUtils.equals(dbStudent.getIdCard(), teacher.getIdCard())) {
 			dbStudent.setIdCard(teacher.getIdCard());
 		}
-
 	}
 
     /**
@@ -325,19 +324,17 @@ public class StudyTeacherController extends BaseController {
 		}
 
 		// 查看未结课的课时记录信息
-		List<TGStudyCourseRecord> courseRecordList = courseRecordService.findByParam(params).getDatas();
+/*		List<TGStudyCourseRecord> courseRecordList = courseRecordService.findByParam(params).getDatas();
 		if(CollectionUtils.isNotEmpty(courseRecordList)) {
-			//
 			smartResp.setMsg("班级仍有 " + courseRecordList.size() + "个课时,不可删除");
 			return smartResp;
 		}
 
 		List<TGStudyCourseStudentRecord> courseStudentRecordList = courseStudentRecordService.findByParam(params).getDatas();
 		if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
-			//
 			smartResp.setMsg("班级仍有 " + courseStudentRecordList.size() + "个学生课时,不可删除");
 			return smartResp;
-		}
+		}*/
 
 		course.setStatus(IConstant.STATUS_DELETE);
 		course.setUpdateTime(new Date());

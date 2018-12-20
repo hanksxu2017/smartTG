@@ -49,7 +49,6 @@ public class StudyTeacherH5Controller {
 		return echostr;
 	}
 
-
 	@RequestMapping(value = "/auth")
 	public void GuideServlet(HttpServletRequest request, HttpServletResponse response) throws Exception {
 		// 设置编码
@@ -75,7 +74,7 @@ public class StudyTeacherH5Controller {
 	@RequestMapping(value = "/login")
 	public ModelAndView login(HttpServletRequest request) {
 
-		String code = request.getParameter("code");
+/*		String code = request.getParameter("code");
 		if(StringUtils.isBlank(code)) {
 			return this.forwardErrorPage("请在微信公众号内访问");
 		}
@@ -93,7 +92,11 @@ public class StudyTeacherH5Controller {
 		TGStudyTeacher teacher = this.teacherService.getTeacherByOpenId(vxUserInfo.getOpenid());
 		if(null == teacher) {
 			return forwardRegisterPage(vxUserInfo.getOpenid());
-		}
+		}*/
+
+		String phone = request.getParameter("phone");
+
+		TGStudyTeacher teacher = this.teacherService.getTeacherByPhone(phone);
 
 		ModelAndView modelView = new ModelAndView();
 		modelView.getModelMap().put("courseRecordList", this.findCourseRecordAtToday(teacher));

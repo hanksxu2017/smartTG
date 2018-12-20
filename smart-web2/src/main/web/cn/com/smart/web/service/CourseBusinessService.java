@@ -44,12 +44,17 @@ public class CourseBusinessService {
 	public SmartResponse<String> generateWeekCourseRecord(Date startDate, List<TGStudyCourse> courseList) {
 		TGStudyCourseRecord courseRecord;
 		for(TGStudyCourse course : courseList) {
+			List<TGStudyStudentCourseRel> studentCourseRelList = this.getStudentCourseRel(course.getId());
+			if(CollectionUtils.isEmpty(studentCourseRelList)) {
+				// 班级无学生,不进行排课
+				continue;
+			}
 			courseRecord = this.initCourseRecord(course, startDate);
 			if(null != courseRecord) {
 				if(StringUtils.isBlank(courseRecord.getId())) {
 					this.courseRecordService.save(courseRecord);
 				}
-				this.createCourseStudentRecord(courseRecord);
+				this.createCourseStudentRecord(courseRecord, studentCourseRelList);
 			}
 		}
 
@@ -57,6 +62,13 @@ public class CourseBusinessService {
 		smartResponse.setResult(IConstant.OP_SUCCESS);
 		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
 		return smartResponse;
+	}
+
+	private List<TGStudyStudentCourseRel> getStudentCourseRel(String courseId) {
+		Map<String, Object> params = new HashMap<>();
+		params.put("status", IConstant.STATUS_NORMAL);
+		params.put("courseId", courseId);
+		return studentCourseRelService.findByParam(params).getDatas();
 	}
 
 	/**
@@ -111,19 +123,16 @@ public class CourseBusinessService {
 	 * 生成课时对应的学生课时记录
 	 * @param courseRecord
 	 */
-	private void createCourseStudentRecord(TGStudyCourseRecord courseRecord) {
+	private void createCourseStudentRecord(TGStudyCourseRecord courseRecord, List<TGStudyStudentCourseRel> studentCourseRelList) {
 
 		Map<String, Object> params = new HashMap<>();
 		params.put("status", IConstant.STATUS_NORMAL);
 		params.put("courseId", courseRecord.getCourseId());
-		List<TGStudyStudentCourseRel> studentCourseRelList = studentCourseRelService.findByParam(params).getDatas();
-		if(CollectionUtils.isNotEmpty(studentCourseRelList)) {
-			TGStudyCourseStudentRecord courseStudentRecord;
-			for(TGStudyStudentCourseRel rel : studentCourseRelList) {
-				courseStudentRecord = this.initCourseStudentRecord(courseRecord, rel);
-				if(StringUtils.isBlank(courseStudentRecord.getId())) {
-					this.courseStudentRecordService.save(courseStudentRecord);
-				}
+		TGStudyCourseStudentRecord courseStudentRecord;
+		for(TGStudyStudentCourseRel rel : studentCourseRelList) {
+			courseStudentRecord = this.initCourseStudentRecord(courseRecord, rel);
+			if(StringUtils.isBlank(courseStudentRecord.getId())) {
+				this.courseStudentRecordService.save(courseStudentRecord);
 			}
 		}
 	}
