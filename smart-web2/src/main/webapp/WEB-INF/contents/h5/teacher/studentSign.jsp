@@ -217,7 +217,7 @@
                 tr += "</tr>";
                 $("#studentTable").append(tr);
             });
-            var addMakeUpTr = "<tr><td colspan='3' style='text-align:left;padding-left:18px;'><button class='btn btn-info'><i class='glyphicon glyphicon-plus'>学生补课</i></button></td></tr>";
+            var addMakeUpTr = "<tr><td colspan='3' style='text-align:left;padding-left:18px;'><button class='btn btn-info' onclick='jumpToChooseStu()'><i class='glyphicon glyphicon-plus'>学生补课</i></button></td></tr>";
             $("#studentTable").append(addMakeUpTr);
         }
     }
@@ -230,6 +230,12 @@
             stBtn = "<button class='btn " + classType + "' data-type='" + type + "' data-studentid='" + studentId + "' onclick='subStudentSign(this)'>" + btnName + "</button>&nbsp;";
         }
         return stBtn;
+    }
+    
+    function jumpToChooseStu() {
+        var url = "${ctx}/h5/makeUpStudent?courseRecordId=" + $("#chooseCourseRecForSign").val();
+        window.location.href = url;
+
     }
 
 </script>

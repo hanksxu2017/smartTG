@@ -3,9 +3,15 @@ package cn.com.smart.web.controller.impl;
 import cn.com.smart.bean.SmartResponse;
 import cn.com.smart.constant.IConstant;
 import cn.com.smart.utils.DateUtil;
+import cn.com.smart.web.bean.RequestPage;
 import cn.com.smart.web.bean.entity.*;
+import cn.com.smart.web.bean.search.StudentSearch;
+import cn.com.smart.web.constant.enums.BtnPropType;
 import cn.com.smart.web.constant.enums.tg.CourseStudentRecordStatusEnum;
 import cn.com.smart.web.service.*;
+import cn.com.smart.web.tag.bean.CustomBtn;
+import cn.com.smart.web.tag.bean.PageParam;
+import cn.com.smart.web.tag.bean.RefreshBtn;
 import cn.com.smart.web.utils.VxAuthUtil;
 import com.alibaba.fastjson.JSONObject;
 import lombok.extern.slf4j.Slf4j;
@@ -14,6 +20,7 @@ import org.apache.commons.lang.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
@@ -259,7 +266,6 @@ public class StudyTeacherH5Controller {
         return courseRecordService.find(courseRecordId);
     }
 
-
     @Autowired
     private StudyCourseRecordSignService courseRecordSignService;
 
@@ -291,4 +297,29 @@ public class StudyTeacherH5Controller {
         return null;
     }
 
+    @Autowired
+    private StudyMakeUpService makeUpService;
+
+    @RequestMapping("/makeUpStudent")
+    public ModelAndView makeUpStudent(StudentSearch searchParam, RequestPage page) {
+
+       SmartResponse<Object> smartResp = makeUpService.findStudentHasAbsent(searchParam, page.getPage(), page.getPageSize());
+
+        ModelAndView modelView = new ModelAndView();
+        Map<String, Object> modelMap = modelView.getModelMap();
+
+        modelMap.put("smartResp", smartResp);
+        modelMap.put("courseRecordId", searchParam.getCourseRecordId());
+        modelMap.put("studentName", searchParam.getName());
+
+        modelView.setViewName(this.pathDir + "makeUpStudent");
+        return modelView;
+    }
+
+    @RequestMapping(value = "/subMakeUpStudent")
+    @ResponseBody
+    public SmartResponse<String> subMakeUpStudent(String studentId, String courseRecordId) {
+        SmartResponse<String> smartResponse = this.makeUpService.doMakeUp(studentId, courseRecordId);
+        return smartResponse;
+    }
 }
