@@ -50,6 +50,8 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
 
 	private String signType = IConstant.SIGNED_TYPE_NORMAL;
 
+	private String isProcess = IConstant.IS_PROCESS_NO;
+
 	@Id
 	@Column(name="id", length=64)
 	public String getId() {
@@ -148,5 +150,14 @@ public class TGStudyCourseStudentRecord extends BaseBeanImpl implements DateBean
 
 	public void setSignType(String signType) {
 		this.signType = signType;
+	}
+
+	@Column(name="is_process", length=8)
+	public String getIsProcess() {
+		return isProcess;
+	}
+
+	public void setIsProcess(String isProcess) {
+		this.isProcess = isProcess;
 	}
 }

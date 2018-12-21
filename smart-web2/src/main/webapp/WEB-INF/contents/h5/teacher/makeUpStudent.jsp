@@ -4,7 +4,7 @@
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
-<c:set var="ctx" value="${basePath}"/>
+<c:set var="ctx" value="<%=basePath%>"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -32,7 +32,7 @@
 
     <div style="padding-top: 6px;">
         <ul class="pager">
-            <li class="previous"><a href="javascript:void(0);">&larr; 返回上一页</a></li>
+            <li class="previous"><a href="${ctx}/h5/login?teacherId=${teacherId}&courseRecordId=${courseRecordId}">&larr; 返回上一页</a></li>
         </ul>
 
     </div>
@@ -100,6 +100,8 @@
                 success: function (data) {
                     if('1' === data.result) {
                         tr.remove();
+                    } else {
+                        alert(data.msg);
                     }
                 }
             });

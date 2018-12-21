@@ -9,6 +9,8 @@ import org.apache.commons.lang3.StringUtils;
 @Setter
 public class StudentSearch extends FilterParam {
 
+	private String teacherId;
+
 	private String status;
 
 	private String courseRecordId;

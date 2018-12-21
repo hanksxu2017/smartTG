@@ -44,7 +44,6 @@ public class StudyCourseStudentRecordService extends MgrServiceImpl<TGStudyCours
 	 * @return
 	 */
 	public List<TGStudyCourseStudentRecord> findByStudentId(String studentId) {
-		// 检查指定课时的所有学生是否已经全部签到
 		Map<String, Object> params = new HashMap<>();
 		params.put("studentId", studentId);
 		params.put("status", this.getQueryStatus().toArray());

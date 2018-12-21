@@ -1,10 +1,11 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@ taglib prefix="C" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8" %>
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme() + "://" + request.getServerName() + ":" + request.getServerPort() + path + "/";
 %>
-<c:set var="ctx" value="${basePath}"/>
+<c:set var="ctx" value="<%=basePath%>"/>
 <!DOCTYPE html>
 <html>
 <head>
@@ -27,7 +28,7 @@
 </head>
 <body class="bg">
 
-
+<input type="hidden" id="teacherId" value="${teacherId}">
 <div class="container-fluid" style="width: 100%;align-content: center">
 
     <div>
@@ -43,7 +44,7 @@
                 <c:when test="${courseRecordList != null}">
                     <option value="">--请选择课时--</option>
                     <c:forEach items="${courseRecordList}" var="courseRecord">
-                        <option value="${courseRecord.id}">${courseRecord.courseName}</option>
+                        <option value="${courseRecord.id}" <c:if test="${not empty chooseCourseRecord && chooseCourseRecord.id eq courseRecord.id}">selected</c:if> >${courseRecord.courseName}</option>
                     </c:forEach>
                 </c:when>
                 <c:otherwise>
@@ -53,14 +54,31 @@
         </select>
     </div>
 
-    <div id="courseInfoDiv" style="margin-top: 6px;display: none;background-color:rgba(255, 255, 255, 0.5);">
-            <div class="panel-body">
-                <label>时间:<span id="courseTime">2018-11-29 18:30-20:00</span></label><br/>
-                <label>教室:<span id="classroomName">灵秀一</span></label><br/>
-                <label>应到:<span id="planCount">12</span>&nbsp;实到:<span id="actualCount">8</span>&nbsp;缺席:<span
-                        id="absentCount">1</span>&nbsp;未签:<span id="unSignCount">3</span></label><br/>
-            </div>
-    </div>
+	<div id="courseInfoDiv" style="margin-top: 6px;background-color:rgba(255, 255, 255, 0.5);" <c:if test="${empty chooseCourseRecord}">hidden</c:if> >
+				<div class="panel-body">
+					<label>时间:<span id="courseTime"><c:if test="${not empty chooseCourseRecord}">${chooseCourseRecord.courseDate}&nbsp;${chooseCourseRecord.courseTime}</c:if></span></label><br/>
+					<label>教室:<span id="classroomName"><c:if test="${chooseCourseRecord != null}">${chooseCourseRecord.classroomName}</c:if></span></label><br/>
+					<label>应到:<span id="planCount"><c:if test="${chooseCourseRecord != null}">${chooseCourseRecord.studentQuantityPlan}</c:if></span>
+						&nbsp;实到:<span id="actualCount"><c:if test="${chooseCourseRecord != null}">${chooseCourseRecord.studentQuantityActual}</c:if></span>
+						&nbsp;缺席:<span id="absentCount"><c:if test="${chooseCourseRecord != null}">${chooseCourseRecord.studentPersonalLeave + chooseCourseRecord.studentPlayTruant}</c:if></span>
+						&nbsp;未签:<span id="unSignCount"><c:if test="${chooseCourseRecord != null}">${chooseCourseRecord.studentQuantityPlan - chooseCourseRecord.studentQuantityActual - chooseCourseRecord.studentPersonalLeave - chooseCourseRecord.studentPlayTruant}</c:if></span>
+						&nbsp;补课:<span id="makeUpCount">${makeUpCount}</span></label>
+					<br/>
+
+						<c:if test="${not empty chooseCourseRecord}">
+							<c:choose>
+								<c:when test="${chooseCourseRecord.status eq 'NORMAL_END'}">
+									<span class="text-info">已结课</span>
+								</c:when>
+								<c:otherwise>
+									<span class="text-warning">未结课</span>
+								</c:otherwise>
+							</c:choose>
+						</c:if>
+					<c:if test="{empty chooseCourseRecord}"><span id="courseRecordStatus"></span></c:if>
+				</div>
+			</div>
+
 
     <div style="margin-top: 6px;">
         <table class="table table-condensed table-bordered" id="studentTable">
@@ -71,6 +89,51 @@
                 <th style="width: 70%;">操作</th>
             </tr>
             </thead>
+            <c:if test="${studentRecordList != null}">
+	            <c:forEach var="item" items="${studentRecordList}">
+		            <tr>
+			            <td style='valign:middle;padding-top: 14px;'><p>${item.studentName}</p></td>
+			            <c:choose>
+				            <c:when test="${item.status eq 'SIGNED'}">
+			                    <td>
+				                    <button class='btn btn-success' data-type='signed' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>签到</button>
+				                    <button class='btn' data-type='leave' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>请假</button>
+				                    <button class='btn' data-type='truant' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>缺课</button>
+			                    </td>
+				            </c:when>
+				            <c:when test="${item.status eq 'PERSONAL_LEAVE'}">
+					            <td>
+						            <button class='btn' data-type='signed' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>签到</button>
+						            <button class='btn btn-info' data-type='leave' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>请假</button>
+						            <button class='btn' data-type='truant' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>缺课</button>
+					            </td>
+				            </c:when>
+				            <c:when test="${item.status eq 'PLAY_TRUANT'}">
+					            <td>
+						            <button class='btn' data-type='signed' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>签到</button>
+						            <button class='btn' data-type='leave' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>请假</button>
+						            <button class='btn btn-danger' data-type='truant' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>缺课</button>
+					            </td>
+				            </c:when>
+				            <c:when test="${item.status eq 'X_MAKE_UP'}">
+					            <td style='text-align:left;padding-left:18px;'><button class='btn btn-info' data-studentid='" + value.studentId + "' onclick='removeMakeUp(this)'><i class='glyphicon glyphicon-remove'>移除补课</i></button></td></tr>
+				            </c:when>
+							<c:otherwise>
+								<td>
+									<button class='btn' data-type='signed' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>签到</button>
+									<button class='btn' data-type='leave' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>请假</button>
+									<button class='btn' data-type='truant' data-studentid='${item.studentId}' onclick='subStudentSign(this)'>缺课</button>
+								</td>
+							</c:otherwise>
+			            </c:choose>
+		            </tr>
+	            </c:forEach>
+	            <tr>
+		            <td colspan='2' style='text-align:left;padding-left:18px;'>
+			            <button <c:if test="${empty canSign || !(canSign eq 'YES')}">disabled='disabled'</c:if> class='btn btn-info' onclick='jumpToChooseStu()'><i class='glyphicon glyphicon-plus'>学生补课</i></button>
+		            </td>
+	            </tr>
+            </c:if>
         </table>
     </div>
 </div>
@@ -93,7 +156,6 @@
 <!-- 包括所有已编译的插件 -->
 <script src="../../../../plugins/bootstrap/js/bootstrap.min.js"></script>
 
-
 <script>
     $(function () {
 
@@ -105,16 +167,7 @@
                     url: "${ctx}/h5/queryCourseRecord?courseRecordId=" + courseRecId,
                     success: function (data) {
                         if (null != data.result && '1' === data.result) {
-                            $("#courseTime").text(data.data.courseDate + ' ' + data.data.courseTime);
-                            $("#classroomName").text(data.data.classroomName);
-                            $("#planCount").text(data.data.studentQuantityPlan);
-                            $("#actualCount").text(data.data.studentQuantityActual);
-                            var absent = data.data.studentPersonalLeave + data.data.studentPlayTruant;
-                            $("#absentCount").text(absent);
-
-                            var unSign = data.data.studentQuantityPlan - data.data.studentQuantityActual - absent;
-                            $("#unSignCount").text(unSign);
-                            $("#courseInfoDiv").show();
+                            loadCourseInfo(data.data, data.size);
                         }
                     }
                 });
@@ -130,6 +183,34 @@
 
         });
     });
+    
+    function loadCourseInfo(data, makeUpCount) {
+        $("#courseTime").text(data.courseDate + ' ' + data.courseTime);
+        $("#classroomName").text(data.classroomName);
+        $("#planCount").text(data.studentQuantityPlan);
+        $("#actualCount").text(data.studentQuantityActual);
+        var absent = data.studentPersonalLeave + data.studentPlayTruant;
+        $("#absentCount").text(absent);
+
+        var unSign = data.studentQuantityPlan - data.studentQuantityActual - absent;
+        $("#unSignCount").text(unSign);
+
+        $("#makeUpCount").text(makeUpCount);
+
+        if(data.status === 'NORMAL_END') {
+            $("#courseRecordStatus").text('已结课');
+            if(!$("#courseRecordStatus").hasClass('text-info')) {
+                $("#courseRecordStatus").addClass('text-info');
+            }
+        } else {
+            $("#courseRecordStatus").text('未结课');
+            if(!$("#courseRecordStatus").hasClass('text-warning')) {
+                $("#courseRecordStatus").addClass('text-warning');
+            }
+        }
+
+        $("#courseInfoDiv").show();
+    }
 
     function subStudentSign(btn) {
         var studentId = $(btn).data('studentid');
@@ -152,6 +233,8 @@
                         } else if ('truant' === status) {
                             switchBtnClass(btn, 'btn-danger');
                         }
+
+                        loadCourseInfo(data.data, data.size);
                     } else {
                         $("#showSignFailedMsg").text(data.msg);
                         $('#signFailedModal').modal('show');
@@ -207,6 +290,8 @@
                     tr += createButton('', 'leave', value.studentId, isCanSign, '请假');
                     tr += createButton('btn-danger', 'truant', value.studentId, isCanSign, '缺课');
                     tr += "</td>";
+                } else if(value.status === 'X_MAKE_UP') {
+                    tr += "<td style='text-align:left;padding-left:18px;'><button class='btn btn-info' data-studentid='" + value.studentId + "' onclick='removeMakeUp(this)'><i class='glyphicon glyphicon-plus'>学生补课</i></button></td>";
                 } else {
                     tr += "<td>";
                     tr += createButton('', 'signed', value.studentId, isCanSign, '签到');
@@ -217,7 +302,12 @@
                 tr += "</tr>";
                 $("#studentTable").append(tr);
             });
-            var addMakeUpTr = "<tr><td colspan='3' style='text-align:left;padding-left:18px;'><button class='btn btn-info' onclick='jumpToChooseStu()'><i class='glyphicon glyphicon-plus'>学生补课</i></button></td></tr>";
+            if(isCanSign) {
+                var addMakeUpTr = "<tr><td colspan='2' style='text-align:left;padding-left:18px;'><button class='btn btn-info' onclick='jumpToChooseStu()'><i class='glyphicon glyphicon-plus'>学生补课</i></button></td></tr>";
+            } else {
+                var addMakeUpTr = "<tr><td colspan='2' style='text-align:left;padding-left:18px;'><button disabled='disabled' class='btn btn-info' onclick='jumpToChooseStu()'><i class='glyphicon glyphicon-plus'>学生补课</i></button></td></tr>";
+
+            }
             $("#studentTable").append(addMakeUpTr);
         }
     }
@@ -227,15 +317,33 @@
         if(isCanSign) {
             stBtn = "<button class='btn " + classType + "' data-type='" + type + "' data-studentid='" + studentId + "' onclick='subStudentSign(this)'>" + btnName + "</button>&nbsp;";
         } else {
-            stBtn = "<button class='btn " + classType + "' data-type='" + type + "' data-studentid='" + studentId + "' onclick='subStudentSign(this)'>" + btnName + "</button>&nbsp;";
+            stBtn = "<button disabled='disabled' class='btn " + classType + "' data-type='" + type + "' data-studentid='" + studentId + "' onclick='subStudentSign(this)'>" + btnName + "</button>&nbsp;";
         }
         return stBtn;
     }
     
     function jumpToChooseStu() {
-        var url = "${ctx}/h5/makeUpStudent?courseRecordId=" + $("#chooseCourseRecForSign").val();
+        var url = "${ctx}/h5/makeUpStudent?courseRecordId=" + $("#chooseCourseRecForSign").val() + "&teacherId=" + $("#teacherId").val();
         window.location.href = url;
+    }
+    
+    function removeMakeUp(removeBtn) {
+        var tr = $(removeBtn).parent().parent();
+        var studentId = $(this).data('studentid');
+        var courseRecordId = $('#chooseCourseRecForSign').val();
+        var uri = "/h5/removeMakeUp?courseRecordId=" + courseRecordId + "&studentId=" + studentId;
 
+        $.ajax({
+            type: "GET",
+            url: uri,
+            success: function (data) {
+                if('1' === data.result) {
+                    tr.remove();
+                } else {
+                    alert(data.msg);
+                }
+            }
+        });
     }
 
 </script>

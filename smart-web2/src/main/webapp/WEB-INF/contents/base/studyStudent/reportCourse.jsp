@@ -4,7 +4,7 @@
     String path = request.getContextPath();
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
-<c:set var="ctx" value="${basePath}"/>
+<c:set var="ctx" value="<%=basePath%>"/>
 <script type="text/javascript" src="${pageContext.request.contextPath}/js/class-config.js"></script>
 <div class="wrap-content-dialog">
     <form class="form-horizontal" role="form" id="student-course-add" action="studyStudent/course/subReportCourse">

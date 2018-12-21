@@ -722,14 +722,23 @@ public class StudyStudentController extends BaseController {
 
 		SmartResponse<TGStudyStudent> res = new SmartResponse<>();
 
-		SmartResponse<String> smartResponse = this.courseRecordSignService.subStudentSign(courseRecordId, studentId, this.parseCourseStudentStatus(signType));
-		if (smartResponse.isSuccess()) {
-			res.setData(this.studentService.find(studentId).getData());
-			res.setResult(IConstant.OP_SUCCESS);
-			res.setMsg(IConstant.OP_SUCCESS_MSG);
-			return res;
-		} else {
-			res.setMsg(smartResponse.getMsg());
+		CourseStudentRecordStatusEnum statusEnum = this.parseCourseStudentStatus(signType);
+
+		try {
+			SmartResponse<String> smartResponse = this.courseRecordSignService.subStudentSign(courseRecordId, studentId, statusEnum, "");
+			if (smartResponse.isSuccess()) {
+				res.setData(this.studentService.find(studentId).getData());
+				res.setResult(IConstant.OP_SUCCESS);
+				res.setMsg(IConstant.OP_SUCCESS_MSG);
+				return res;
+			} else {
+				res.setMsg(smartResponse.getMsg());
+				return res;
+			}
+		} catch (Exception e) {
+			log.info("-----[点名失败]-----{}", e);
+			res.setResult(IConstant.OP_FAIL);
+			res.setMsg(e.getMessage());
 			return res;
 		}
 	}
@@ -769,61 +778,35 @@ public class StudyStudentController extends BaseController {
 	@RequestMapping(value = "/subAllSign", method = RequestMethod.POST)
 	@ResponseBody
 	public SmartResponse<String> subAllSign(String courseRecordId) {
+
 		SmartResponse<String> response = new SmartResponse<>();
-		SmartResponse<TGStudyCourseRecord> smartResponse = this.courseRecordService.find(courseRecordId);
-		if (!smartResponse.isSuccess() || null == smartResponse.getData()) {
-			response.setMsg(smartResponse.getMsg());
-			return response;
-		}
-		TGStudyCourseRecord courseRecord = smartResponse.getData();
 
-		if (!courseRecord.canSign()) {
-			response.setMsg("课时目前无法进行签到操作,请稍后再试!");
-			return response;
-		}
-		if (0 != courseRecord.getStudentPersonalLeave() ||
-				0 != courseRecord.getStudentPlayTruant()) {
-			response.setMsg("存在学生缺席记录,无法全部签到!");
-			return response;
-		}
-
-		Date updateDate = new Date();
 		Map<String, Object> params = new HashMap<>();
 		params.put("courseRecordId", courseRecordId);
-		params.put("status", IConstant.STATUS_NORMAL);
-		List<TGStudyCourseStudentRecord> courseStudentRecordList =
-				this.courseStudentRecordService.findByParam(params).getDatas();
-		if (CollectionUtils.isNotEmpty(courseStudentRecordList)) {
-			courseRecord.setStudentQuantityPlan(courseStudentRecordList.size());
-			courseRecord.setStudentQuantityActual(courseStudentRecordList.size());
-			courseRecord.setStudentPersonalLeave(0);
-			courseRecord.setStudentPlayTruant(0);
-
-			TGStudyStudent student;
-			for (TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
-				courseStudentRecord.setStatus(CourseStudentRecordStatusEnum.SIGNED.name());
-				courseRecord.setUpdateTime(updateDate);
-				this.courseStudentRecordService.update(courseStudentRecord);
-
-				// 学生课时-1
-				student = this.studentService.find(courseStudentRecord.getStudentId()).getData();
-				student.setRemainCourse(student.getRemainCourse() - 1);
-				student.setUpdateTime(updateDate);
-				student.setCourseSeriesUnSigned(0);
-				this.studentService.update(student);
-				// 取消连续签退的广播消息
-				this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
-				if (student.getRemainCourse() < 3) {
-					// 课时不足
-					String content = "学生[" + student.getName() + "]仅剩余 " + student.getRemainCourse() + "课时!";
-					this.systemMessageService.broadSystemMessage(SystemMessageEnum.STUDENT_REMAIN_COURSE_NOTE, content, student.getId());
-				}
-			}
+		List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByParam(params).getDatas();
+		if (CollectionUtils.isEmpty(courseStudentRecordList)) {
+			response.setMsg("无学生课时记录,无需签到操作");
+			return response;
 		}
 
-		courseRecord.setUpdateTime(updateDate);
-		courseRecord.setStatus(IConstant.STATUS_COURSE_END);
-		response = courseRecordService.update(courseRecord);
+		List<String> studentIdList = new ArrayList<>();
+		for(TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
+			if(StringUtils.equals(courseStudentRecord.getIsProcess(), IConstant.IS_PROCESS_YES) &&
+				!StringUtils.equals(CourseStudentRecordStatusEnum.SIGNED.name(), courseStudentRecord.getStatus())){
+				response.setMsg("存在学生缺课记录,无法全部签到!");
+				return response;
+			}
+			studentIdList.add(courseStudentRecord.getStudentId());
+		}
+
+		try {
+			response = this.courseRecordSignService.subStudentSign(courseRecordId, studentIdList, CourseStudentRecordStatusEnum.SIGNED, "");
+		} catch (Exception e) {
+			log.info("-----[点名失败]-----{}", e);
+			response.setResult(IConstant.OP_FAIL);
+			response.setMsg("全部签到失败!");
+		}
+
 		return response;
 	}
 
@@ -877,15 +860,14 @@ public class StudyStudentController extends BaseController {
 		}
 
 		String[] studentIds = studentId.split(",");
-		for (String sid : studentIds) {
-			smartResponse = courseRecordSignService.subStudentSign(courseRecordId, sid, statusEnum, description);
-			if (!smartResponse.isSuccess()) {
-				return smartResponse;
-			}
+		try {
+			smartResponse = this.courseRecordSignService.subStudentSign(courseRecordId, Arrays.asList(studentIds), statusEnum, description);
+		} catch (Exception e) {
+			log.info("-----[点名失败]-----{}", e);
+			smartResponse.setResult(IConstant.OP_FAIL);
+			smartResponse.setMsg("学生点名[" + statusEnum.getMessage() + " ]失败!");
 		}
 
-		smartResponse.setResult(IConstant.OP_SUCCESS);
-		smartResponse.setMsg(IConstant.OP_SUCCESS_MSG);
 		return smartResponse;
 	}
 

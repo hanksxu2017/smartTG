@@ -34,7 +34,7 @@ public class StudyCourseRecordService extends MgrServiceImpl<TGStudyCourseRecord
 	 * @param courseRecordId 课时记录序号
 	 */
 	public void updateCourseRecordToEndIfAllSigned(String courseRecordId, List<TGStudyCourseStudentRecord> courseStudentRecordList) {
-		if (!CollectionUtils.isEmpty(courseStudentRecordList)) {
+		if (CollectionUtils.isNotEmpty(courseStudentRecordList)) {
 			// 所有学生课时记录已处理
 			boolean isAllSigned = true;
 
