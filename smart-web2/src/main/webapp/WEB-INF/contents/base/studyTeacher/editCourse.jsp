@@ -1,5 +1,6 @@
 <%@ page language="java" import="java.util.*" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core"%>
+<%@ taglib prefix="fmt" uri="http://java.sun.com/jstl/fmt" %>
 <%
     String path = request.getContextPath();
     String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
@@ -76,6 +77,14 @@
                </select>
            </div>
        </div>
+
+	   <div class="form-group m-b-10">
+		   <label for="createTimeForEditCourse" class="col-sm-2 control-label">建班日期</label>
+		   <div class="col-sm-9 p-l-0">
+			   <input type="text" class="form-control cnoj-date require" data-date-format="yyyy-mm-dd" name="createTimeStr" id="createTimeForEditCourse"
+			          data-label-name="建班日期" value="<fmt:formatDate value="${course.createTime}" type="both" pattern="yyyy-MM-dd"></fmt:formatDate>"/>
+		   </div>
+	   </div>
 
        <div class="form-group m-b-10">
            <label for="descriptionForTechEditCourse" class="col-sm-2 control-label">描述</label>
