@@ -73,6 +73,14 @@
            </div>
        </div>
 
+	   <div class="form-group m-b-10">
+		   <label for="createTimeForAddCourse" class="col-sm-2 control-label">建班日期</label>
+		   <div class="col-sm-9 p-l-0">
+			   <input type="text" class="form-control cnoj-date require" data-date-format="yyyy-mm-dd" name="createTimeStr" id="createTimeForAddCourse"
+			          data-label-name="建班日期"/>
+		   </div>
+	   </div>
+
        <div class="form-group m-b-10">
            <label for="descriptionForTechAddCourse" class="col-sm-2 control-label">描述</label>
            <div class="col-sm-9 p-l-0">
