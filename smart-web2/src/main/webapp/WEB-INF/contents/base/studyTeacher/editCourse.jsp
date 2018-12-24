@@ -82,7 +82,7 @@
 		   <label for="createTimeForEditCourse" class="col-sm-2 control-label">建班日期</label>
 		   <div class="col-sm-9 p-l-0">
 			   <input type="text" class="form-control cnoj-date require" data-date-format="yyyy-mm-dd" name="createTimeStr" id="createTimeForEditCourse"
-			          data-label-name="建班日期" value="<fmt:formatDate value="${course.createTime}" type="both" pattern="yyyy-MM-dd"></fmt:formatDate>"/>
+			          data-label-name="建班日期" value="${course.createTimeStr}"/>
 		   </div>
 	   </div>
 

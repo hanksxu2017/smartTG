@@ -3,6 +3,8 @@ package cn.com.smart.web.bean.entity;
 import cn.com.smart.bean.BaseBeanImpl;
 import cn.com.smart.bean.DateBean;
 import cn.com.smart.constant.IConstant;
+import cn.com.smart.utils.DateUtil;
+import org.apache.commons.lang.StringUtils;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -55,6 +57,8 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 	private Date createTime;
 
 	private Date updateTime;
+
+	private String createTimeStr;
 
 	@Id
 	@Column(name="id", length=64)
@@ -190,5 +194,16 @@ public class TGStudyCourse extends BaseBeanImpl implements DateBean {
 
 	public void setCourseTimeIndex(short courseTimeIndex) {
 		this.courseTimeIndex = courseTimeIndex;
+	}
+
+	public String getCreateTimeStr() {
+		if(StringUtils.isBlank(this.createTimeStr)) {
+			this.setCreateTimeStr(DateUtil.dateToStr(this.createTime, "yyyy-MM-dd"));
+		}
+		return this.createTimeStr;
+	}
+
+	public void setCreateTimeStr(String createTimeStr) {
+		this.createTimeStr = createTimeStr;
 	}
 }

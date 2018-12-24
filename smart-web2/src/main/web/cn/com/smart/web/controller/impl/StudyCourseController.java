@@ -347,7 +347,7 @@ public class StudyCourseController extends BaseController {
 	 */
 	@RequestMapping(value = "/subEditCourse", method = RequestMethod.POST)
 	@ResponseBody
-	public SmartResponse<String> subEditCourse(String createTimeStr, TGStudyCourse course) {
+	public SmartResponse<String> subEditCourse(TGStudyCourse course) {
 		SmartResponse<String> smartResp = new SmartResponse<>();
 		String checkRes = this.checkCourseConflict(course);
 		if(StringUtils.isNotBlank(checkRes)) {
@@ -358,7 +358,7 @@ public class StudyCourseController extends BaseController {
 		this.packTeacherInfo(course);
 		course.setUpdateTime(new Date());
 		course.setName(this.concatCourseName(course));
-		course.setCreateTime(DateUtil.parseDate(createTimeStr, "yyyy-MM-dd"));
+		course.setCreateTime(DateUtil.parseDate(course.getCreateTimeStr(), "yyyy-MM-dd"));
 
 		smartResp = this.courseService.update(course);
 		// 老师课时增加成功后,进行本周内的时安排
@@ -374,14 +374,14 @@ public class StudyCourseController extends BaseController {
      * @return              执行增加的结果
      */
     @RequestMapping(value="/saveCourse",method=RequestMethod.POST)
-    public @ResponseBody SmartResponse<String> saveCourse(String createTimeStr, TGStudyCourse course) {
+    public @ResponseBody SmartResponse<String> saveCourse(TGStudyCourse course) {
         SmartResponse<String> smartResp = new SmartResponse<>();
         String checkRes = this.checkCourseConflict(course);
         if(StringUtils.isNotBlank(checkRes)) {
             smartResp.setMsg(checkRes);
             return smartResp;
         }
-        course.setCreateTime(DateUtil.parseDate(createTimeStr, "yyyy-MM-dd"));
+        course.setCreateTime(DateUtil.parseDate(course.getCreateTimeStr(), "yyyy-MM-dd"));
         this.packTeacherInfo(course);
 
         course.setName(this.concatCourseName(course));
