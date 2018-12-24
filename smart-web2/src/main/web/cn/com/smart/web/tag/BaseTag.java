@@ -33,6 +33,10 @@ public class BaseTag extends TagSupport implements IWebConstant {
 	protected UserInfo getUserInfo() {
 		return (UserInfo)pageContext.getSession().getAttribute(IActionConstant.SESSION_USER_KEY);
 	}
+
+	protected final String getContextPath() {
+		return pageContext.getServletContext().getContextPath();
+	}
 	
 	/**
 	 * 根据名称获取服务对象

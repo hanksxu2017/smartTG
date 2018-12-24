@@ -46,15 +46,15 @@ public class WebSecurityHelper {
      * @param uri 操作对应的URI
      * @return 返回添加授权token后的URI
      */
-    public static String addUriAuth(String currentUri, String id, String uri) {
+    public static String addUriAuth(String context, String currentUri, String id, String uri) {
         if(StringUtils.isNotEmpty(uri) 
                 && StringUtils.isNotEmpty(id) 
                 && StringUtils.isNotEmpty(currentUri)) {
             String token = currentUri+"##"+id+"##"+uri;
             if(uri.contains("?")) {
-                uri = uri + "&authToken=";
+                uri = context + uri + "&authToken=";
             } else {
-                uri = uri + "?authToken=";
+                uri = context + uri + "?authToken=";
             }
             uri = uri + WebSecurityHelper.encrypt(token);
         }
