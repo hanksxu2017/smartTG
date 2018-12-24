@@ -115,10 +115,12 @@ public interface IConstant {
 	 *
 	 */
 	int NOTIFY_COURSE_SERIES_UNSIGNED = 2;
+	// 系统报警阀门-
 	int NOTIFY_COURSE_RENEW = 3;
 
 	String SIGNED_TYPE_NORMAL = "NORMAL";
 	String SIGNED_TYPE_MAKEUP = "MAKE_UP";
+	String SIGNED_TYPE_PRE_MAKEUP = "PRE_MAKE_UP";
 
 	// 续费应付
 	int MAKE_UP_AMOUNT_PAYABLE = 1000;

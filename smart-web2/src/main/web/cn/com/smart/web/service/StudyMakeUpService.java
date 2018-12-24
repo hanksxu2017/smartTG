@@ -35,12 +35,16 @@ public class StudyMakeUpService {
      * @return                  学生信息
      */
     public SmartResponse<Object> findStudentHasAbsent(StudentSearch searchParam, int pageNum, int pageSize) {
-        TGStudyCourseRecord studyCourseRecord = this.courseRecordService.find(searchParam.getCourseRecordId()).getData();
-        searchParam.setCourseId(studyCourseRecord.getCourseId());
-        SmartResponse<Object> smartResp =
-                opService.getDatas("student_has_absent_course_list", searchParam, (pageNum - 1) * pageSize, pageSize);
+	    TGStudyCourseRecord studyCourseRecord = this.courseRecordService.find(searchParam.getCourseRecordId()).getData();
+	    searchParam.setCourseId(studyCourseRecord.getCourseId());
+	    SmartResponse<Object> smartResp = null;
+	    if(StringUtils.isNotBlank(searchParam.getName())) {
+            // 查找全部学生
+            opService.getDatas("student_list_for_make_up", searchParam, (pageNum - 1) * pageSize, pageSize);
+        } else {
+		    smartResp =opService.getDatas("student_has_absent_course_list", searchParam, (pageNum - 1) * pageSize, pageSize);
+	    }
         this.packageAbsentCount(smartResp);
-
         return smartResp;
     }
 
@@ -106,6 +110,13 @@ public class StudyMakeUpService {
         Map<String,Object> params = new HashMap<>();
         params.put("studentId", studentId);
         List<Object> studentAbsentRecordList = this.opService.getDatas("student_absent_course_record_list", params).getDatas();
+
+	    TGStudyStudent student = this.studentService.find(studentId).getData();
+	    if(null == student) {
+	    	log.info("[补课]--[失败]--[学生数据错误]--[id:{}]", student);
+	    	return;
+	    }
+
         if(CollectionUtils.isNotEmpty(studentAbsentRecordList)) {
             log.info("缺课记录:{}", studentAbsentRecordList);
             Object[] objects = (Object[])studentAbsentRecordList.get(0);
@@ -113,39 +124,60 @@ public class StudyMakeUpService {
             map.put("studentId", studentId);
             map.put("courseRecordId", objects[0]);
             List<TGStudyCourseStudentRecord> previousAbsentRecordList = this.courseStudentRecordService.findByParam(map).getDatas();
-            if(CollectionUtils.isEmpty(previousAbsentRecordList)) {
-                return;
+            if(CollectionUtils.isNotEmpty(previousAbsentRecordList)) {
+	            TGStudyCourseStudentRecord previousAbsentRecord = previousAbsentRecordList.get(0);
+	            if (null != previousAbsentRecord && !StringUtils.equals(previousAbsentRecord.getStatus(), CourseStudentRecordStatusEnum.NORMAL.name())) {
+		            // 新增一个补课类型的学生课时
+		            this.createCourseStudentRecordAndSave(student, courseRecord, CourseStudentRecordStatusEnum.X_MAKE_UP, previousAbsentRecord);
+
+		            // 修改补课目标课时为已签到
+		            previousAbsentRecord.setStatus(CourseStudentRecordStatusEnum.SIGNED.name());
+		            previousAbsentRecord.setSignType(IConstant.SIGNED_TYPE_MAKEUP);
+		            previousAbsentRecord.setUpdateTime(new Date());
+		            this.courseStudentRecordService.update(previousAbsentRecord);
+		            // 更新签到统计信息
+		            this.updateSignCount(previousAbsentRecord.getCourseRecordId());
+		            // 取消学生连续签退计数器
+		            if(student.getCourseSeriesUnSigned() != 0) {
+			            student.setCourseSeriesUnSigned(0);
+			            student.setUpdateTime(new Date());
+			            this.studentService.update(student);
+		            }
+		            // 取消学生连续缺课的系统提醒
+		            this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
+	            }
             }
-            TGStudyCourseStudentRecord previousAbsentRecord = previousAbsentRecordList.get(0);
-            if (null != previousAbsentRecord && !StringUtils.equals(previousAbsentRecord.getStatus(), CourseStudentRecordStatusEnum.NORMAL.name())) {
-                // 新增一个补课类型的学生课时
-                TGStudyCourseStudentRecord courseStudentRecord = new TGStudyCourseStudentRecord();
-                TGStudyStudent student = this.studentService.find(studentId).getData();
-                courseStudentRecord.setCourseRecordId(courseRecord.getId());
-                courseStudentRecord.setCourseId(courseRecord.getCourseId());
-                courseStudentRecord.setStudentId(student.getId());
-                courseStudentRecord.setStudentName(student.getName());
-                courseStudentRecord.setStatus(CourseStudentRecordStatusEnum.X_MAKE_UP.name());
-                courseStudentRecord.setCreateTime(new Date());
-                courseStudentRecord.setMakeUpTargetId(previousAbsentRecord.getId());
-                this.courseStudentRecordService.save(courseStudentRecord);
-                // 修改补课目标课时为已签到
-                previousAbsentRecord.setStatus(CourseStudentRecordStatusEnum.SIGNED.name());
-                previousAbsentRecord.setSignType(IConstant.SIGNED_TYPE_MAKEUP);
-                previousAbsentRecord.setUpdateTime(new Date());
-                this.courseStudentRecordService.update(previousAbsentRecord);
-                // 更新签到统计信息
-                this.updateSignCount(previousAbsentRecord.getCourseRecordId());
-                // 取消学生连续签退计数器
-                if(student.getCourseSeriesUnSigned() != 0) {
-                    student.setCourseSeriesUnSigned(0);
-                    student.setUpdateTime(new Date());
-                    this.studentService.update(student);
-                }
-                // 取消学生连续缺课的系统提醒
-                this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
-            }
+        } else {
+	        // 无缺课记录
+	        // 若果不存在缺课记录,则认为时预补课
+	        this.createCourseStudentRecordAndSave(student, courseRecord, CourseStudentRecordStatusEnum.Y_PRE_MAKE_UP, null);
+	        this.studentService.reduceRemainCourse(student, 1);
         }
+    }
+
+	/**
+	 * 新增一条课时记录
+	 * @param student       学生对象
+	 * @param courseRecord  课时对象
+	 * @param statusEnum    点名结果
+	 * @param targetRecord  目标学生课时对象
+	 * @return              执行结果
+	 */
+	private SmartResponse<String> createCourseStudentRecordAndSave(TGStudyStudent student,
+                                                                   TGStudyCourseRecord courseRecord,
+                                                                   CourseStudentRecordStatusEnum statusEnum,
+	                                                               TGStudyCourseStudentRecord targetRecord) {
+		TGStudyCourseStudentRecord courseStudentRecord = new TGStudyCourseStudentRecord();
+		courseStudentRecord.setCourseRecordId(courseRecord.getId());
+		courseStudentRecord.setCourseId(courseRecord.getCourseId());
+		courseStudentRecord.setStudentId(student.getId());
+		courseStudentRecord.setStudentName(student.getName());
+		courseStudentRecord.setStatus(statusEnum.name());
+		courseStudentRecord.setCreateTime(new Date());
+		if(null != targetRecord) {
+			courseStudentRecord.setMakeUpTargetId(targetRecord.getId());
+		}
+		return this.courseStudentRecordService.save(courseStudentRecord);
     }
 
     /**

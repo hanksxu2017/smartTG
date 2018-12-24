@@ -297,6 +297,19 @@
                 AND (t.status = 'PERSONAL_LEAVE' OR t.status = 'PLAY_TRUANT'))
         </sql>
     </sqlUnit>
+    <sqlUnit name="student_list_for_make_up">
+        <sql>
+            SELECT student.id, student.name, student.level
+            FROM tg_study_student student
+            WHERE student.status = 'NORMAL'
+            AND student.name LIKE '%:name%'
+            AND student.id IN (
+                SELECT DISTINCT t.student_id
+                FROM tg_study_course_student_record t
+                WHERE t.course_id !=:courseId
+            )
+        </sql>
+    </sqlUnit>
     <sqlUnit name="student_has_absent_count">
         <sql>
             select count(t.course_record_id)

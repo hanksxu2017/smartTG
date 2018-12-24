@@ -7,7 +7,8 @@ public enum CourseStudentRecordStatusEnum implements IEnum {
 	SIGNED("已签到"),
 	PERSONAL_LEAVE("事假"),
 	PLAY_TRUANT("缺课"),
-	X_MAKE_UP("补课");
+	X_MAKE_UP("补课"),
+	Y_PRE_MAKE_UP("预补课");
 
 	private String message;
 

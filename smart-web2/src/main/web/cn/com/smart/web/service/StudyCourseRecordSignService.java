@@ -218,8 +218,25 @@ public class StudyCourseRecordSignService {
      */
     private SmartResponse<String> updateCourseStudentRecord(TGStudyCourseStudentRecord courseStudentRecord,
         CourseStudentRecordStatusEnum statusEnum, String description) {
-        // 更新学生课时的签到信息
-        courseStudentRecord.setStatus(statusEnum.name());
+
+	    TGStudyCourseStudentRecord preMakeUpRecord = this.getPreMakeUpRecord(courseStudentRecord.getStudentId());
+
+    	if(!CourseStudentRecordStatusEnum.SIGNED.equals(statusEnum) && null != preMakeUpRecord) {
+
+			// 学生存在预补课
+		    // 当前课时设置为签到
+		    courseStudentRecord.setStatus(CourseStudentRecordStatusEnum.SIGNED.name());
+		    courseStudentRecord.setSignType(IConstant.SIGNED_TYPE_PRE_MAKEUP);
+
+		    // 预补课设置为已处理
+		    preMakeUpRecord.setIsProcess(IConstant.IS_PROCESS_YES);
+		    preMakeUpRecord.setMakeUpTargetId(courseStudentRecord.getId());
+		    this.courseStudentRecordService.update(preMakeUpRecord);
+	    } else {
+		    // 更新学生课时的签到信息
+		    courseStudentRecord.setStatus(statusEnum.name());
+	    }
+
         courseStudentRecord.setDescription(DataUtil.handleNull(description));
         courseStudentRecord.setUpdateTime(new Date());
         courseStudentRecord.setIsProcess(IConstant.IS_PROCESS_YES);
@@ -252,13 +269,18 @@ public class StudyCourseRecordSignService {
             this.systemMessageService.processSystemMessageBySystem(SystemMessageEnum.STUDENT_ABSENT_NOTE, student.getId());
         } else {
             if (!isSignAsHasCome(student.getId(), courseStudentRecord.getCourseId())) {
-                // 签到类型非到班签到时计算缺课逻辑
-                // 学生课时-1
-                if(isFirstSign){
-                    student.setRemainCourse(student.getRemainCourse() - 1);
-                }
-                // 非正常签到,生成异常签到记录
-                student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
+            	// 对于正常签到类型,需要处理签退
+            	if(isFirstSign) {
+					// 第一次点名操作
+		            TGStudyCourseStudentRecord preMakeUpRecord = this.getPreMakeUpRecord(student.getId());
+		            if(null != preMakeUpRecord) {
+			            // 已存在预补课,本次签退不进行课时扣除，连续签退处理
+		            } else {
+			            student.setRemainCourse(student.getRemainCourse() - 1);
+			            // 非正常签到,生成异常签到记录
+			            student.setCourseSeriesUnSigned(student.getCourseSeriesUnSigned() + 1);
+		            }
+	            }
             }
         }
         SmartResponse<String> smartResponse = this.studentService.update(student);
@@ -275,6 +297,28 @@ public class StudyCourseRecordSignService {
         }
 
         return smartResponse;
+    }
+
+	/**
+	 * 查看学生是否存在预习补课的情况
+	 * @param studentId
+	 * @return
+	 */
+	private TGStudyCourseStudentRecord getPreMakeUpRecord(String studentId) {
+
+		Map<String, Object> map = new HashMap<>();
+		map.put("studentId", studentId);
+		map.put("status", CourseStudentRecordStatusEnum.Y_PRE_MAKE_UP.name());
+		List<TGStudyCourseStudentRecord> courseStudentRecordList = this.courseStudentRecordService.findByParam(map, "create_time").getDatas();
+		if(CollectionUtils.isNotEmpty(courseStudentRecordList)) {
+			for(TGStudyCourseStudentRecord courseStudentRecord : courseStudentRecordList) {
+				if(StringUtils.equals(IConstant.IS_PROCESS_NO, courseStudentRecord.getIsProcess())) {
+					return courseStudentRecord;
+				}
+			}
+		}
+
+    	return null;
     }
 
     @Autowired
